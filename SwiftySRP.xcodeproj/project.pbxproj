@@ -12,6 +12,7 @@
 		A50090BF1E4C74BD00238562 /* SwiftySRP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A50090B51E4C74BD00238562 /* SwiftySRP.framework */; };
 		A50090C41E4C74BD00238562 /* SwiftySRPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50090C31E4C74BD00238562 /* SwiftySRPTests.swift */; };
 		A50090C61E4C74BD00238562 /* SwiftySRP.h in Headers */ = {isa = PBXBuildFile; fileRef = A50090B81E4C74BD00238562 /* SwiftySRP.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A50091051E4C961100238562 /* SRP.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50091041E4C961100238562 /* SRP.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +36,7 @@
 		A50090BE1E4C74BD00238562 /* SwiftySRPTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftySRPTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A50090C31E4C74BD00238562 /* SwiftySRPTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftySRPTests.swift; sourceTree = "<group>"; };
 		A50090C51E4C74BD00238562 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A50091041E4C961100238562 /* SRP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRP.swift; sourceTree = "<group>"; };
 		B15B2BD877A371ACD21A17B5 /* Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig"; path = "Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRP/Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig"; sourceTree = "<group>"; };
 		F59A7100C8CBC36C1AB01B41 /* Pods_SwiftySRP_Base_SwiftySRP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SwiftySRP_Base_SwiftySRP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -105,6 +107,7 @@
 			children = (
 				A50090B81E4C74BD00238562 /* SwiftySRP.h */,
 				A50090B91E4C74BD00238562 /* Info.plist */,
+				A50091041E4C961100238562 /* SRP.swift */,
 			);
 			path = SwiftySRP;
 			sourceTree = "<group>";
@@ -186,6 +189,7 @@
 					A50090B41E4C74BD00238562 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = U3842W8E3U;
+						LastSwiftMigration = 0820;
 						ProvisioningStyle = Automatic;
 					};
 					A50090BD1E4C74BD00238562 = {
@@ -313,6 +317,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A50091051E4C961100238562 /* SRP.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -438,6 +443,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 01347E97292452B709D3AE36 /* Pods-SwiftySRP_Base-SwiftySRP.debug.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = U3842W8E3U;
@@ -450,6 +456,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.flockoffiles.SwiftySRP;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				"SWIFT_INCLUDE_PATHS[sdk=iphoneos*]" = "$(SRCROOT)/SystemModule/CommonCrypto/iphoneos";
+				"SWIFT_INCLUDE_PATHS[sdk=iphonesimulator*]" = "$(SRCROOT)/SystemModule/CommonCrypto/iphonesimulator";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -458,6 +467,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B15B2BD877A371ACD21A17B5 /* Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = U3842W8E3U;
@@ -470,6 +480,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.flockoffiles.SwiftySRP;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				"SWIFT_INCLUDE_PATHS[sdk=iphoneos*]" = "$(SRCROOT)/SystemModule/CommonCrypto/iphoneos";
+				"SWIFT_INCLUDE_PATHS[sdk=iphonesimulator*]" = "$(SRCROOT)/SystemModule/CommonCrypto/iphonesimulator";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
@@ -478,6 +490,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 10ED35AB66D3B09F03A8CAC1 /* Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				DEVELOPMENT_TEAM = U3842W8E3U;
 				INFOPLIST_FILE = SwiftySRPTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -491,6 +504,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2FB021FC76E81CB3156016E2 /* Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				DEVELOPMENT_TEAM = U3842W8E3U;
 				INFOPLIST_FILE = SwiftySRPTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
