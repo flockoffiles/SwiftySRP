@@ -5,6 +5,8 @@ workspace 'SwiftySRP'
 abstract_target 'SwiftySRP_Base' do
     use_frameworks!
     
+    pod 'BigInt', '~> 2.1'
+    
     target 'SwiftySRP' do
       project 'SwiftySRP'
       

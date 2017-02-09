@@ -378,6 +378,7 @@
 		A50090F31E4C763400238562 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -428,6 +429,7 @@
 		A50090F41E4C763400238562 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -500,7 +502,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7EBCFDC24DF7B0AF9AAFF412 /* Pods-SwiftySRP_Base-SwiftySRPTestApp-SwiftySRPTestAppTests.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = U3842W8E3U;
 				INFOPLIST_FILE = SwiftySRPTestAppTests/Info.plist;
@@ -516,7 +518,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9D07332B1878C66B381654F1 /* Pods-SwiftySRP_Base-SwiftySRPTestApp-SwiftySRPTestAppTests.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = U3842W8E3U;
 				INFOPLIST_FILE = SwiftySRPTestAppTests/Info.plist;
@@ -547,6 +549,7 @@
 				A50090F71E4C763400238562 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		A50090F81E4C763400238562 /* Build configuration list for PBXNativeTarget "SwiftySRPTestAppTests" */ = {
 			isa = XCConfigurationList;
@@ -555,6 +558,7 @@
 				A50090FA1E4C763400238562 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
