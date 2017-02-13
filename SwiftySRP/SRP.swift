@@ -5,6 +5,23 @@
 //  Created by Sergey A. Novitsky on 09/02/2017.
 //  Copyright © 2017 Flock of Files. All rights reserved.
 //
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in all
+//  copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//  SOFTWARE.
 
 import Foundation
 import BigInt
@@ -51,30 +68,58 @@ import CommonCrypto
 //    The host will abort if it detects that A == 0 (mod N).
 //    The user must show his proof of K first. If the server detects that the user's proof is incorrect, it must abort without showing its own proof of K.
 
-
-
-// TODO:
-//
-// - Generate A
-
 public typealias DigestFunc = (Data) -> Data
+public typealias PrivateValueFunc = (BigUInt) -> BigUInt
 
 public struct SRP
 {
+    /// A large safe prime per SRP spec.
     let N: BigUInt
+    
+    /// A generator modulo N
     let g: BigUInt
+    
+    /// Hash function to be used.
     let digest: DigestFunc
     
+    /// Function to calculate parameter a (per SRP spec abouve)
+    private let a: PrivateValueFunc
+    
+    init(N: BigUInt,
+         g: BigUInt,
+         digest: @escaping DigestFunc = SRP.sha256DigestFunc,
+         a: @escaping PrivateValueFunc = SRP.generatePrivateValue)
+    {
+        self.N = N
+        self.g = g
+        self.digest = digest
+        self.a = a
+    }
+    
+    /// SHA256 hash function
     public static let sha256DigestFunc: DigestFunc = { (data: Data) in
         var hash = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
         CC_SHA256(Array<UInt8>(data), CC_LONG(data.count), &hash)
         return Data(hash)
     }
     
+    /// SHA512 hash function
     public static let sha512DigestFunc: DigestFunc = { (data: Data) in
         var hash = [UInt8](repeating: 0, count: Int(CC_SHA512_DIGEST_LENGTH))
         CC_SHA512(Array<UInt8>(data), CC_LONG(data.count), &hash)
         return Data(hash)
+    }
+
+    public static func generatePrivateValue(N: BigUInt) -> BigUInt
+    {
+        let minBits = N.width / 2
+        var random = BigUInt.randomIntegerLessThan(N)
+        while (random.width < minBits)
+        {
+            random = BigUInt.randomIntegerLessThan(N)
+        }
+        
+        return random
     }
 
     
@@ -82,7 +127,7 @@ public struct SRP
     public func generateClientCredentials(s: Data, I: Data, p: Data) -> (x: BigUInt, a: BigUInt, A: BigUInt)
     {
         let value_x = bouncyCastle_x(s: s, I: I, p: p)
-        let value_a = a(N: self.N)
+        let value_a = a(self.N)
         let value_A = A(N: self.N, g: self.g)
         
         return (value_x, value_a, value_A)
@@ -180,28 +225,12 @@ public struct SRP
         return x
     }
     
-    private func a(N: BigUInt) -> BigUInt
-    {
-        return generatePrivateValue(N: N)
-    }
-    
-    private func A(N: BigUInt, g: BigUInt) ->BigUInt
+    internal func A(N: BigUInt, g: BigUInt) ->BigUInt
     {
         // A = g^a
-        return g.power(a(N: N), modulus: N)
+        return g.power(a(N), modulus: N)
     }
     
-    private func generatePrivateValue(N: BigUInt) -> BigUInt
-    {
-        let minBits = N.width / 2
-        var random = BigUInt.randomIntegerLessThan(N)
-        while (random.width < minBits)
-        {
-            random = BigUInt.randomIntegerLessThan(N)
-        }
-        
-        return random
-    }
     
     
 }
