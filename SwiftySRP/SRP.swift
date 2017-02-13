@@ -81,7 +81,7 @@ public struct SRP
     // TODO: Handle errors.
     public func generateClientCredentials(s: Data, I: Data, p: Data) -> (x: BigUInt, a: BigUInt, A: BigUInt)
     {
-        let value_x = bouncyCastle_x(digest: self.digest, N: self.N, s: s, I: I, p: p)
+        let value_x = bouncyCastle_x(s: s, I: I, p: p)
         let value_a = a(N: self.N)
         let value_A = A(N: self.N, g: self.g)
         
@@ -151,7 +151,15 @@ public struct SRP
         return padded
     }
     
-    private func bouncyCastle_x(digest: DigestFunc, N: BigUInt, s: Data, I: Data,  p: Data) -> BigUInt
+    
+    /// Calculate the value x the BouncyCastle way: x = H(s | H(I | ":" | p))
+    /// | stands for concatenation
+    /// - Parameters:
+    ///   - s: SRP salt
+    ///   - I: User name
+    ///   - p: password
+    /// - Returns: SRP value x calculated as x = H(s | H(I | ":" | p)) (where H is the configured hash function)
+    func bouncyCastle_x(s: Data, I: Data,  p: Data) -> BigUInt
     {
         var identityData = Data(capacity: I.count + 1 + p.count)
         
@@ -166,8 +174,8 @@ public struct SRP
         xData.append(s)
         xData.append(identityHash)
         
-        // Please check if it's big endian and reverse if necessary.
-        let x = BigUInt(xData) % N
+        let xHash = digest(xData)
+        let x = BigUInt(xHash) % N
         
         return x
     }

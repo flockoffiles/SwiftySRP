@@ -105,8 +105,21 @@ class SwiftySRPTests: XCTestCase
         let expected_x_256 = "65AC38DFF8BC34AE0F259E91FBD0F4CA2FA43081C9050CEC7CAC20D015F303"
         let expected_x_512 = "B149ECB0946B0B206D77E73D95DEB7C41BD12E86A5E2EEA3893D5416591A002FF94BFEA384DC0E1C550F7ED4D5A9D2AD1F1526F01C56B5C10577730CC4A4D709"
         
+        let srp256 = SRP(N: N, g:g, digest: SRP.sha256DigestFunc)
+        let srp512 = SRP(N: N, g:g, digest: SRP.sha512DigestFunc)
         
+        let I = "alice".data(using: .utf8)!
+        let p = "password123".data(using: .utf8)!
+        let s = BigUInt("BEB25379D1A8581EB5A727673A2441EE", radix: 16)!.serialize()
+
+        let x_256 = srp256.bouncyCastle_x(s: s, I: I, p: p)
+        let x_512 = srp512.bouncyCastle_x(s: s, I: I, p: p)
         
+        let string_x_256 = String(x_256, radix: 16, uppercase: true)
+        let string_x_512 = String(x_512, radix: 16, uppercase: true)
+        
+        XCTAssertEqual(string_x_256, expected_x_256)
+        XCTAssertEqual(string_x_512, expected_x_512)
     }
 
     
