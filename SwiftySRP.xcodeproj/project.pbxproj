@@ -456,8 +456,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.flockoffiles.SwiftySRP;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				"SWIFT_INCLUDE_PATHS[sdk=iphoneos*]" = "$(SRCROOT)/SystemModule/CommonCrypto/iphoneos";
-				"SWIFT_INCLUDE_PATHS[sdk=iphonesimulator*]" = "$(SRCROOT)/SystemModule/CommonCrypto/iphonesimulator";
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/CommonCrypto";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
@@ -480,8 +479,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.flockoffiles.SwiftySRP;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				"SWIFT_INCLUDE_PATHS[sdk=iphoneos*]" = "$(SRCROOT)/SystemModule/CommonCrypto/iphoneos";
-				"SWIFT_INCLUDE_PATHS[sdk=iphonesimulator*]" = "$(SRCROOT)/SystemModule/CommonCrypto/iphonesimulator";
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/CommonCrypto";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
