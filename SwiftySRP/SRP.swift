@@ -11,11 +11,6 @@ import BigInt
 import CommonCrypto
 
 // SPR Design spec: http://srp.stanford.edu/design.html
-// Bouncy Castle Implementation:
-// http://www.docjar.org/docs/api/org/bouncycastle/crypto/agreement/srp/package-index.html
-
-// http://stackoverflow.com/questions/30195267/how-to-byte-reverse-nsdata-output-in-swift-the-littleendian-way
-// https://github.com/anotheren/SwiftyHash/blob/master/Source/HashType.swift
 
 //    N    A large safe prime (N = 2q+1, where q is prime)
 //    All arithmetic is done modulo N.
@@ -66,15 +61,22 @@ public typealias DigestFunc = (Data) -> Data
 
 public struct SRP
 {
-    private let N: BigUInt
-    private let g: BigUInt
-    private let digest: DigestFunc
+    let N: BigUInt
+    let g: BigUInt
+    let digest: DigestFunc
     
     public static let sha256DigestFunc: DigestFunc = { (data: Data) in
         var hash = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
         CC_SHA256(Array<UInt8>(data), CC_LONG(data.count), &hash)
         return Data(hash)
     }
+    
+    public static let sha512DigestFunc: DigestFunc = { (data: Data) in
+        var hash = [UInt8](repeating: 0, count: Int(CC_SHA512_DIGEST_LENGTH))
+        CC_SHA512(Array<UInt8>(data), CC_LONG(data.count), &hash)
+        return Data(hash)
+    }
+
     
     // TODO: Handle errors.
     public func generateClientCredentials(s: Data, I: Data, p: Data) -> (x: BigUInt, a: BigUInt, A: BigUInt)
@@ -91,19 +93,27 @@ public struct SRP
         let value_B = try validatePublicValue(N: self.N, val: serverB)
         let value_u = hashPaddedPair(digest: self.digest, N: N, n1: A, n2: value_B)
         
-        let k = hashPaddedPair(digest: self.digest, N: self.N, n1: self.N, n2: self.g)
+        let k = calculate_k()
         
         // S = (B - kg^x) ^ (a + ux)
         
         let exp = (((value_u * x) % self.N) + A) % self.N
         let tmp = (self.g.power(x, modulus: self.N) * k) % self.N
         
-        // TODO: Will subtraction always succeed here?
+        // Will subtraction always be positive here?
+        // Apparently, yes: https://groups.google.com/forum/#!topic/clipperz/5H-tKD-l9VU
+        
         let S = ((value_B - tmp) % self.N).power(exp, modulus: self.N)
         
         return S
     }
 
+    public func calculate_k() -> BigUInt
+    {
+        // k = H(N, g)
+        return hashPaddedPair(digest: self.digest, N: self.N, n1: self.N, n2: self.g)
+    }
+    
     private func hashPaddedPair(digest: DigestFunc, N: BigUInt, n1: BigUInt, n2: BigUInt) -> BigUInt
     {
         let padLength = (N.width + 7) / 8
