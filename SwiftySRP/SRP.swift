@@ -55,6 +55,9 @@ import CommonCrypto
 //    Both:  u = H(A, B)
 //
 //    User:  x = H(s, p)                 (user enters password)
+//    NOTE: BouncyCastle does it differently because of the user name involved: 
+//           x = H(s | H(I | ":" | p))  (| means concatenation)
+//
 //    User:  S = (B - kg^x) ^ (a + ux)   (computes session key)
 //    User:  K = H(S)
 //
@@ -82,18 +85,24 @@ public struct SRP
     /// Hash function to be used.
     let digest: DigestFunc
     
-    /// Function to calculate parameter a (per SRP spec abouve)
+    /// Function to calculate parameter a (per SRP spec above)
     private let a: PrivateValueFunc
+    
+    /// Function to calculate parameter b (per SRP spec above)
+    private let b: PrivateValueFunc
+    
     
     init(N: BigUInt,
          g: BigUInt,
          digest: @escaping DigestFunc = SRP.sha256DigestFunc,
-         a: @escaping PrivateValueFunc = SRP.generatePrivateValue)
+         a: @escaping PrivateValueFunc = SRP.generatePrivateValue,
+         b: @escaping PrivateValueFunc = SRP.generatePrivateValue)
     {
         self.N = N
         self.g = g
         self.digest = digest
         self.a = a
+        self.b = b
     }
     
     /// SHA256 hash function
@@ -128,27 +137,57 @@ public struct SRP
     {
         let value_x = bouncyCastle_x(s: s, I: I, p: p)
         let value_a = a(self.N)
-        let value_A = A(N: self.N, g: self.g)
+
+        // A = g^a
+        let value_A = g.power(a(N), modulus: N)
         
         return (value_x, value_a, value_A)
     }
     
-    public func calculateSecret(A: BigUInt, x: BigUInt, serverB: BigUInt) throws -> BigUInt
+    public func generateServerCredentials(v: BigUInt) -> (b: BigUInt, B: BigUInt)
+    {
+        let k = calculate_k()
+        let value_b = b(self.N)
+        // B = kv + g^b
+        let value_B = (((k * v) % self.N) + g.power(value_b, modulus: self.N)) % self.N
+        
+        return (value_b, value_B)
+    }
+    
+    public func verifier(s: Data, I: Data,  p: Data) -> BigUInt
+    {
+        let x = bouncyCastle_x(s:s, I:I, p:p)
+        
+        return self.g.power(x, modulus:self.N)
+    }
+    
+    public func calculateClientSecret(a: BigUInt, A:BigUInt, x: BigUInt, serverB: BigUInt) throws -> BigUInt
     {
         let value_B = try validatePublicValue(N: self.N, val: serverB)
         let value_u = hashPaddedPair(digest: self.digest, N: N, n1: A, n2: value_B)
         
         let k = calculate_k()
-        
+
         // S = (B - kg^x) ^ (a + ux)
         
-        let exp = (((value_u * x) % self.N) + A) % self.N
+        let exp = ((value_u * x) + a) % self.N
+        
         let tmp = (self.g.power(x, modulus: self.N) * k) % self.N
         
         // Will subtraction always be positive here?
         // Apparently, yes: https://groups.google.com/forum/#!topic/clipperz/5H-tKD-l9VU
-        
         let S = ((value_B - tmp) % self.N).power(exp, modulus: self.N)
+        
+        return S
+    }
+    
+    public func calculateServerSecret(clientA: BigUInt, v:BigUInt, b:BigUInt, B: BigUInt) throws -> BigUInt
+    {
+        let value_A = try validatePublicValue(N: self.N, val: clientA)
+        let value_u = hashPaddedPair(digest: self.digest, N: N, n1: value_A, n2: B)
+        
+        // S = (Av^u) ^ b
+        let S = ((value_A * v.power(value_u, modulus: self.N)) % self.N).power(b, modulus: self.N)
         
         return S
     }
@@ -157,6 +196,26 @@ public struct SRP
     {
         // k = H(N, g)
         return hashPaddedPair(digest: self.digest, N: self.N, n1: self.N, n2: self.g)
+    }
+    
+    
+    /// Compute the client evidence message.
+    /// NOTE: This is different from the spec. above and is done the BouncyCastle way:
+    /// M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S
+    /// - Parameters:
+    ///   - a: Private ephemeral value a (per spec. above)
+    ///   - A: Public ephemeral value A (per spec. above)
+    ///   - x: Identity hash (computed the BouncyCastle way)
+    ///   - serverB: Server public ephemeral value B (per spec. above)
+    /// - Returns: The evidence message to be sent to the server.
+    /// - Throws: TODO
+    public func clientEvidenceMessage(a: BigUInt, A:BigUInt, x: BigUInt, serverB: BigUInt) throws -> BigUInt
+    {
+        let value_B = try validatePublicValue(N: self.N, val: serverB)
+        let S = try calculateClientSecret(a: a, A: A, x: x, serverB: serverB)
+        
+        // TODO: Check if values are valid.
+        return hashPaddedTriplet(digest: self.digest, N: self.N, n1: A, n2: value_B, n3: S);
     }
     
     private func hashPaddedPair(digest: DigestFunc, N: BigUInt, n1: BigUInt, n2: BigUInt) -> BigUInt
@@ -169,6 +228,22 @@ public struct SRP
         dataToHash.append(paddedN1)
         dataToHash.append(paddedN2)
         
+        let hash = digest(dataToHash)
+        
+        return BigUInt(hash) % N
+    }
+    
+    private func hashPaddedTriplet(digest: DigestFunc, N: BigUInt, n1: BigUInt, n2: BigUInt, n3: BigUInt) -> BigUInt
+    {
+        let padLength = (N.width + 7) / 8
+        
+        let paddedN1 = pad(n1.serialize(), to: padLength)
+        let paddedN2 = pad(n2.serialize(), to: padLength)
+        let paddedN3 = pad(n3.serialize(), to: padLength)
+        var dataToHash = Data(capacity: paddedN1.count + paddedN2.count + paddedN3.count)
+        dataToHash.append(paddedN1)
+        dataToHash.append(paddedN2)
+        dataToHash.append(paddedN3)
         let hash = digest(dataToHash)
         
         return BigUInt(hash) % N
@@ -224,13 +299,6 @@ public struct SRP
         
         return x
     }
-    
-    internal func A(N: BigUInt, g: BigUInt) ->BigUInt
-    {
-        // A = g^a
-        return g.power(a(N), modulus: N)
-    }
-    
     
     
 }
