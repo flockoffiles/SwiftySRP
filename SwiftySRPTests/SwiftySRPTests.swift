@@ -277,13 +277,23 @@ class SwiftySRPTests: XCTestCase
         
         XCTAssertEqual(stringClient_s_256, stringServer_s_256)
         
-        // Verify the client evidence message.
-        let M_256 = try! srp256.clientEvidenceMessage(a: a_256, A: A_256, x: x_256, serverB: B_256)
+        // Check the client evidence message.
+        let cM_256 = try! srp256.clientEvidenceMessage(a: a_256, A: A_256, x: x_256, serverB: B_256)
         
-        let expectedStringM_256 = "795532FF6473671A589F05180E26AC39FEC22C290ADD5C7BEBF6609442129FEA"
+        let expectedString_cM_256 = "795532FF6473671A589F05180E26AC39FEC22C290ADD5C7BEBF6609442129FEA"
         
-        let stringM_256 = String(M_256, radix: 16, uppercase: true)
-        XCTAssertEqual(stringM_256, expectedStringM_256)
+        let string_cM_256 = String(cM_256, radix: 16, uppercase: true)
+        XCTAssertEqual(string_cM_256, expectedString_cM_256)
+        
+        XCTAssertTrue(try! srp256.verifyClientEvidenceMessage(a: a_256, A: A_256, x: x_256, B: B_256, clientM: cM_256))
+        
+        let sM_256 = try! srp256.serverEvidenceMessage(clientA: A_256, v: v_256, b: b_256, B: B_256, clientM: cM_256)
+        
+        let expectedString_sM_256 = "EC17DCA98343326653D6E5865178B7058D1757F5FA1D8341DFFD9C43CDF59F73"
+        let string_sM_256 = String(sM_256, radix: 16, uppercase: true)
+        
+        XCTAssertEqual(string_sM_256, expectedString_sM_256)
+        
     }
     
     /// This test verifies that the client and server way of calculating the shared secret produce the same shared secret value.
@@ -318,12 +328,22 @@ class SwiftySRPTests: XCTestCase
         XCTAssertEqual(stringClient_s_512, stringServer_s_512)
         
         // Verify the client evidence message.
-        let M_512 = try! srp512.clientEvidenceMessage(a: a_512, A: A_512, x: x_512, serverB: B_512)
+        let cM_512 = try! srp512.clientEvidenceMessage(a: a_512, A: A_512, x: x_512, serverB: B_512)
         
         let expectedStringM_512 = "79C9D1689A5D9721CD8AF63BE1C01D3F728FED2AD1D0DCFD5051CF729720BE6CF5C4DA7F7C135EFEBF7B2B45F2ADE4AB56B527231A2EAD0C8F23639BA578B92B"
         
-        let stringM_512 = String(M_512, radix: 16, uppercase: true)
+        let stringM_512 = String(cM_512, radix: 16, uppercase: true)
         XCTAssertEqual(stringM_512, expectedStringM_512)
+        
+        XCTAssertTrue(try! srp512.verifyClientEvidenceMessage(a: a_512, A: A_512, x: x_512, B: B_512, clientM: cM_512))
+        
+        let sM_512 = try! srp512.serverEvidenceMessage(clientA: A_512, v: v_512, b: b_512, B: B_512, clientM: cM_512)
+        
+        let expectedString_sM_512 = "B93808BAC1465E4145E2593F672469DC1CC9EE7FEF2A766CED750B5A835B2AF8CCF4E59F50091F5C72100870207F97EEB8B77D082A0CFB47852D53C5BA807712"
+        let string_sM_512 = String(sM_512, radix: 16, uppercase: true)
+        
+        XCTAssertEqual(string_sM_512, expectedString_sM_512)
+
 
     }
     

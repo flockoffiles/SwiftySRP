@@ -218,6 +218,35 @@ public struct SRP
         return hashPaddedTriplet(digest: self.digest, N: self.N, n1: A, n2: value_B, n3: S);
     }
     
+    
+    /// Compute the server evidence message.
+    /// NOTE: This is different from the spec above and is done the BouncyCastle way:
+    /// M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret.
+    /// - Parameters:
+    ///   - clientA: Client value A
+    ///   - v: Password verifier v (per spec above)
+    ///   - b: Private ephemeral value b
+    ///   - B: Public ephemeral value B
+    ///   - clientM: Client evidence message
+    /// - Returns: The computed server evidence message.
+    /// - Throws: TODO
+    public func serverEvidenceMessage(clientA: BigUInt, v:BigUInt, b:BigUInt, B: BigUInt, clientM: BigUInt) throws -> BigUInt
+    {
+        // TODO: Check if values are valid.
+        // M2 = SRP6Util.calculateM2(digest, N, A, M1, S);
+        let value_A = try validatePublicValue(N: self.N, val: clientA)
+        let S = try calculateServerSecret(clientA: clientA, v: v, b: b, B: B)
+        
+        return hashPaddedTriplet(digest: self.digest, N: self.N, n1: value_A, n2: clientM, n3: S);
+    }
+    
+    public func verifyClientEvidenceMessage(a: BigUInt, A:BigUInt, x: BigUInt, B: BigUInt, clientM: BigUInt) throws -> Bool
+    {
+        // TODO: Check values.
+        let M = try clientEvidenceMessage(a: a, A: A, x: x, serverB: B)
+        return (M == clientM)
+    }
+    
     private func hashPaddedPair(digest: DigestFunc, N: BigUInt, n1: BigUInt, n2: BigUInt) -> BigUInt
     {
         let padLength = (N.width + 7) / 8
