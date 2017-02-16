@@ -72,6 +72,7 @@ import CommonCrypto
 //    The user must show his proof of K first. If the server detects that the user's proof is incorrect, it must abort without showing its own proof of K.
 
 public typealias DigestFunc = (Data) -> Data
+public typealias HMacFunc = (Data, Data) -> Data
 public typealias PrivateValueFunc = (BigUInt) -> BigUInt
 
 public struct SRP
@@ -85,6 +86,8 @@ public struct SRP
     /// Hash function to be used.
     let digest: DigestFunc
     
+    let hmac: HMacFunc
+    
     /// Function to calculate parameter a (per SRP spec above)
     private let a: PrivateValueFunc
     
@@ -95,6 +98,7 @@ public struct SRP
     init(N: BigUInt,
          g: BigUInt,
          digest: @escaping DigestFunc = SRP.sha256DigestFunc,
+         hmac: @escaping HMacFunc = SRP.sha256HMacFunc,
          a: @escaping PrivateValueFunc = SRP.generatePrivateValue,
          b: @escaping PrivateValueFunc = SRP.generatePrivateValue)
     {
@@ -103,6 +107,7 @@ public struct SRP
         self.digest = digest
         self.a = a
         self.b = b
+        self.hmac = hmac
     }
     
     /// SHA256 hash function
@@ -118,7 +123,32 @@ public struct SRP
         CC_SHA512(Array<UInt8>(data), CC_LONG(data.count), &hash)
         return Data(hash)
     }
+    
+    public static let sha256HMacFunc: HMacFunc = { (key, data) in
+        var result: [UInt8] = Array(repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
+        
+        key.withUnsafeBytes { keyBytes in
+            data.withUnsafeBytes { dataBytes in
+                CCHmac(CCHmacAlgorithm(kCCHmacAlgSHA256), keyBytes, key.count, dataBytes, data.count, &result)
+            }
+        }
+        
+        return Data(result)
+    }
 
+    public static let sha512HMacFunc: HMacFunc = { (key, data) in
+        var result: [UInt8] = Array(repeating: 0, count: Int(CC_SHA512_DIGEST_LENGTH))
+        
+        key.withUnsafeBytes { keyBytes in
+            data.withUnsafeBytes { dataBytes in
+                CCHmac(CCHmacAlgorithm(kCCHmacAlgSHA512), keyBytes, key.count, dataBytes, data.count, &result)
+            }
+        }
+        
+        return Data(result)
+    }
+
+    
     public static func generatePrivateValue(N: BigUInt) -> BigUInt
     {
         let minBits = N.width / 2
@@ -135,7 +165,7 @@ public struct SRP
     // TODO: Handle errors.
     public func generateClientCredentials(s: Data, I: Data, p: Data) -> (x: BigUInt, a: BigUInt, A: BigUInt)
     {
-        let value_x = bouncyCastle_x(s: s, I: I, p: p)
+        let value_x = x(s: s, I: I, p: p)
         let value_a = a(self.N)
 
         // A = g^a
@@ -156,9 +186,9 @@ public struct SRP
     
     public func verifier(s: Data, I: Data,  p: Data) -> BigUInt
     {
-        let x = bouncyCastle_x(s:s, I:I, p:p)
+        let valueX = x(s:s, I:I, p:p)
         
-        return self.g.power(x, modulus:self.N)
+        return self.g.power(valueX, modulus:self.N)
     }
     
     public func calculateClientSecret(a: BigUInt, A:BigUInt, x: BigUInt, serverB: BigUInt) throws -> BigUInt
@@ -247,6 +277,21 @@ public struct SRP
         return (M == clientM)
     }
     
+    public func calculateSharedKey(S: BigUInt) -> BigUInt
+    {
+        // TODO: Check if data is valid.
+        let padLength = (N.width + 7) / 8
+        let paddedS = pad(S.serialize(), to: padLength)
+        let hash = digest(paddedS)
+        
+        return BigUInt(hash)
+    }
+    
+    public func calculateSharedKey(salt: Data, S: Data) throws -> Data
+    {
+        return self.hmac(salt, S)
+    }
+    
     private func hashPaddedPair(digest: DigestFunc, N: BigUInt, n1: BigUInt, n2: BigUInt) -> BigUInt
     {
         let padLength = (N.width + 7) / 8
@@ -308,7 +353,7 @@ public struct SRP
     ///   - I: User name
     ///   - p: password
     /// - Returns: SRP value x calculated as x = H(s | H(I | ":" | p)) (where H is the configured hash function)
-    func bouncyCastle_x(s: Data, I: Data,  p: Data) -> BigUInt
+    func x(s: Data, I: Data,  p: Data) -> BigUInt
     {
         var identityData = Data(capacity: I.count + 1 + p.count)
         
@@ -331,3 +376,52 @@ public struct SRP
     
     
 }
+
+extension UnicodeScalar
+{
+    var hexNibble:UInt8
+    {
+        let value = self.value
+        if 48 <= value && value <= 57 {
+            return UInt8(value - 48)
+        }
+        else if 65 <= value && value <= 70 {
+            return UInt8(value - 55)
+        }
+        else if 97 <= value && value <= 102 {
+            return UInt8(value - 87)
+        }
+        fatalError("\(self) not a legal hex nibble")
+    }
+}
+
+
+extension Data
+{
+    init(hex:String)
+    {
+        let scalars = hex.unicodeScalars
+        var bytes = Array<UInt8>(repeating: 0, count: (scalars.count + 1) >> 1)
+        for (index, scalar) in scalars.enumerated()
+        {
+            var nibble = scalar.hexNibble
+            if index & 1 == 0 {
+                nibble <<= 4
+            }
+            bytes[index >> 1] |= nibble
+        }
+        self = Data(bytes: bytes)
+    }
+    
+    func hex() -> String
+    {
+        var result = String()
+        result.reserveCapacity(self.count * 2)
+        [UInt8](self).forEach { (aByte) in
+            result += String(format: "%02X", aByte)
+        }
+        return result
+    }
+}
+
+
