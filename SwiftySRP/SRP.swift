@@ -75,7 +75,7 @@ public typealias DigestFunc = (Data) -> Data
 public typealias HMacFunc = (Data, Data) -> Data
 public typealias PrivateValueFunc = (BigUInt) -> BigUInt
 
-public struct SRP
+public struct SRPConfiguration
 {
     /// A large safe prime per SRP spec.
     let N: BigUInt
@@ -86,21 +86,21 @@ public struct SRP
     /// Hash function to be used.
     let digest: DigestFunc
     
+    /// Function to calculate HMAC
     let hmac: HMacFunc
     
     /// Function to calculate parameter a (per SRP spec above)
-    private let a: PrivateValueFunc
+    let a: PrivateValueFunc
     
     /// Function to calculate parameter b (per SRP spec above)
-    private let b: PrivateValueFunc
-    
+    let b: PrivateValueFunc
     
     init(N: BigUInt,
          g: BigUInt,
-         digest: @escaping DigestFunc = SRP.sha256DigestFunc,
-         hmac: @escaping HMacFunc = SRP.sha256HMacFunc,
-         a: @escaping PrivateValueFunc = SRP.generatePrivateValue,
-         b: @escaping PrivateValueFunc = SRP.generatePrivateValue)
+         digest: @escaping DigestFunc = SRPConfiguration.sha256DigestFunc,
+         hmac: @escaping HMacFunc = SRPConfiguration.sha256HMacFunc,
+         a: @escaping PrivateValueFunc = SRPConfiguration.generatePrivateValue,
+         b: @escaping PrivateValueFunc = SRPConfiguration.generatePrivateValue)
     {
         self.N = N
         self.g = g
@@ -109,6 +109,7 @@ public struct SRP
         self.b = b
         self.hmac = hmac
     }
+
     
     /// SHA256 hash function
     public static let sha256DigestFunc: DigestFunc = { (data: Data) in
@@ -135,7 +136,7 @@ public struct SRP
         
         return Data(result)
     }
-
+    
     public static let sha512HMacFunc: HMacFunc = { (key, data) in
         var result: [UInt8] = Array(repeating: 0, count: Int(CC_SHA512_DIGEST_LENGTH))
         
@@ -147,7 +148,7 @@ public struct SRP
         
         return Data(result)
     }
-
+    
     
     public static func generatePrivateValue(N: BigUInt) -> BigUInt
     {
@@ -160,16 +161,22 @@ public struct SRP
         
         return random
     }
+    
 
+}
+
+public struct SRP
+{
+    public let configuration: SRPConfiguration
     
     // TODO: Handle errors.
     public func generateClientCredentials(s: Data, I: Data, p: Data) -> (x: BigUInt, a: BigUInt, A: BigUInt)
     {
         let value_x = x(s: s, I: I, p: p)
-        let value_a = a(self.N)
+        let value_a = configuration.a(configuration.N)
 
         // A = g^a
-        let value_A = g.power(a(N), modulus: N)
+        let value_A = configuration.g.power(configuration.a(configuration.N), modulus: configuration.N)
         
         return (value_x, value_a, value_A)
     }
@@ -177,9 +184,9 @@ public struct SRP
     public func generateServerCredentials(v: BigUInt) -> (b: BigUInt, B: BigUInt)
     {
         let k = calculate_k()
-        let value_b = b(self.N)
+        let value_b = configuration.b(configuration.N)
         // B = kv + g^b
-        let value_B = (((k * v) % self.N) + g.power(value_b, modulus: self.N)) % self.N
+        let value_B = (((k * v) % configuration.N) + configuration.g.power(value_b, modulus: configuration.N)) % configuration.N
         
         return (value_b, value_B)
     }
@@ -188,36 +195,36 @@ public struct SRP
     {
         let valueX = x(s:s, I:I, p:p)
         
-        return self.g.power(valueX, modulus:self.N)
+        return configuration.g.power(valueX, modulus:configuration.N)
     }
     
     public func calculateClientSecret(a: BigUInt, A:BigUInt, x: BigUInt, serverB: BigUInt) throws -> BigUInt
     {
-        let value_B = try validatePublicValue(N: self.N, val: serverB)
-        let value_u = hashPaddedPair(digest: self.digest, N: N, n1: A, n2: value_B)
+        let value_B = try validatePublicValue(N: configuration.N, val: serverB)
+        let value_u = hashPaddedPair(digest: configuration.digest, N: configuration.N, n1: A, n2: value_B)
         
         let k = calculate_k()
 
         // S = (B - kg^x) ^ (a + ux)
         
-        let exp = ((value_u * x) + a) % self.N
+        let exp = ((value_u * x) + a) % configuration.N
         
-        let tmp = (self.g.power(x, modulus: self.N) * k) % self.N
+        let tmp = (configuration.g.power(x, modulus: configuration.N) * k) % configuration.N
         
         // Will subtraction always be positive here?
         // Apparently, yes: https://groups.google.com/forum/#!topic/clipperz/5H-tKD-l9VU
-        let S = ((value_B - tmp) % self.N).power(exp, modulus: self.N)
+        let S = ((value_B - tmp) % configuration.N).power(exp, modulus: configuration.N)
         
         return S
     }
     
     public func calculateServerSecret(clientA: BigUInt, v:BigUInt, b:BigUInt, B: BigUInt) throws -> BigUInt
     {
-        let value_A = try validatePublicValue(N: self.N, val: clientA)
-        let value_u = hashPaddedPair(digest: self.digest, N: N, n1: value_A, n2: B)
+        let value_A = try validatePublicValue(N: configuration.N, val: clientA)
+        let value_u = hashPaddedPair(digest: configuration.digest, N: configuration.N, n1: value_A, n2: B)
         
         // S = (Av^u) ^ b
-        let S = ((value_A * v.power(value_u, modulus: self.N)) % self.N).power(b, modulus: self.N)
+        let S = ((value_A * v.power(value_u, modulus: configuration.N)) % configuration.N).power(b, modulus: configuration.N)
         
         return S
     }
@@ -225,7 +232,7 @@ public struct SRP
     public func calculate_k() -> BigUInt
     {
         // k = H(N, g)
-        return hashPaddedPair(digest: self.digest, N: self.N, n1: self.N, n2: self.g)
+        return hashPaddedPair(digest: configuration.digest, N: configuration.N, n1: configuration.N, n2: configuration.g)
     }
     
     
@@ -241,11 +248,11 @@ public struct SRP
     /// - Throws: TODO
     public func clientEvidenceMessage(a: BigUInt, A:BigUInt, x: BigUInt, serverB: BigUInt) throws -> BigUInt
     {
-        let value_B = try validatePublicValue(N: self.N, val: serverB)
+        let value_B = try validatePublicValue(N: configuration.N, val: serverB)
         let S = try calculateClientSecret(a: a, A: A, x: x, serverB: serverB)
         
         // TODO: Check if values are valid.
-        return hashPaddedTriplet(digest: self.digest, N: self.N, n1: A, n2: value_B, n3: S);
+        return hashPaddedTriplet(digest: configuration.digest, N: configuration.N, n1: A, n2: value_B, n3: S);
     }
     
     
@@ -264,10 +271,10 @@ public struct SRP
     {
         // TODO: Check if values are valid.
         // M2 = SRP6Util.calculateM2(digest, N, A, M1, S);
-        let value_A = try validatePublicValue(N: self.N, val: clientA)
+        let value_A = try validatePublicValue(N: configuration.N, val: clientA)
         let S = try calculateServerSecret(clientA: clientA, v: v, b: b, B: B)
         
-        return hashPaddedTriplet(digest: self.digest, N: self.N, n1: value_A, n2: clientM, n3: S);
+        return hashPaddedTriplet(digest: configuration.digest, N: configuration.N, n1: value_A, n2: clientM, n3: S);
     }
     
     public func verifyClientEvidenceMessage(a: BigUInt, A:BigUInt, x: BigUInt, B: BigUInt, clientM: BigUInt) throws -> Bool
@@ -280,16 +287,16 @@ public struct SRP
     public func calculateSharedKey(S: BigUInt) -> BigUInt
     {
         // TODO: Check if data is valid.
-        let padLength = (N.width + 7) / 8
+        let padLength = (configuration.N.width + 7) / 8
         let paddedS = pad(S.serialize(), to: padLength)
-        let hash = digest(paddedS)
+        let hash = configuration.digest(paddedS)
         
         return BigUInt(hash)
     }
     
     public func calculateSharedKey(salt: Data, S: Data) throws -> Data
     {
-        return self.hmac(salt, S)
+        return configuration.hmac(salt, S)
     }
     
     private func hashPaddedPair(digest: DigestFunc, N: BigUInt, n1: BigUInt, n2: BigUInt) -> BigUInt
@@ -361,15 +368,15 @@ public struct SRP
         identityData.append(":".data(using: .utf8)!)
         identityData.append(p)
         
-        let identityHash = digest(identityData)
+        let identityHash = configuration.digest(identityData)
         
         var xData = Data(capacity: s.count + identityHash.count)
         
         xData.append(s)
         xData.append(identityHash)
         
-        let xHash = digest(xData)
-        let x = BigUInt(xHash) % N
+        let xHash = configuration.digest(xData)
+        let x = BigUInt(xHash) % configuration.N
         
         return x
     }
