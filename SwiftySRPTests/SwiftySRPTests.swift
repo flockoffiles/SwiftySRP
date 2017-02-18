@@ -52,6 +52,39 @@ class SwiftySRPTests: XCTestCase
     /// For test purposes we don't generate b randomly in certain cases.
     let fixedString_b_512 = "89B5B98F37337E0806DA6805E085DFA62F4AF2F60C0131C13676CD18FB1DD3D71D2C3C4F92921644B91B87A2D1E1E34359903771EA5D7680AD4CC7B29A54D03655F5C6E8A2975CA7D5B4F579C55F572BF5A5D4D59DC5650AB7E2CE8DE8DCB847BF5F3F5DA581EBBC1097C88E91C14D546C0B3E5071FEEA05E6D838EB2BFCE761"
     
+    let expectedString_A_256 = "67945EDA6F2843D4619740F35387015D86CA0893BB204952BEB65E90B90CA93BADED1F450CEDD699C2A3D58E2203D17BBEF02B68484E43C31BF5A62B616EA516C94366E2009F2C0202E52B26F01BBC16BCB912DEC4FE3E42DAD9A853616B9373125C2C7EC3BD5FED929FF3BAA84C8F4AB0F1B081B7FC799BCFE5F8BDB707EEEB"
+
+    let expectedString_A_512 = "D43DA6788AD71005BF4BF32A9A8E960424FDBB0940D92D4CD00DC0C9AB3D9D52395B20E3CCB9B14BA1343AEC5D5C99D41D047C4E6E3F2B335E953559A0C327770DD57BF88F91B207A5B55143122BA7CC43CEF97917D52AC366976D28F7D4AD9BDF31867474E09235549680166D3FC46B5BD351F71CA722F0A140A3B6F3CB8F0F"
+
+    let expected_x_256 = "65AC38DFF8BC34AE0F259E91FBD0F4CA2FA43081C9050CEC7CAC20D015F303"
+    let expectedString_x_256 = "65AC38DFF8BC34AE0F259E91FBD0F4CA2FA43081C9050CEC7CAC20D015F303"
+    let expected_x_512 = "B149ECB0946B0B206D77E73D95DEB7C41BD12E86A5E2EEA3893D5416591A002FF94BFEA384DC0E1C550F7ED4D5A9D2AD1F1526F01C56B5C10577730CC4A4D709"
+    let expectedString_x_512 = "B149ECB0946B0B206D77E73D95DEB7C41BD12E86A5E2EEA3893D5416591A002FF94BFEA384DC0E1C550F7ED4D5A9D2AD1F1526F01C56B5C10577730CC4A4D709"
+
+    let expectedString_B_256 = "7695C1E721DB7A7ADA8F2091BF68F113D32F6027E28F8652D552FC898A6184580E97B4C11D0F9ECF5F7ABE23EBB33C61514C1770ABF722AE757D3E9CD5E5FC0F1C479D7F6203399F7A58483DD8C94B5802ED59720C0CA626F476FBFAFC2EE153BC1E468D0B23937267C7468A94BBADA15606870C6B1F87931294708A384231A8"
+    
+    let expectedString_B_512 = "5B9BCD0D994B0C3BB04EF255B9C9FC6AFB9DBA26467A6F48AB2C42D925F33EB35956EE8D508012D2CA3702657370337939D4D5836353039B253BB1ADB8FE2987149E89B7527FE8598EB1107195FBC29B67C5BD5FA7B8D2CD667A6326E7531C4B8D7E6434656C732593728DB814EBBF90BCE8A8EEA254AC79F663269BFB8CD573"
+    
+    let expectedStringVerifier_256 = "27E2855AC715F625981DBA238667955DB341A3BDD919868943BC049736C7804CD8E0507DFEFBF5B8573F5AAE7BAC19B257034254119AB520E1F7CF3F45D01B159016847201D14C8DC95EC34E8B26EE255BC4CB28D4F97E0DB97B65BDD196C4D2951CD84F493AFD7B34B90984357988601A3643358B81689DFD0CB0D21E21CF6E"
+    
+    let expectedStringVerifier_512 = "E714706A2A6C6C0478444006A15EA8625943ABDFA2C0AC9085CB174623304B71A55FD9A4114E089A05CD0E898B48294B6C842B333CE8141AFCE3FA54DD8D0ED6A950642AB0066858456219F88038D68FC4AFFCAABFEC4044BA484719ADDF2FE31AB5F02BBCAAC55B5765FB1827D9E7DE8150C5BA6C891DA9CBBE1B31F3B70B3F"
+
+    let expectedString_cM_256 = "795532FF6473671A589F05180E26AC39FEC22C290ADD5C7BEBF6609442129FEA"
+    let expectedString_sM_256 = "EC17DCA98343326653D6E5865178B7058D1757F5FA1D8341DFFD9C43CDF59F73"
+
+    let expectedStringM_512 = "79C9D1689A5D9721CD8AF63BE1C01D3F728FED2AD1D0DCFD5051CF729720BE6CF5C4DA7F7C135EFEBF7B2B45F2ADE4AB56B527231A2EAD0C8F23639BA578B92B"
+    let expectedString_sM_512 = "B93808BAC1465E4145E2593F672469DC1CC9EE7FEF2A766CED750B5A835B2AF8CCF4E59F50091F5C72100870207F97EEB8B77D082A0CFB47852D53C5BA807712"
+
+    
+    let expectedStringSharedKey_256 = "044EB29FEAA744DC7FDCAA23F43FC39A23FA99236869D890DF5650E3D0292B5E"
+    let expectedStringSharedHMacKey_256 = "154610966C4C8C760E99F2F6B380E8622472F45F27708B4F8852ABA6E9FE8FAB"
+    let hmacSalt256 = Data(hex:"1EB95379D1E7731FBCA727673A2441FF")
+
+    let hmacSalt512 = Data(hex:"1EB95379D1E7731DAD15DC7D7B46154D6E8EFAD6982559BFBCA727673A2441FF")
+    let expectedStringSharedKey_512 = "0E27EF33DCC742838FD037EE8EDE0C9CB5F526B5417570B2B9B0A57292EC0E28AEE7E01ECB98A36F90496CDE2335BEFF4290888F006CFB202EFA010ABBDE6EAA"
+    let expectedStringSharedHMacKey_512 = "AF3C3D5644484E0D6C65B19F2C43F4D9C1C11C873577B2FA3C84B3EDF2D3FA1EC9005671749A881B769B21AF21E4060721B8A2DE6B43E34268860916D976A513"
+
+    
     let s = BigUInt("BEB25379D1A8581EB5A727673A2441EE", radix: 16)!.serialize()
     let I = "alice".data(using: .utf8)!
     let p = "password123".data(using: .utf8)!
@@ -85,57 +118,21 @@ class SwiftySRPTests: XCTestCase
     func test02DataConversion()
     {
         let N: BigUInt = BigUInt(N_asString, radix: 16)!
-        
         let N_data = N.serialize()
-        
         let N_dataArray = [UInt8](N_data)
-        
         let recoveredString = N_dataArray.reduce("") { (aResult, aCurrentValue) -> String in
             return aResult + String(format: "%02X", aCurrentValue)
         }
-        
         XCTAssertEqual(N_asString, recoveredString)
-    }
-    
-    /// This test verifies calculation of the parameter k = H(N, g) for H = SHA256
-    func test03Generate_k_SHA256()
-    {
-        // Generated with BouncyCastle: SRP6Util.calculateK(new SHA256Digest(), N, g).toString(16).toUpperCase()
-        let expectedString_k256 = "1A1A4C140CDE70AE360C1EC33A33155B1022DF951732A476A862EB3AB8206A5C"
-        
-        let srp256 = SRP(configuration:SRPConfiguration(N: N, g:g, digest: SRPConfiguration.sha256DigestFunc, hmac: SRPConfiguration.sha256HMacFunc))
-        
-        let k256 = srp256.calculate_k()
-        
-        let string_k_256 = String(k256, radix: 16, uppercase: true)
-        
-        XCTAssertEqual(string_k_256, expectedString_k256)
-    }
-    
-    /// This test verifies calculation of the parameter k = H(N, g) for H = SHA512
-    func test03Generate_k_SHA512()
-    {
-        // Generated with BouncyCastle: SRP6Util.calculateK(new SHA512Digest(), N, g).toString(16).toUpperCase()
-        let expectedString_k512 = "5DF1C7A41B6EEB64E6EB12CC8BCC682BE86F5B33BE6A80B607421B436A613ADEDD13F8C58F216E78AE53B378E9BBCE1FCB48EF8D1870C11394DF228C7821D27F"
-        
-        let srp512 = SRP(configuration:SRPConfiguration(N: N, g:g, digest: SRPConfiguration.sha512DigestFunc, hmac:SRPConfiguration.sha512HMacFunc))
-        let k512 = srp512.calculate_k()
-        let string_k_512 = String(k512, radix: 16, uppercase: true)
-        XCTAssertEqual(string_k_512, expectedString_k512)
     }
     
     /// This test verifies calculation of the parameter x. Please note that we use the same formula for x as BouncyCastle does:
     /// x = H(s | H(I | ":" | p))  (| means concatenation and H is a hash function; SHA256 in this case)
     func test04Generate_x_SHA256()
     {
-        let expected_x_256 = "65AC38DFF8BC34AE0F259E91FBD0F4CA2FA43081C9050CEC7CAC20D015F303"
-        
         let srp256 = SRP(configuration:SRPConfiguration(N: N, g:g, digest: SRPConfiguration.sha256DigestFunc, hmac: SRPConfiguration.sha256HMacFunc))
-        
         let x_256 = srp256.x(s: s, I: I, p: p)
-        
         let string_x_256 = String(x_256, radix: 16, uppercase: true)
-        
         XCTAssertEqual(string_x_256, expected_x_256)
     }
 
@@ -143,14 +140,9 @@ class SwiftySRPTests: XCTestCase
     /// x = H(s | H(I | ":" | p))  (| means concatenation and H is a hash function; SHA512 in this case)
     func test04Generate_x_SHA512()
     {
-        let expected_x_512 = "B149ECB0946B0B206D77E73D95DEB7C41BD12E86A5E2EEA3893D5416591A002FF94BFEA384DC0E1C550F7ED4D5A9D2AD1F1526F01C56B5C10577730CC4A4D709"
-        
         let srp512 = SRP(configuration:SRPConfiguration(N: N, g:g, digest: SRPConfiguration.sha512DigestFunc, hmac:SRPConfiguration.sha512HMacFunc))
-        
         let x_512 = srp512.x(s: s, I: I, p: p)
-        
         let string_x_512 = String(x_512, radix: 16, uppercase: true)
-        
         XCTAssertEqual(string_x_512, expected_x_512)
     }
     
@@ -160,21 +152,16 @@ class SwiftySRPTests: XCTestCase
     /// This test is for SRP using SHA256 as the hashing function.
     func test05GenerateClientCredentials_SHA256()
     {
-        let expectedString_x_256 = "65AC38DFF8BC34AE0F259E91FBD0F4CA2FA43081C9050CEC7CAC20D015F303"
-        
         // a is fixed in this test (not generated randomly)
         let fixed_a_256 = BigUInt(fixedString_a_256, radix: 16)!
         
-        let expectedString_A_256 = "67945EDA6F2843D4619740F35387015D86CA0893BB204952BEB65E90B90CA93BADED1F450CEDD699C2A3D58E2203D17BBEF02B68484E43C31BF5A62B616EA516C94366E2009F2C0202E52B26F01BBC16BCB912DEC4FE3E42DAD9A853616B9373125C2C7EC3BD5FED929FF3BAA84C8F4AB0F1B081B7FC799BCFE5F8BDB707EEEB"
-
-        
         let srp256 = SRP(configuration: SRPConfiguration(N: N, g:g, digest: SRPConfiguration.sha256DigestFunc, hmac: SRPConfiguration.sha256HMacFunc, a: { _ in return fixed_a_256 }))
 
-        let (x_256, a_256, A_256) = srp256.generateClientCredentials(s: s, I: I, p: p)
+        let clientSRPData = try! srp256.generateClientCredentials(s: s, I: I, p: p)
         
-        let string_x_256 = String(x_256, radix: 16, uppercase: true)
-        let string_A_256 = String(A_256, radix: 16, uppercase: true)
-        let string_a_256 = String(a_256, radix: 16, uppercase: true)
+        let string_x_256 = String(clientSRPData.x, radix: 16, uppercase: true)
+        let string_A_256 = String(clientSRPData.A, radix: 16, uppercase: true)
+        let string_a_256 = String(clientSRPData.a, radix: 16, uppercase: true)
         
         XCTAssertEqual(string_x_256, expectedString_x_256)
         XCTAssertEqual(string_a_256, fixedString_a_256)
@@ -187,44 +174,28 @@ class SwiftySRPTests: XCTestCase
     /// This test is for SRP using SHA512 as the hashing function.
     func test05GenerateClientCredentials_SHA512()
     {
-        let s = BigUInt("BEB25379D1A8581EB5A727673A2441EE", radix: 16)!.serialize()
-        let I = "alice".data(using: .utf8)!
-        let p = "password123".data(using: .utf8)!
-        
-        let expectedString_x_512 = "B149ECB0946B0B206D77E73D95DEB7C41BD12E86A5E2EEA3893D5416591A002FF94BFEA384DC0E1C550F7ED4D5A9D2AD1F1526F01C56B5C10577730CC4A4D709"
-        
-        let fixedString_a_512 = "AF418FB99C9FFBAD427DEAE500F65A213F4855FD879E6F948103976F273D16377303A1339EF66150D882B15656E4CE18D8E894D72D0D671A85F34895F35A715698EC3D51DFE8F9D21D061B2409F6756EADE4714530E617140EFA13577498F5C3A0B3667489A66A6654D08E162EAE563BCF1FC05183435D31F1D0CF7F9B2B98C8"
-        
         let fixed_a_512 = BigUInt(fixedString_a_512, radix: 16)!
-        
-        let expectedString_A_512 = "9EEA5E7ED47AAE68209D6A520E3FDF7AF2E51582D89E1A35C83500216A77C2B6C4AC9ECF343827A0C5C524F7E4BD74FC66FE370A60AF7CBDB7911BD2A06EA5E164D55E0D269BA5B27A8DE199F0712769FFC195B4ABCF5D9CB286208E44841455BC5336091BC972B7CBE4A8596E370AC41DB6015A7B71251E410C56C309B62040"
-        
         let srp_512 = SRP(configuration: SRPConfiguration(N: N, g:g, digest: SRPConfiguration.sha512DigestFunc, hmac:SRPConfiguration.sha512HMacFunc, a: { _ in return fixed_a_512 }))
-        
-        let (x_512, a_512, A_512) = srp_512.generateClientCredentials(s: s, I: I, p: p)
-        
-        let string_x_512 = String(x_512, radix: 16, uppercase: true)
-        let string_A_512 = String(A_512, radix: 16, uppercase: true)
-        let string_a_512 = String(a_512, radix: 16, uppercase: true)
+        let clientSRPData = try! srp_512.generateClientCredentials(s: s, I: I, p: p)
+        let string_x_512 = String(clientSRPData.x, radix: 16, uppercase: true)
+        let string_A_512 = String(clientSRPData.A, radix: 16, uppercase: true)
+        let string_a_512 = String(clientSRPData.a, radix: 16, uppercase: true)
         
         XCTAssertEqual(string_x_512, expectedString_x_512)
         XCTAssertEqual(string_a_512, fixedString_a_512)
         XCTAssertEqual(string_A_512, expectedString_A_512)
-        
     }
     
     /// Test to verify that the SRP verifier is calculated correctly (this version is for SHA256 hash function).
     func test06Verifier_SHA256()
     {
-        let expectedStringVerifier_256 = "27E2855AC715F625981DBA238667955DB341A3BDD919868943BC049736C7804CD8E0507DFEFBF5B8573F5AAE7BAC19B257034254119AB520E1F7CF3F45D01B159016847201D14C8DC95EC34E8B26EE255BC4CB28D4F97E0DB97B65BDD196C4D2951CD84F493AFD7B34B90984357988601A3643358B81689DFD0CB0D21E21CF6E"
-        
         // a is fixed in this test (not generated randomly)
         let fixed_a_256 = BigUInt(fixedString_a_256, radix: 16)!
         let srp256 = SRP(configuration: SRPConfiguration(N: N, g:g, digest: SRPConfiguration.sha256DigestFunc, hmac: SRPConfiguration.sha256HMacFunc, a: { _ in return fixed_a_256 }))
         
-        let v_256 = srp256.verifier(s: s, I: I, p: p)
+        let clientSRPData = try! srp256.verifier(s: s, I: I, p: p)
 
-        let string_v_256 = String(v_256, radix: 16, uppercase: true)
+        let string_v_256 = String(clientSRPData.v, radix: 16, uppercase: true)
         
         XCTAssertEqual(string_v_256, expectedStringVerifier_256)
     }
@@ -232,16 +203,14 @@ class SwiftySRPTests: XCTestCase
     /// Test to verify that the SRP verifier is calculated correctly (this version is for SHA512 hash function).
     func test06Verifier_SHA512()
     {
-        let expectedStringVerifier_512 = "E714706A2A6C6C0478444006A15EA8625943ABDFA2C0AC9085CB174623304B71A55FD9A4114E089A05CD0E898B48294B6C842B333CE8141AFCE3FA54DD8D0ED6A950642AB0066858456219F88038D68FC4AFFCAABFEC4044BA484719ADDF2FE31AB5F02BBCAAC55B5765FB1827D9E7DE8150C5BA6C891DA9CBBE1B31F3B70B3F"
-
         // a is fixed in this test (not generated randomly)
         let fixed_a_512 = BigUInt(fixedString_a_512, radix: 16)!
         let srp512 = SRP(configuration: SRPConfiguration(N: N, g:g, digest: SRPConfiguration.sha512DigestFunc, hmac:SRPConfiguration.sha512HMacFunc,
                                                          a: { _ in return fixed_a_512 }))
         
-        let v_512 = srp512.verifier(s: s, I: I, p: p)
+        let clientSRPData = try! srp512.verifier(s: s, I: I, p: p)
         
-        let string_v_512 = String(v_512, radix: 16, uppercase: true)
+        let string_v_512 = String(clientSRPData.v, radix: 16, uppercase: true)
         
         XCTAssertEqual(string_v_512, expectedStringVerifier_512)
         
@@ -251,64 +220,65 @@ class SwiftySRPTests: XCTestCase
     /// (This version is for SHA256 hash function)
     func test07Verification_SHA256()
     {
-        let expectedString_B_256 = "7695C1E721DB7A7ADA8F2091BF68F113D32F6027E28F8652D552FC898A6184580E97B4C11D0F9ECF5F7ABE23EBB33C61514C1770ABF722AE757D3E9CD5E5FC0F1C479D7F6203399F7A58483DD8C94B5802ED59720C0CA626F476FBFAFC2EE153BC1E468D0B23937267C7468A94BBADA15606870C6B1F87931294708A384231A8"
-        
         let fixed_a_256 = BigUInt(fixedString_a_256, radix: 16)!
         let fixed_b_256 = BigUInt(fixedString_b_256, radix: 16)!
         
         let srp256 = SRP(configuration: SRPConfiguration(N: N, g:g, digest: SRPConfiguration.sha256DigestFunc, hmac: SRPConfiguration.sha256HMacFunc,
                                                          a: { _ in return fixed_a_256 }, b: { _ in return fixed_b_256 }))
         
-        let v_256 = srp256.verifier(s: s, I: I, p: p)
+        // Client computes the verifier (and sends it to the server)
+        var clientSRPData = try! srp256.verifier(s: s, I: I, p: p)
 
-        let (b_256, B_256) = srp256.generateServerCredentials(v: v_256)
+        // Server generates credentials by using the verifier.
+        var serverSRPData = try! srp256.generateServerCredentials(verifier: clientSRPData.v.serialize())
         
-        let string_b_256 = String(b_256, radix: 16, uppercase: true)
-        let string_B_256 = String(B_256, radix: 16, uppercase: true)
+        XCTAssertEqual(serverSRPData.b.hexString(), fixedString_b_256)
+        XCTAssertEqual(serverSRPData.B.hexString(), expectedString_B_256)
         
-        XCTAssertEqual(string_b_256, fixedString_b_256)
-        XCTAssertEqual(string_B_256, expectedString_B_256)
+        // Pretend that the server has communicated its public value
+        clientSRPData.B = serverSRPData.B
+
+        // Client calculates the secret.
+        clientSRPData = try! srp256.calculateClientSecret(srpData: clientSRPData)
         
-        let (x_256, a_256, A_256) = srp256.generateClientCredentials(s: s, I: I, p: p)
+        // Pretend that the client has communicated its public value
+        serverSRPData.A = clientSRPData.A
         
-        let client_s_256 = try! srp256.calculateClientSecret(a: a_256, A:A_256, x: x_256, serverB: B_256)
-        let server_s_256 = try! srp256.calculateServerSecret(clientA: A_256, v: v_256, b: b_256, B: B_256)
+        // Server also calculates the secret.
+        serverSRPData = try! srp256.calculateServerSecret(srpData: serverSRPData)
         
-        let stringClient_s_256 = String(client_s_256, radix: 16, uppercase: true)
-        let stringServer_s_256 = String(server_s_256, radix: 16, uppercase: true)
-        
-        XCTAssertEqual(stringClient_s_256, stringServer_s_256)
+        // Here we make sure the secrets are the same (but in real life the secret is NEVER sent over the wire).
+        XCTAssertEqual(clientSRPData.clientS.hexString(), serverSRPData.serverS.hexString())
         
         // Check the client evidence message.
-        let cM_256 = try! srp256.clientEvidenceMessage(a: a_256, A: A_256, x: x_256, serverB: B_256)
+        clientSRPData = try! srp256.clientEvidenceMessage(srpData: clientSRPData)
+        XCTAssertEqual(clientSRPData.clientM.hexString(), expectedString_cM_256)
         
-        let expectedString_cM_256 = "795532FF6473671A589F05180E26AC39FEC22C290ADD5C7BEBF6609442129FEA"
+        // Pretend that the server has received the client evidence:
+        serverSRPData.clientM = clientSRPData.clientM
+        do {
+            try srp256.verifyClientEvidenceMessage(srpData: serverSRPData)
+        } catch {
+            XCTFail("Failed to verify client evidence message")
+        }
         
-        let string_cM_256 = String(cM_256, radix: 16, uppercase: true)
-        XCTAssertEqual(string_cM_256, expectedString_cM_256)
+        serverSRPData = try! srp256.serverEvidenceMessage(srpData: serverSRPData)
+        XCTAssertEqual(serverSRPData.serverM.hexString(), expectedString_sM_256)
         
-        XCTAssertTrue(try! srp256.verifyClientEvidenceMessage(a: a_256, A: A_256, x: x_256, B: B_256, clientM: cM_256))
+        // Pretend that the client has received the server evidence:
+        clientSRPData.serverM = serverSRPData.serverM
         
-        let sM_256 = try! srp256.serverEvidenceMessage(clientA: A_256, v: v_256, b: b_256, B: B_256, clientM: cM_256)
+        do {
+            try srp256.verifyServerEvidenceMessage(srpData: clientSRPData)
+        } catch {
+            XCTFail("Failed to verify server evidence message")
+        }
         
-        let expectedString_sM_256 = "EC17DCA98343326653D6E5865178B7058D1757F5FA1D8341DFFD9C43CDF59F73"
-        let string_sM_256 = String(sM_256, radix: 16, uppercase: true)
-        
-        XCTAssertEqual(string_sM_256, expectedString_sM_256)
-        
-        let sharedKey_256 = srp256.calculateSharedKey(S:server_s_256)
-        let stringSharedKey_256 = String(sharedKey_256, radix: 16, uppercase: true)
-        
-        let expectedStringSharedKey_256 = "44EB29FEAA744DC7FDCAA23F43FC39A23FA99236869D890DF5650E3D0292B5E"
-        
-        XCTAssertEqual(stringSharedKey_256, expectedStringSharedKey_256)
+        let clientSharedKey_256 = try! srp256.calculateClientSharedKey(srpData: clientSRPData)
+        XCTAssertEqual(clientSharedKey_256.hexString(), expectedStringSharedKey_256)
 
-        let expectedStringSharedHMacKey_256 = "154610966C4C8C760E99F2F6B380E8622472F45F27708B4F8852ABA6E9FE8FAB"
-        let hmacSalt = Data(hex:"1EB95379D1E7731FBCA727673A2441FF")
-
-        let sharedHMacKey_256 = try! srp256.calculateSharedKey(salt: hmacSalt, S: server_s_256.serialize())
-        let stringSharedHMacKey_256 = sharedHMacKey_256.hex()
-        XCTAssertEqual(stringSharedHMacKey_256, expectedStringSharedHMacKey_256)
+        let clientSharedHMacKey_256 = try! srp256.calculateClientSharedKey(srpData: clientSRPData, salt: hmacSalt256)
+        XCTAssertEqual(clientSharedHMacKey_256.hexString(), expectedStringSharedHMacKey_256)
         
     }
     
@@ -316,7 +286,6 @@ class SwiftySRPTests: XCTestCase
     /// (This version is for SHA512 hash function)
     func test07Verification_SHA512()
     {
-        let expectedString_B_512 = "5B9BCD0D994B0C3BB04EF255B9C9FC6AFB9DBA26467A6F48AB2C42D925F33EB35956EE8D508012D2CA3702657370337939D4D5836353039B253BB1ADB8FE2987149E89B7527FE8598EB1107195FBC29B67C5BD5FA7B8D2CD667A6326E7531C4B8D7E6434656C732593728DB814EBBF90BCE8A8EEA254AC79F663269BFB8CD573"
         
         let fixed_a_512 = BigUInt(fixedString_a_512, radix: 16)!
         let fixed_b_512 = BigUInt(fixedString_b_512, radix: 16)!
@@ -324,55 +293,57 @@ class SwiftySRPTests: XCTestCase
         let srp512 = SRP(configuration: SRPConfiguration(N: N, g:g, digest: SRPConfiguration.sha512DigestFunc, hmac:SRPConfiguration.sha512HMacFunc,
                                                          a: { _ in return fixed_a_512 }, b: { _ in return fixed_b_512 }))
         
-        let v_512 = srp512.verifier(s: s, I: I, p: p)
+        var clientSRPData = try! srp512.verifier(s: s, I: I, p: p)
         
-        let (b_512, B_512) = srp512.generateServerCredentials(v: v_512)
+        var serverSRPData = try! srp512.generateServerCredentials(verifier: clientSRPData.v.serialize())
         
-        let string_b_512 = String(b_512, radix: 16, uppercase: true)
-        let string_B_512 = String(B_512, radix: 16, uppercase: true)
-        
-        XCTAssertEqual(string_b_512, fixedString_b_512)
-        XCTAssertEqual(string_B_512, expectedString_B_512)
-        
-        let (x_512, a_512, A_512) = srp512.generateClientCredentials(s: s, I: I, p: p)
-        
-        let client_s_512 = try! srp512.calculateClientSecret(a: a_512, A:A_512, x: x_512, serverB: B_512)
-        let server_s_512 = try! srp512.calculateServerSecret(clientA: A_512, v: v_512, b: b_512, B: B_512)
-        
-        let stringClient_s_512 = String(client_s_512, radix: 16, uppercase: true)
-        let stringServer_s_512 = String(server_s_512, radix: 16, uppercase: true)
-        
-        XCTAssertEqual(stringClient_s_512, stringServer_s_512)
-        
-        // Verify the client evidence message.
-        let cM_512 = try! srp512.clientEvidenceMessage(a: a_512, A: A_512, x: x_512, serverB: B_512)
-        
-        let expectedStringM_512 = "79C9D1689A5D9721CD8AF63BE1C01D3F728FED2AD1D0DCFD5051CF729720BE6CF5C4DA7F7C135EFEBF7B2B45F2ADE4AB56B527231A2EAD0C8F23639BA578B92B"
-        
-        let stringM_512 = String(cM_512, radix: 16, uppercase: true)
-        XCTAssertEqual(stringM_512, expectedStringM_512)
-        
-        XCTAssertTrue(try! srp512.verifyClientEvidenceMessage(a: a_512, A: A_512, x: x_512, B: B_512, clientM: cM_512))
-        
-        let sM_512 = try! srp512.serverEvidenceMessage(clientA: A_512, v: v_512, b: b_512, B: B_512, clientM: cM_512)
-        
-        let expectedString_sM_512 = "B93808BAC1465E4145E2593F672469DC1CC9EE7FEF2A766CED750B5A835B2AF8CCF4E59F50091F5C72100870207F97EEB8B77D082A0CFB47852D53C5BA807712"
-        let string_sM_512 = String(sM_512, radix: 16, uppercase: true)
-        
-        XCTAssertEqual(string_sM_512, expectedString_sM_512)
-        
-        let sharedKey_512 = srp512.calculateSharedKey(S:server_s_512)
-        let stringSharedKey_512 = String(sharedKey_512, radix: 16, uppercase: true)
-        
-        let expectedStringSharedKey_512 = "E27EF33DCC742838FD037EE8EDE0C9CB5F526B5417570B2B9B0A57292EC0E28AEE7E01ECB98A36F90496CDE2335BEFF4290888F006CFB202EFA010ABBDE6EAA"
-        
-        XCTAssertEqual(stringSharedKey_512, expectedStringSharedKey_512)
+        XCTAssertEqual(serverSRPData.b.hexString(), fixedString_b_512)
+        XCTAssertEqual(serverSRPData.B.hexString(), expectedString_B_512)
 
-        let expectedStringSharedHMacKey_512 = "AF3C3D5644484E0D6C65B19F2C43F4D9C1C11C873577B2FA3C84B3EDF2D3FA1EC9005671749A881B769B21AF21E4060721B8A2DE6B43E34268860916D976A513"
-        let hmacSalt = Data(hex:"1EB95379D1E7731DAD15DC7D7B46154D6E8EFAD6982559BFBCA727673A2441FF")
+        // Pretend that the server has communicated its public value
+        clientSRPData.B = serverSRPData.B
         
-        let sharedHMacKey_512 = try! srp512.calculateSharedKey(salt: hmacSalt, S: server_s_512.serialize())
-        let stringSharedHMacKey_512 = sharedHMacKey_512.hex()
+        clientSRPData = try! srp512.calculateClientSecret(srpData: clientSRPData)
+        
+        // Pretend that the client has communicated its public value
+        serverSRPData.A = clientSRPData.A
+        
+        serverSRPData = try! srp512.calculateServerSecret(srpData: serverSRPData)
+        
+        // Here we make sure the secrets are the same (but in real life the secret is NEVER sent over the wire).
+        XCTAssertEqual(clientSRPData.clientS.hexString(), serverSRPData.serverS.hexString())
+        
+        // Check the client evidence message.
+        clientSRPData = try! srp512.clientEvidenceMessage(srpData: clientSRPData)
+        XCTAssertEqual(clientSRPData.clientM.hexString(), expectedStringM_512)
+        
+        // Pretend that the server has received the client evidence:
+        serverSRPData.clientM = clientSRPData.clientM
+        do {
+            try srp512.verifyClientEvidenceMessage(srpData: serverSRPData)
+        } catch {
+            XCTFail("Failed to verify client evidence message")
+        }
+
+        serverSRPData = try! srp512.serverEvidenceMessage(srpData: serverSRPData)
+        XCTAssertEqual(serverSRPData.serverM.hexString(), expectedString_sM_512)
+        
+        // Pretend that the client has received the server evidence:
+        clientSRPData.serverM = serverSRPData.serverM
+        
+        do {
+            try srp512.verifyServerEvidenceMessage(srpData: clientSRPData)
+        } catch {
+            XCTFail("Failed to verify server evidence message")
+        }
+
+        let clientSharedKey_512 = try! srp512.calculateClientSharedKey(srpData: clientSRPData)
+        
+        XCTAssertEqual(clientSharedKey_512.hexString(), expectedStringSharedKey_512)
+
+        
+        let sharedHMacKey_512 = try! srp512.calculateClientSharedKey(srpData: clientSRPData, salt: hmacSalt512)
+        let stringSharedHMacKey_512 = sharedHMacKey_512.hexString()
         XCTAssertEqual(stringSharedHMacKey_512, expectedStringSharedHMacKey_512)
 
     }

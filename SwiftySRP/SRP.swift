@@ -28,7 +28,7 @@ import BigInt
 import CommonCrypto
 
 // SPR Design spec: http://srp.stanford.edu/design.html
-
+// SRP RFC: https://tools.ietf.org/html/rfc5054
 //    N    A large safe prime (N = 2q+1, where q is prime)
 //    All arithmetic is done modulo N.
 //
@@ -75,6 +75,497 @@ public typealias DigestFunc = (Data) -> Data
 public typealias HMacFunc = (Data, Data) -> Data
 public typealias PrivateValueFunc = (BigUInt) -> BigUInt
 
+
+enum SRPError: Error
+{
+    case invalidSalt
+    case invalidUserName
+    case invalidPassword
+    case invalidVerifier
+    case invalidClientPublicValue
+    case invalidServerPublicValue
+    case invalidClientPrivateValue
+    case invalidServerPrivateValue
+    case invalidPasswordHash
+    case invalidClientEvidenceMessage
+    case invalidServerEvidenceMessage
+    case invalidClientSharedSecret
+    case invalidServerSharedSecret
+    
+    case configurationPrimeTooShort
+    case configurationGeneratorInvalid
+}
+
+/// Protocol defining SRP intermediate data.
+public protocol SRPData
+{
+    // Client specific data
+    
+    /// Password hash (see the spec. above)
+    var x: BigUInt { get set }
+    
+    /// Client private value 'a' (see the spec. above)
+    var a: BigUInt { get set }
+    
+    /// Client public value 'A' (see the spec. above)
+    var A: BigUInt { get set }
+    
+    /// Client evidence message, computed as: M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S
+    var clientM: BigUInt { get set }
+    /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret.
+    var serverM: BigUInt { get set }
+    
+    // Common data:
+    
+    /// SRP Verifier.
+    var v: BigUInt { get set }
+    
+    // u = H(A, B)
+    var u: BigUInt { get set }
+    
+    /// Shared secret. Computed on the client as: S = (B - kg^x) ^ (a + ux)
+    var clientS: BigUInt { get set }
+    
+    /// Shared secret. Computed on the server as: S = (Av^u) ^ b
+    var serverS: BigUInt { get set }
+    
+    // Server specific data
+    
+    var k: BigUInt { get set }
+    
+    /// Server private value 'b' (see the spec. above)
+    var b: BigUInt { get set }
+    
+    /// Server public value 'B' (see the spec. above)
+    var B: BigUInt { get set }
+    
+}
+
+/// SRP intermediate data (implementation)
+internal struct SRPDataImpl: SRPData
+{
+    // Client specific data
+    var x: BigUInt
+    var a: BigUInt
+    var A: BigUInt
+
+    /// Client evidence message, computed as: M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S
+    var clientM: BigUInt
+    
+    /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret.
+    var serverM: BigUInt
+    
+    // Common data
+    /// SRP Verifier
+    var v: BigUInt
+    /// u = H(A, B)
+    var u: BigUInt
+    
+    /// Shared secret. Computed on the client as: S = (B - kg^x) ^ (a + ux)
+    var clientS: BigUInt
+    /// Shared secret. Computed on the server as: S = (Av^u) ^ b
+    var serverS: BigUInt
+    
+    // Server specific data
+    var k: BigUInt
+    var b: BigUInt
+    var B: BigUInt
+
+    init(x: BigUInt, a: BigUInt, A: BigUInt)
+    {
+        self.x = x
+        self.a = a
+        self.A = A
+        
+        self.v = 0
+        self.b = 0
+        self.k = 0
+        self.B = 0
+        self.u = 0
+        self.clientS = 0
+        self.serverS = 0
+        self.clientM = 0
+        self.serverM = 0
+    }
+    
+    init(v: BigUInt, k: BigUInt, b: BigUInt, B: BigUInt)
+    {
+        self.v = v
+        self.k = k
+        self.b = b
+        self.B = B
+        
+        self.x = 0
+        self.a = 0
+        self.A = 0
+        self.u = 0
+        self.clientS = 0
+        self.serverS = 0
+        self.clientM = 0
+        self.serverM = 0
+    }
+}
+
+public struct SRP
+{
+    /// SRP configuration. Defines the prime N and generator g to be used, and also the relevant hashing functions.
+    public let configuration: SRPConfiguration
+    
+    
+    /// Generate client credentials (parameters x, a, and A) from the SRP salt, user name (I), and password (p)
+    ///
+    /// - Parameters:
+    ///   - s: SRP salt
+    ///   - I: User name
+    ///   - p: Password
+    /// - Returns: SRP data with parameters x, a, and A populated.
+    /// - Throws: SRPError if input parameters or configuration are not valid.
+    internal func generateClientCredentials(s: Data, I: Data, p: Data) throws -> SRPData
+    {
+        // TODO: There may be more stringent requirements about salt.
+        try configuration.validate()
+        guard !s.isEmpty else { throw SRPError.invalidSalt }
+        guard !I.isEmpty else { throw SRPError.invalidUserName }
+        guard !p.isEmpty else { throw SRPError.invalidPassword }
+        
+        let value_x = x(s: s, I: I, p: p)
+        let value_a = configuration.a(configuration.N)
+
+        // A = g^a
+        let value_A = configuration.g.power(configuration.a(configuration.N), modulus: configuration.N)
+        
+        return SRPDataImpl(x: value_x, a: value_a, A: value_A)
+    }
+    
+    
+    /// Generate the server side SRP parameters. This method normally will NOT be used by the client.
+    /// It's included here for testing purposes.
+    /// - Parameter verifier: SRP verifier received from the client.
+    /// - Returns: SRP data with parameters v, k, b, and B populated.
+    /// - Throws: SRPError if the verifier or configuration is invalid.
+    public func generateServerCredentials(verifier: Data) throws -> SRPData
+    {
+        guard !verifier.isEmpty else { throw SRPError.invalidVerifier }
+        try configuration.validate()
+        
+        let v = BigUInt(verifier)
+        let k = hashPaddedPair(digest: configuration.digest, N: configuration.N, n1: configuration.N, n2: configuration.g)
+        let b = configuration.b(configuration.N)
+        // B = kv + g^b
+        let B = (((k * v) % configuration.N) + configuration.g.power(b, modulus: configuration.N)) % configuration.N
+        
+        return SRPDataImpl(v:v, k:k, b:b, B:B)
+    }
+    
+    
+    /// Compute the verifier and client credentials.
+    ///
+    /// - Parameters:
+    ///   - s: SRP salt
+    ///   - I: User name
+    ///   - p: Password
+    /// - Returns: SRPData with parameters v, x, a, and A populated.
+    /// - Throws: SRPError if input parameters or configuration are not valid.
+    public func verifier(s: Data, I: Data,  p: Data) throws -> SRPData
+    {
+        // let valueX = x(s:s, I:I, p:p)
+        var srpData = try generateClientCredentials(s: s, I: I, p: p)
+        
+        srpData.v = configuration.g.power(srpData.x, modulus:configuration.N)
+        
+        return srpData
+    }
+    
+    
+    /// Calculate the shared secret on the client side: S = (B - kg^x) ^ (a + ux)
+    ///
+    /// - Parameter srpData: SRP data to use in the calculation.
+    ///   Must have the following parameters populated and valid: B (received from the server), A (computed previously), a, x
+    /// - Returns: SRPData with parameter S populated
+    /// - Throws: SRPError if some of the input parameters is not set or invalid.
+    public func calculateClientSecret(srpData: SRPData) throws -> SRPData
+    {
+        try configuration.validate()
+        guard (srpData.A % configuration.N) > 0 else { throw SRPError.invalidClientPublicValue }
+        guard (srpData.B % configuration.N) > 0 else { throw SRPError.invalidServerPublicValue }
+        guard srpData.a > 0 else { throw SRPError.invalidClientPrivateValue }
+        guard srpData.x > 0 else { throw SRPError.invalidPasswordHash }
+        
+        var resultData = srpData
+        
+        resultData.u = hashPaddedPair(digest: configuration.digest, N: configuration.N, n1: resultData.A, n2: resultData.B)
+        resultData.k = hashPaddedPair(digest: configuration.digest, N: configuration.N, n1: configuration.N, n2: configuration.g)
+
+        let exp = ((resultData.u * resultData.x) + resultData.a) % configuration.N
+        
+        let tmp = (configuration.g.power(resultData.x, modulus: configuration.N) * resultData.k) % configuration.N
+        
+        // Will subtraction always be positive here?
+        // Apparently, yes: https://groups.google.com/forum/#!topic/clipperz/5H-tKD-l9VU
+        resultData.clientS = ((resultData.B - tmp) % configuration.N).power(exp, modulus: configuration.N)
+        
+        return resultData
+    }
+    
+    
+    /// Calculate the shared secret on the server side: S = (Av^u) ^ b
+    ///
+    /// - Parameter srpData: SRPData with the following parameters populated: A, v, b, B
+    /// - Returns: SRPData with the computed u and serverS
+    /// - Throws: SRPError if some of the required parameters are invalid.
+    public func calculateServerSecret(srpData: SRPData) throws -> SRPData
+    {
+        try configuration.validate()
+        guard (srpData.A % configuration.N) > 0 else { throw SRPError.invalidClientPublicValue }
+        guard (srpData.B % configuration.N) > 0 else { throw SRPError.invalidServerPublicValue }
+        guard srpData.b > 0 else { throw SRPError.invalidServerPrivateValue }
+        guard srpData.v > 0 else { throw SRPError.invalidVerifier }
+        
+        var resultData = srpData
+        resultData.u = hashPaddedPair(digest: configuration.digest, N: configuration.N, n1: resultData.A, n2: resultData.B)
+        
+        // S = (Av^u) ^ b
+        resultData.serverS = ((resultData.A * resultData.v.power(resultData.u, modulus: configuration.N)) % configuration.N).power(resultData.b, modulus: configuration.N)
+        
+        return resultData
+    }
+    
+    /// Compute the client evidence message.
+    /// NOTE: This is different from the spec. above and is done the BouncyCastle way:
+    /// M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S
+    /// - Parameter srpData: SRP data to use in the calculation.
+    ///   Must have the following fields populated:
+    ///   - a: Private ephemeral value a (per spec. above)
+    ///   - A: Public ephemeral value A (per spec. above)
+    ///   - x: Identity hash (computed the BouncyCastle way)
+    ///   - B: Server public ephemeral value B (per spec. above)
+    /// - Returns: SRPData with the client evidence message populated.
+    /// - Throws: SRPError if some of the required parameters are invalid.
+    public func clientEvidenceMessage(srpData: SRPData) throws -> SRPData
+    {
+        try configuration.validate()
+        guard (srpData.A % configuration.N) > 0 else { throw SRPError.invalidClientPublicValue }
+        guard (srpData.B % configuration.N) > 0 else { throw SRPError.invalidServerPublicValue }
+        var resultData = srpData.clientS > 0 ? srpData : try calculateClientSecret(srpData: srpData)
+        
+        resultData.clientM = hashPaddedTriplet(digest: configuration.digest, N: configuration.N, n1: resultData.A, n2: resultData.B, n3: resultData.clientS)
+        return resultData
+    }
+    
+    
+    /// Compute the server evidence message.
+    /// NOTE: This is different from the spec above and is done the BouncyCastle way:
+    /// M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret.
+    /// - Parameter srpData: SRP Data with the following fields populated:
+    ///   - A: Client value A
+    ///   - v: Password verifier v (per spec above)
+    ///   - b: Private ephemeral value b
+    ///   - B: Public ephemeral value B
+    ///   - clientM: Client evidence message
+    /// - Returns: SRPData with the computed server evidence message field populated.
+    /// - Throws: SRPError if some of the required parameters are invalid.
+    public func serverEvidenceMessage(srpData: SRPData) throws -> SRPData
+    {
+        try configuration.validate()
+        guard (srpData.A % configuration.N) > 0 else { throw SRPError.invalidClientPublicValue }
+        guard (srpData.B % configuration.N) > 0 else { throw SRPError.invalidServerPublicValue }
+        
+        var resultData = srpData.serverS > 0 ? srpData : try calculateServerSecret(srpData: srpData)
+        
+        resultData.serverM = hashPaddedTriplet(digest: configuration.digest, N: configuration.N, n1: resultData.A, n2: resultData.clientM, n3: resultData.serverS)
+        
+        return resultData
+    }
+    
+    
+    /// Verify the client evidence message (received from the client)
+    ///
+    /// - Parameter srpData: SRPData with the following fields populated: A, B, clientM, serverS
+    /// - Throws: SRPError in case verification fails or when some of the required parameters are invalid.
+    public func verifyClientEvidenceMessage(srpData: SRPData) throws
+    {
+        try configuration.validate()
+        guard srpData.clientM > 0 else { throw SRPError.invalidClientEvidenceMessage }
+        guard (srpData.A % configuration.N) > 0 else { throw SRPError.invalidClientPublicValue }
+        guard (srpData.B % configuration.N) > 0 else { throw SRPError.invalidServerPublicValue }
+        guard srpData.serverS > 0 else { throw SRPError.invalidServerSharedSecret }
+        
+        let M = hashPaddedTriplet(digest: configuration.digest, N: configuration.N, n1: srpData.A, n2: srpData.B, n3: srpData.serverS)
+        guard (M == srpData.clientM) else { throw SRPError.invalidClientEvidenceMessage }
+    }
+    
+    
+    /// Verify the server evidence message (received from the server)
+    ///
+    /// - Parameter srpData: SRPData with the following fields populated: serverM, clientM, A, clientS
+    /// - Throws: SRPError if verification fails or if some of the input parameters is invalid.
+    public func verifyServerEvidenceMessage(srpData: SRPData) throws
+    {
+        try configuration.validate()
+        guard srpData.serverM > 0 else { throw SRPError.invalidServerEvidenceMessage }
+        guard srpData.clientM > 0 else { throw SRPError.invalidClientEvidenceMessage }
+        guard (srpData.A % configuration.N) > 0 else { throw SRPError.invalidClientPublicValue }
+        guard srpData.clientS > 0 else { throw SRPError.invalidClientSharedSecret }
+        
+        let M = hashPaddedTriplet(digest: configuration.digest, N: configuration.N, n1: srpData.A, n2: srpData.clientM, n3: srpData.clientS)
+        guard (M == srpData.serverM) else { throw SRPError.invalidServerEvidenceMessage }
+    }
+    
+    
+    /// Calculate the shared key (client side) in the standard way: sharedKey = H(clientS)
+    ///
+    /// - Parameter srpData: SRPData with clientS populated.
+    /// - Returns: Shared key
+    /// - Throws: SRPError if some of the required parameters is invalid.
+    public func calculateClientSharedKey(srpData: SRPData) throws -> Data
+    {
+        try configuration.validate()
+        guard srpData.clientS > 0 else { throw SRPError.invalidClientSharedSecret }
+        let padLength = (configuration.N.width + 7) / 8
+        let paddedS = pad(srpData.clientS.serialize(), to: padLength)
+        let hash = configuration.digest(paddedS)
+        
+        return hash
+    }
+
+    /// Calculate the shared key (server side) in the standard way: sharedKey = H(serverS)
+    ///
+    /// - Parameter srpData: SRPData with serverS populated.
+    /// - Returns: Shared key
+    /// - Throws: SRPError if some of the required parameters is invalid.
+    public func calculateServerSharedKey(srpData: SRPData) throws -> Data
+    {
+        try configuration.validate()
+        guard srpData.serverS > 0 else { throw SRPError.invalidServerSharedSecret }
+        let padLength = (configuration.N.width + 7) / 8
+        let paddedS = pad(srpData.clientS.serialize(), to: padLength)
+        let hash = configuration.digest(paddedS)
+        
+        return hash
+    }
+
+    /// Calculate the shared key (client side) by using HMAC: sharedKey = HMAC(salt, clientS)
+    /// This version can be used to derive multiple shared keys from the same shared secret (by using different salts)
+    /// - Parameter srpData: SRPData with clientS populated.
+    /// - Returns: Shared key
+    /// - Throws: SRPError if some of the required parameters is invalid.
+    public func calculateClientSharedKey(srpData: SRPData, salt: Data) throws -> Data
+    {
+        try configuration.validate()
+        return configuration.hmac(salt, srpData.clientS.serialize())
+    }
+
+    /// Calculate the shared key (server side) by using HMAC: sharedKey = HMAC(salt, clientS)
+    /// This version can be used to derive multiple shared keys from the same shared secret (by using different salts)
+    /// - Parameter srpData: SRPData with clientS populated.
+    /// - Returns: Shared key
+    /// - Throws: SRPError if some of the required parameters is invalid.
+    public func calculateServerSharedKey(srpData: SRPData, salt: Data) throws -> Data
+    {
+        try configuration.validate()
+        return configuration.hmac(salt, srpData.serverS.serialize())
+    }
+
+    
+    /// Helper method to concatenate, pad, and hash two values.
+    ///
+    /// - Parameters:
+    ///   - digest: The hash function to be used.
+    ///   - N: Modulus; values are padded to the byte size of the modulus
+    ///   - n1: First value
+    ///   - n2: Second value
+    /// - Returns: Result of hashing.
+    internal func hashPaddedPair(digest: DigestFunc, N: BigUInt, n1: BigUInt, n2: BigUInt) -> BigUInt
+    {
+        let padLength = (N.width + 7) / 8
+        
+        let paddedN1 = pad(n1.serialize(), to: padLength)
+        let paddedN2 = pad(n2.serialize(), to: padLength)
+        var dataToHash = Data(capacity: paddedN1.count + paddedN2.count)
+        dataToHash.append(paddedN1)
+        dataToHash.append(paddedN2)
+        
+        let hash = digest(dataToHash)
+        
+        return BigUInt(hash) % N
+    }
+    
+    
+    /// Helper method to concatenate, pad, and hash three values.
+    ///
+    /// - Parameters:
+    ///   - digest: The hash function to be used.
+    ///   - N: Modulus; values are padded to the byte size of the modulus.
+    ///   - n1: First value
+    ///   - n2: Second value
+    ///   - n3: Third value
+    /// - Returns: Result of hashing.
+    internal func hashPaddedTriplet(digest: DigestFunc, N: BigUInt, n1: BigUInt, n2: BigUInt, n3: BigUInt) -> BigUInt
+    {
+        let padLength = (N.width + 7) / 8
+        
+        let paddedN1 = pad(n1.serialize(), to: padLength)
+        let paddedN2 = pad(n2.serialize(), to: padLength)
+        let paddedN3 = pad(n3.serialize(), to: padLength)
+        var dataToHash = Data(capacity: paddedN1.count + paddedN2.count + paddedN3.count)
+        dataToHash.append(paddedN1)
+        dataToHash.append(paddedN2)
+        dataToHash.append(paddedN3)
+        let hash = digest(dataToHash)
+        
+        return BigUInt(hash) % N
+    }
+    
+    
+    /// Pad the given data with zeroes to the given byte size
+    ///
+    /// - Parameters:
+    ///   - data: Data to pad
+    ///   - length: Desired byte length
+    /// - Returns: Result of the padding.
+    internal func pad(_ data: Data, to length: Int) -> Data
+    {
+        if data.count >= length
+        {
+            return data
+        }
+        
+        var padded = Data(count: length - data.count)
+        padded.append(data)
+        return padded
+    }
+    
+    
+    /// Calculate the SRP parameter x the BouncyCastle way: x = H(s | H(I | ":" | p))
+    /// | stands for concatenation
+    /// - Parameters:
+    ///   - s: SRP salt
+    ///   - I: User name
+    ///   - p: password
+    /// - Returns: SRP value x calculated as x = H(s | H(I | ":" | p)) (where H is the configured hash function)
+    internal func x(s: Data, I: Data,  p: Data) -> BigUInt
+    {
+        var identityData = Data(capacity: I.count + 1 + p.count)
+        
+        identityData.append(I)
+        identityData.append(":".data(using: .utf8)!)
+        identityData.append(p)
+        
+        let identityHash = configuration.digest(identityData)
+        
+        var xData = Data(capacity: s.count + identityHash.count)
+        
+        xData.append(s)
+        xData.append(identityHash)
+        
+        let xHash = configuration.digest(xData)
+        let x = BigUInt(xHash) % configuration.N
+        
+        return x
+    }
+}
+
+/// Configuration for SRP algorithms (see the spec. above for more information about the meaning of parameters).
 public struct SRPConfiguration
 {
     /// A large safe prime per SRP spec.
@@ -109,7 +600,16 @@ public struct SRPConfiguration
         self.b = b
         self.hmac = hmac
     }
-
+    
+    
+    /// Check if configuration is valid.
+    /// Currently only requires the size of the prime to be >= 256 and the g to be non-zero.
+    /// - Throws: SRPError if invalid.
+    func validate() throws
+    {
+        guard N.width >= 256 else { throw SRPError.configurationPrimeTooShort }
+        guard g > 0 else { throw SRPError.configurationGeneratorInvalid }
+    }
     
     /// SHA256 hash function
     public static let sha256DigestFunc: DigestFunc = { (data: Data) in
@@ -125,6 +625,8 @@ public struct SRPConfiguration
         return Data(hash)
     }
     
+    
+    /// SHA256 hash function
     public static let sha256HMacFunc: HMacFunc = { (key, data) in
         var result: [UInt8] = Array(repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
         
@@ -137,6 +639,7 @@ public struct SRPConfiguration
         return Data(result)
     }
     
+    /// SHA512 hash function
     public static let sha512HMacFunc: HMacFunc = { (key, data) in
         var result: [UInt8] = Array(repeating: 0, count: Int(CC_SHA512_DIGEST_LENGTH))
         
@@ -150,6 +653,10 @@ public struct SRPConfiguration
     }
     
     
+    /// Generate a random private value less than the given value N and at least half the bit size of N
+    ///
+    /// - Parameter N: The value determining the range of the random value to generate.
+    /// - Returns: Randomly generate value.
     public static func generatePrivateValue(N: BigUInt) -> BigUInt
     {
         let minBits = N.width / 2
@@ -161,229 +668,9 @@ public struct SRPConfiguration
         
         return random
     }
-    
-
 }
 
-public struct SRP
-{
-    public let configuration: SRPConfiguration
-    
-    // TODO: Handle errors.
-    public func generateClientCredentials(s: Data, I: Data, p: Data) -> (x: BigUInt, a: BigUInt, A: BigUInt)
-    {
-        let value_x = x(s: s, I: I, p: p)
-        let value_a = configuration.a(configuration.N)
-
-        // A = g^a
-        let value_A = configuration.g.power(configuration.a(configuration.N), modulus: configuration.N)
-        
-        return (value_x, value_a, value_A)
-    }
-    
-    public func generateServerCredentials(v: BigUInt) -> (b: BigUInt, B: BigUInt)
-    {
-        let k = calculate_k()
-        let value_b = configuration.b(configuration.N)
-        // B = kv + g^b
-        let value_B = (((k * v) % configuration.N) + configuration.g.power(value_b, modulus: configuration.N)) % configuration.N
-        
-        return (value_b, value_B)
-    }
-    
-    public func verifier(s: Data, I: Data,  p: Data) -> BigUInt
-    {
-        let valueX = x(s:s, I:I, p:p)
-        
-        return configuration.g.power(valueX, modulus:configuration.N)
-    }
-    
-    public func calculateClientSecret(a: BigUInt, A:BigUInt, x: BigUInt, serverB: BigUInt) throws -> BigUInt
-    {
-        let value_B = try validatePublicValue(N: configuration.N, val: serverB)
-        let value_u = hashPaddedPair(digest: configuration.digest, N: configuration.N, n1: A, n2: value_B)
-        
-        let k = calculate_k()
-
-        // S = (B - kg^x) ^ (a + ux)
-        
-        let exp = ((value_u * x) + a) % configuration.N
-        
-        let tmp = (configuration.g.power(x, modulus: configuration.N) * k) % configuration.N
-        
-        // Will subtraction always be positive here?
-        // Apparently, yes: https://groups.google.com/forum/#!topic/clipperz/5H-tKD-l9VU
-        let S = ((value_B - tmp) % configuration.N).power(exp, modulus: configuration.N)
-        
-        return S
-    }
-    
-    public func calculateServerSecret(clientA: BigUInt, v:BigUInt, b:BigUInt, B: BigUInt) throws -> BigUInt
-    {
-        let value_A = try validatePublicValue(N: configuration.N, val: clientA)
-        let value_u = hashPaddedPair(digest: configuration.digest, N: configuration.N, n1: value_A, n2: B)
-        
-        // S = (Av^u) ^ b
-        let S = ((value_A * v.power(value_u, modulus: configuration.N)) % configuration.N).power(b, modulus: configuration.N)
-        
-        return S
-    }
-
-    public func calculate_k() -> BigUInt
-    {
-        // k = H(N, g)
-        return hashPaddedPair(digest: configuration.digest, N: configuration.N, n1: configuration.N, n2: configuration.g)
-    }
-    
-    
-    /// Compute the client evidence message.
-    /// NOTE: This is different from the spec. above and is done the BouncyCastle way:
-    /// M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S
-    /// - Parameters:
-    ///   - a: Private ephemeral value a (per spec. above)
-    ///   - A: Public ephemeral value A (per spec. above)
-    ///   - x: Identity hash (computed the BouncyCastle way)
-    ///   - serverB: Server public ephemeral value B (per spec. above)
-    /// - Returns: The evidence message to be sent to the server.
-    /// - Throws: TODO
-    public func clientEvidenceMessage(a: BigUInt, A:BigUInt, x: BigUInt, serverB: BigUInt) throws -> BigUInt
-    {
-        let value_B = try validatePublicValue(N: configuration.N, val: serverB)
-        let S = try calculateClientSecret(a: a, A: A, x: x, serverB: serverB)
-        
-        // TODO: Check if values are valid.
-        return hashPaddedTriplet(digest: configuration.digest, N: configuration.N, n1: A, n2: value_B, n3: S);
-    }
-    
-    
-    /// Compute the server evidence message.
-    /// NOTE: This is different from the spec above and is done the BouncyCastle way:
-    /// M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret.
-    /// - Parameters:
-    ///   - clientA: Client value A
-    ///   - v: Password verifier v (per spec above)
-    ///   - b: Private ephemeral value b
-    ///   - B: Public ephemeral value B
-    ///   - clientM: Client evidence message
-    /// - Returns: The computed server evidence message.
-    /// - Throws: TODO
-    public func serverEvidenceMessage(clientA: BigUInt, v:BigUInt, b:BigUInt, B: BigUInt, clientM: BigUInt) throws -> BigUInt
-    {
-        // TODO: Check if values are valid.
-        // M2 = SRP6Util.calculateM2(digest, N, A, M1, S);
-        let value_A = try validatePublicValue(N: configuration.N, val: clientA)
-        let S = try calculateServerSecret(clientA: clientA, v: v, b: b, B: B)
-        
-        return hashPaddedTriplet(digest: configuration.digest, N: configuration.N, n1: value_A, n2: clientM, n3: S);
-    }
-    
-    public func verifyClientEvidenceMessage(a: BigUInt, A:BigUInt, x: BigUInt, B: BigUInt, clientM: BigUInt) throws -> Bool
-    {
-        // TODO: Check values.
-        let M = try clientEvidenceMessage(a: a, A: A, x: x, serverB: B)
-        return (M == clientM)
-    }
-    
-    public func calculateSharedKey(S: BigUInt) -> BigUInt
-    {
-        // TODO: Check if data is valid.
-        let padLength = (configuration.N.width + 7) / 8
-        let paddedS = pad(S.serialize(), to: padLength)
-        let hash = configuration.digest(paddedS)
-        
-        return BigUInt(hash)
-    }
-    
-    public func calculateSharedKey(salt: Data, S: Data) throws -> Data
-    {
-        return configuration.hmac(salt, S)
-    }
-    
-    private func hashPaddedPair(digest: DigestFunc, N: BigUInt, n1: BigUInt, n2: BigUInt) -> BigUInt
-    {
-        let padLength = (N.width + 7) / 8
-        
-        let paddedN1 = pad(n1.serialize(), to: padLength)
-        let paddedN2 = pad(n2.serialize(), to: padLength)
-        var dataToHash = Data(capacity: paddedN1.count + paddedN2.count)
-        dataToHash.append(paddedN1)
-        dataToHash.append(paddedN2)
-        
-        let hash = digest(dataToHash)
-        
-        return BigUInt(hash) % N
-    }
-    
-    private func hashPaddedTriplet(digest: DigestFunc, N: BigUInt, n1: BigUInt, n2: BigUInt, n3: BigUInt) -> BigUInt
-    {
-        let padLength = (N.width + 7) / 8
-        
-        let paddedN1 = pad(n1.serialize(), to: padLength)
-        let paddedN2 = pad(n2.serialize(), to: padLength)
-        let paddedN3 = pad(n3.serialize(), to: padLength)
-        var dataToHash = Data(capacity: paddedN1.count + paddedN2.count + paddedN3.count)
-        dataToHash.append(paddedN1)
-        dataToHash.append(paddedN2)
-        dataToHash.append(paddedN3)
-        let hash = digest(dataToHash)
-        
-        return BigUInt(hash) % N
-    }
-    
-    private func validatePublicValue(N: BigUInt, val: BigUInt) throws -> BigUInt
-    {
-        let checkedVal = val % N
-        if checkedVal == 0
-        {
-            // TODO: Throw error.
-        }
-        return checkedVal
-    }
-    
-    private func pad(_ data: Data, to length: Int) -> Data
-    {
-        if data.count >= length
-        {
-            return data
-        }
-        
-        var padded = Data(count: length - data.count)
-        padded.append(data)
-        return padded
-    }
-    
-    
-    /// Calculate the value x the BouncyCastle way: x = H(s | H(I | ":" | p))
-    /// | stands for concatenation
-    /// - Parameters:
-    ///   - s: SRP salt
-    ///   - I: User name
-    ///   - p: password
-    /// - Returns: SRP value x calculated as x = H(s | H(I | ":" | p)) (where H is the configured hash function)
-    func x(s: Data, I: Data,  p: Data) -> BigUInt
-    {
-        var identityData = Data(capacity: I.count + 1 + p.count)
-        
-        identityData.append(I)
-        identityData.append(":".data(using: .utf8)!)
-        identityData.append(p)
-        
-        let identityHash = configuration.digest(identityData)
-        
-        var xData = Data(capacity: s.count + identityHash.count)
-        
-        xData.append(s)
-        xData.append(identityHash)
-        
-        let xHash = configuration.digest(xData)
-        let x = BigUInt(xHash) % configuration.N
-        
-        return x
-    }
-    
-    
-}
-
+/// Helper category to perform conversion of hex strings to data
 extension UnicodeScalar
 {
     var hexNibble:UInt8
@@ -403,6 +690,7 @@ extension UnicodeScalar
 }
 
 
+/// Helper category to perform conversion of hex strings to data
 extension Data
 {
     init(hex:String)
@@ -420,7 +708,7 @@ extension Data
         self = Data(bytes: bytes)
     }
     
-    func hex() -> String
+    func hexString() -> String
     {
         var result = String()
         result.reserveCapacity(self.count * 2)
@@ -431,4 +719,12 @@ extension Data
     }
 }
 
+/// Helper category to convert BitUInt value to a hex string.
+extension BigUInt
+{
+    func hexString() -> String
+    {
+        return String(self, radix: 16, uppercase: true)
+    }
+}
 
