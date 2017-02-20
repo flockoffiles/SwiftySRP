@@ -33,7 +33,7 @@ let N_asString = "EEAF0AB9ADB38DD69C33F80AFA8FC5E86072618775FF3C0B9EA2314C"
     + "7BCF1885C529F566660E57EC68EDBC3C05726CC02FD4CBF4976EAA9A"
     + "FD5138FE8376435B9FC61D2FC0EB06E3"
 
-let g_asString = "2"
+let g_asString = "02"
 
 /// Tests for SRP functions.
 /// Based on similar tests in BouncyCastle, but uses different hash functions (SHA256 and SHA512).
@@ -90,15 +90,15 @@ class SwiftySRPTests: XCTestCase
     let p = "password123".data(using: .utf8)!
 
     
-    var N: BigUInt = BigUInt(N_asString, radix: 16)!
-    var g: BigUInt = BigUInt(g_asString, radix: 16)!
+    var N: Data = BigUInt(N_asString, radix: 16)!.serialize()
+    var g: Data = BigUInt(g_asString, radix: 16)!.serialize()
     
     override func setUp()
     {
         super.setUp()
         
-        print("N = \(String(N, radix: 16, uppercase: true))")
-        print("g = \(String(g, radix: 16, uppercase: true))")
+        print("N = \(N.hexString())")
+        print("g = \(g.hexString())")
     }
     
     override func tearDown()
@@ -110,8 +110,8 @@ class SwiftySRPTests: XCTestCase
     /// Simple test to verify that hex strings representations are the same and can be used for comparison in other tests.
     func test01StringConversion()
     {
-        XCTAssertEqual(N_asString, String(N, radix: 16, uppercase: true))
-        XCTAssertEqual(g_asString, String(g, radix: 16, uppercase: true))
+        XCTAssertEqual(N_asString, N.hexString())
+        XCTAssertEqual(g_asString, g.hexString())
     }
     
     /// Simple test to verify that conversion of BigUInt to Data gives correct representation in terms of the order of bytes.
@@ -126,24 +126,54 @@ class SwiftySRPTests: XCTestCase
         XCTAssertEqual(N_asString, recoveredString)
     }
     
+    func test03CreateConfiguration()
+    {
+        var caughtException = false
+        do
+        {
+            let _ = try SRP.configuration(N: N, g:Data(), digest: SRP.sha256DigestFunc,
+                                          hmac: SRP.sha256HMacFunc)
+        }
+        catch let e {
+            if let srpError = e as? SRPError
+            {
+                caughtException = true
+                XCTAssertEqual(srpError, SRPError.configurationGeneratorInvalid)
+            }
+        }
+        XCTAssertTrue(caughtException, "Expecting an exception to be caught")
+
+    }
+    
     /// This test verifies calculation of the parameter x. Please note that we use the same formula for x as BouncyCastle does:
     /// x = H(s | H(I | ":" | p))  (| means concatenation and H is a hash function; SHA256 in this case)
     func test04Generate_x_SHA256()
     {
-        let srp256 = SRP(configuration:SRPConfiguration(N: N, g:g, digest: SRPConfiguration.sha256DigestFunc, hmac: SRPConfiguration.sha256HMacFunc))
-        let x_256 = srp256.x(s: s, I: I, p: p)
-        let string_x_256 = String(x_256, radix: 16, uppercase: true)
-        XCTAssertEqual(string_x_256, expected_x_256)
+        do {
+            let srp256 = SRP.srpProtocol(try SRP.configuration(N: N, g:g, digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc)) as! SRPImpl
+            let x_256 = srp256.x(s: s, I: I, p: p)
+            let string_x_256 = String(x_256, radix: 16, uppercase: true)
+            XCTAssertEqual(string_x_256, expected_x_256)
+        }
+        catch let e {
+            XCTFail("Caught exception: \(e)")
+        }
+
     }
 
     /// This test verifies calculation of the parameter x. Please note that we use the same formula for x as BouncyCastle does:
     /// x = H(s | H(I | ":" | p))  (| means concatenation and H is a hash function; SHA512 in this case)
     func test04Generate_x_SHA512()
     {
-        let srp512 = SRP(configuration:SRPConfiguration(N: N, g:g, digest: SRPConfiguration.sha512DigestFunc, hmac:SRPConfiguration.sha512HMacFunc))
-        let x_512 = srp512.x(s: s, I: I, p: p)
-        let string_x_512 = String(x_512, radix: 16, uppercase: true)
-        XCTAssertEqual(string_x_512, expected_x_512)
+        do {
+            let srp512 = SRP.srpProtocol(try SRP.configuration(N: N, g:g, digest: SRP.sha512DigestFunc, hmac:SRP.sha512HMacFunc)) as! SRPImpl
+            let x_512 = srp512.x(s: s, I: I, p: p)
+            let string_x_512 = String(x_512, radix: 16, uppercase: true)
+            XCTAssertEqual(string_x_512, expected_x_512)
+        }
+        catch let e {
+            XCTFail("Caught exception: \(e)")
+        }
     }
     
     /// This test verifies correct computation of the client credentials by SRP.
@@ -152,20 +182,72 @@ class SwiftySRPTests: XCTestCase
     /// This test is for SRP using SHA256 as the hashing function.
     func test05GenerateClientCredentials_SHA256()
     {
-        // a is fixed in this test (not generated randomly)
-        let fixed_a_256 = BigUInt(fixedString_a_256, radix: 16)!
-        
-        let srp256 = SRP(configuration: SRPConfiguration(N: N, g:g, digest: SRPConfiguration.sha256DigestFunc, hmac: SRPConfiguration.sha256HMacFunc, a: { _ in return fixed_a_256 }))
+        let srp256: SRPImpl
+        do {
+            // a is fixed in this test (not generated randomly)
+            let fixed_a_256 = BigUInt(fixedString_a_256, radix: 16)!
+            let fixed_b_256 = BigUInt(fixedString_b_256, radix: 16)!
+            
+            srp256 = SRP.srpProtocol(try SRP.configuration(N: N, g:g, digest: SRP.sha256DigestFunc,
+                                                           hmac: SRP.sha256HMacFunc,
+                                                           a: { _ in return fixed_a_256 },
+                                                           b: { _ in return fixed_b_256 })) as! SRPImpl
 
-        let clientSRPData = try! srp256.generateClientCredentials(s: s, I: I, p: p)
+            
+            guard let clientSRPData = try? srp256.generateClientCredentials(s: s, I: I, p: p) else {
+                XCTFail("Cannot generate client data")
+                return
+            }
+            
+            let string_x_256 = String(clientSRPData.x, radix: 16, uppercase: true)
+            let string_A_256 = String(clientSRPData.A, radix: 16, uppercase: true)
+            let string_a_256 = String(clientSRPData.a, radix: 16, uppercase: true)
+            
+            XCTAssertEqual(string_x_256, expectedString_x_256)
+            XCTAssertEqual(string_a_256, fixedString_a_256)
+            XCTAssertEqual(string_A_256, expectedString_A_256)
+        }
+        catch let e {
+            XCTFail("Caught exception: \(e)")
+            return
+        }
+
+        // Also test incorrect values
+        var caughtException = false
+        do {
+            let _ = try srp256.generateClientCredentials(s: Data(), I: I, p: p)
+        } catch let e {
+            if let srpError = e as? SRPError
+            {
+                caughtException = true
+                XCTAssertEqual(srpError, SRPError.invalidSalt)
+            }
+        }
+        XCTAssertTrue(caughtException, "Expecting an exception to be caught")
         
-        let string_x_256 = String(clientSRPData.x, radix: 16, uppercase: true)
-        let string_A_256 = String(clientSRPData.A, radix: 16, uppercase: true)
-        let string_a_256 = String(clientSRPData.a, radix: 16, uppercase: true)
+        caughtException = false
+        do {
+            let _ = try srp256.generateClientCredentials(s: s, I: Data(), p: p)
+        } catch let e {
+            if let srpError = e as? SRPError
+            {
+                caughtException = true
+                XCTAssertEqual(srpError, SRPError.invalidUserName)
+            }
+        }
+        XCTAssertTrue(caughtException, "Expecting an exception to be caught")
         
-        XCTAssertEqual(string_x_256, expectedString_x_256)
-        XCTAssertEqual(string_a_256, fixedString_a_256)
-        XCTAssertEqual(string_A_256, expectedString_A_256)
+        caughtException = false
+        do {
+            let _ = try srp256.generateClientCredentials(s: s, I: I, p: Data())
+        } catch let e {
+            if let srpError = e as? SRPError
+            {
+                caughtException = true
+                XCTAssertEqual(srpError, SRPError.invalidPassword)
+            }
+        }
+        XCTAssertTrue(caughtException, "Expecting an exception to be caught")
     }
 
     /// This test verifies correct computation of the client credentials by SRP.
@@ -175,15 +257,27 @@ class SwiftySRPTests: XCTestCase
     func test05GenerateClientCredentials_SHA512()
     {
         let fixed_a_512 = BigUInt(fixedString_a_512, radix: 16)!
-        let srp_512 = SRP(configuration: SRPConfiguration(N: N, g:g, digest: SRPConfiguration.sha512DigestFunc, hmac:SRPConfiguration.sha512HMacFunc, a: { _ in return fixed_a_512 }))
-        let clientSRPData = try! srp_512.generateClientCredentials(s: s, I: I, p: p)
-        let string_x_512 = String(clientSRPData.x, radix: 16, uppercase: true)
-        let string_A_512 = String(clientSRPData.A, radix: 16, uppercase: true)
-        let string_a_512 = String(clientSRPData.a, radix: 16, uppercase: true)
+        let fixed_b_512 = BigUInt(fixedString_b_512, radix: 16)!
+        let srp_512: SRPImpl
         
-        XCTAssertEqual(string_x_512, expectedString_x_512)
-        XCTAssertEqual(string_a_512, fixedString_a_512)
-        XCTAssertEqual(string_A_512, expectedString_A_512)
+        do {
+            srp_512 = SRP.srpProtocol(try SRP.configuration(N: N, g:g, digest: SRP.sha512DigestFunc, hmac:SRP.sha512HMacFunc,
+                                                            a: { _ in return fixed_a_512 },
+                                                            b: { _ in return fixed_b_512 })) as! SRPImpl
+            
+            let clientSRPData = try! srp_512.generateClientCredentials(s: s, I: I, p: p)
+            let string_x_512 = String(clientSRPData.x, radix: 16, uppercase: true)
+            let string_A_512 = String(clientSRPData.A, radix: 16, uppercase: true)
+            let string_a_512 = String(clientSRPData.a, radix: 16, uppercase: true)
+            
+            XCTAssertEqual(string_x_512, expectedString_x_512)
+            XCTAssertEqual(string_a_512, fixedString_a_512)
+            XCTAssertEqual(string_A_512, expectedString_A_512)
+        }
+        catch let e {
+            XCTFail("Caught exception: \(e)")
+            return
+        }
     }
     
     /// Test to verify that the SRP verifier is calculated correctly (this version is for SHA256 hash function).
@@ -191,13 +285,25 @@ class SwiftySRPTests: XCTestCase
     {
         // a is fixed in this test (not generated randomly)
         let fixed_a_256 = BigUInt(fixedString_a_256, radix: 16)!
-        let srp256 = SRP(configuration: SRPConfiguration(N: N, g:g, digest: SRPConfiguration.sha256DigestFunc, hmac: SRPConfiguration.sha256HMacFunc, a: { _ in return fixed_a_256 }))
+        let fixed_b_256 = BigUInt(fixedString_b_256, radix: 16)!
         
-        let clientSRPData = try! srp256.verifier(s: s, I: I, p: p)
+        let srp256: SRPImpl
+        do {
+            srp256 = SRP.srpProtocol(try SRP.configuration(N: N, g:g, digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc,
+                                                           a: { _ in return fixed_a_256 },
+                                                           b: { _ in return fixed_b_256 })) as! SRPImpl
+            
+            let clientSRPData = try! srp256.verifier(s: s, I: I, p: p)
 
-        let string_v_256 = String(clientSRPData.v, radix: 16, uppercase: true)
-        
-        XCTAssertEqual(string_v_256, expectedStringVerifier_256)
+            let string_v_256 = String(clientSRPData.v, radix: 16, uppercase: true)
+            
+            XCTAssertEqual(string_v_256, expectedStringVerifier_256)
+        }
+        catch let e {
+            XCTFail("Caught exception: \(e)")
+            return
+        }
+
     }
     
     /// Test to verify that the SRP verifier is calculated correctly (this version is for SHA512 hash function).
@@ -205,15 +311,25 @@ class SwiftySRPTests: XCTestCase
     {
         // a is fixed in this test (not generated randomly)
         let fixed_a_512 = BigUInt(fixedString_a_512, radix: 16)!
-        let srp512 = SRP(configuration: SRPConfiguration(N: N, g:g, digest: SRPConfiguration.sha512DigestFunc, hmac:SRPConfiguration.sha512HMacFunc,
-                                                         a: { _ in return fixed_a_512 }))
+        let fixed_b_512 = BigUInt(fixedString_b_512, radix: 16)!
+        let srp512: SRPImpl
         
-        let clientSRPData = try! srp512.verifier(s: s, I: I, p: p)
-        
-        let string_v_512 = String(clientSRPData.v, radix: 16, uppercase: true)
-        
-        XCTAssertEqual(string_v_512, expectedStringVerifier_512)
-        
+        do {
+            srp512 = SRP.srpProtocol(try SRP.configuration(N: N, g:g, digest: SRP.sha512DigestFunc, hmac:SRP.sha512HMacFunc,
+                                                             a: { _ in return fixed_a_512 },
+                                                             b: { _ in return fixed_b_512 })) as! SRPImpl
+            
+            let clientSRPData = try! srp512.verifier(s: s, I: I, p: p)
+            
+            let string_v_512 = String(clientSRPData.v, radix: 16, uppercase: true)
+            
+            XCTAssertEqual(string_v_512, expectedStringVerifier_512)
+        }
+        catch let e {
+            XCTFail("Caught exception: \(e)")
+            return
+        }
+
     }
     
     /// This test verifies that the client and server way of calculating the shared secret produce the same shared secret value.
@@ -223,63 +339,65 @@ class SwiftySRPTests: XCTestCase
         let fixed_a_256 = BigUInt(fixedString_a_256, radix: 16)!
         let fixed_b_256 = BigUInt(fixedString_b_256, radix: 16)!
         
-        let srp256 = SRP(configuration: SRPConfiguration(N: N, g:g, digest: SRPConfiguration.sha256DigestFunc, hmac: SRPConfiguration.sha256HMacFunc,
-                                                         a: { _ in return fixed_a_256 }, b: { _ in return fixed_b_256 }))
-        
-        // Client computes the verifier (and sends it to the server)
-        var clientSRPData = try! srp256.verifier(s: s, I: I, p: p)
-
-        // Server generates credentials by using the verifier.
-        var serverSRPData = try! srp256.generateServerCredentials(verifier: clientSRPData.v.serialize())
-        
-        XCTAssertEqual(serverSRPData.b.hexString(), fixedString_b_256)
-        XCTAssertEqual(serverSRPData.B.hexString(), expectedString_B_256)
-        
-        // Pretend that the server has communicated its public value
-        clientSRPData.B = serverSRPData.B
-
-        // Client calculates the secret.
-        clientSRPData = try! srp256.calculateClientSecret(srpData: clientSRPData)
-        
-        // Pretend that the client has communicated its public value
-        serverSRPData.A = clientSRPData.A
-        
-        // Server also calculates the secret.
-        serverSRPData = try! srp256.calculateServerSecret(srpData: serverSRPData)
-        
-        // Here we make sure the secrets are the same (but in real life the secret is NEVER sent over the wire).
-        XCTAssertEqual(clientSRPData.clientS.hexString(), serverSRPData.serverS.hexString())
-        
-        // Check the client evidence message.
-        clientSRPData = try! srp256.clientEvidenceMessage(srpData: clientSRPData)
-        XCTAssertEqual(clientSRPData.clientM.hexString(), expectedString_cM_256)
-        
-        // Pretend that the server has received the client evidence:
-        serverSRPData.clientM = clientSRPData.clientM
+        let srp256: SRPProtocol
         do {
+            srp256 = SRP.srpProtocol(try SRP.configuration(N: N, g:g, digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc,
+                                                             a: { _ in return fixed_a_256 },
+                                                             b: { _ in return fixed_b_256 }))
+            
+            // Client computes the verifier (and sends it to the server)
+            var clientSRPData = try! srp256.verifier(s: s, I: I, p: p)
+
+            // Server generates credentials by using the verifier.
+            var serverSRPData = try! srp256.generateServerCredentials(verifier: clientSRPData.v.serialize())
+            
+            XCTAssertEqual(serverSRPData.b.hexString(), fixedString_b_256)
+            XCTAssertEqual(serverSRPData.B.hexString(), expectedString_B_256)
+            
+            // Pretend that the server has communicated its public value
+            clientSRPData.B = serverSRPData.B
+
+            // Client calculates the secret.
+            clientSRPData = try! srp256.calculateClientSecret(srpData: clientSRPData)
+            
+            // Pretend that the client has communicated its public value
+            serverSRPData.A = clientSRPData.A
+            
+            // Server also calculates the secret.
+            serverSRPData = try! srp256.calculateServerSecret(srpData: serverSRPData)
+            
+            // Here we make sure the secrets are the same (but in real life the secret is NEVER sent over the wire).
+            XCTAssertEqual(clientSRPData.clientS.hexString(), serverSRPData.serverS.hexString())
+            
+            // Check the client evidence message.
+            clientSRPData = try! srp256.clientEvidenceMessage(srpData: clientSRPData)
+            XCTAssertEqual(clientSRPData.clientM.hexString(), expectedString_cM_256)
+            
+            // Pretend that the server has received the client evidence:
+            serverSRPData.clientM = clientSRPData.clientM
             try srp256.verifyClientEvidenceMessage(srpData: serverSRPData)
-        } catch {
-            XCTFail("Failed to verify client evidence message")
-        }
-        
-        serverSRPData = try! srp256.serverEvidenceMessage(srpData: serverSRPData)
-        XCTAssertEqual(serverSRPData.serverM.hexString(), expectedString_sM_256)
-        
-        // Pretend that the client has received the server evidence:
-        clientSRPData.serverM = serverSRPData.serverM
-        
-        do {
+            
+            serverSRPData = try! srp256.serverEvidenceMessage(srpData: serverSRPData)
+            XCTAssertEqual(serverSRPData.serverM.hexString(), expectedString_sM_256)
+            
+            // Pretend that the client has received the server evidence:
+            clientSRPData.serverM = serverSRPData.serverM
+            
             try srp256.verifyServerEvidenceMessage(srpData: clientSRPData)
-        } catch {
-            XCTFail("Failed to verify server evidence message")
-        }
-        
-        let clientSharedKey_256 = try! srp256.calculateClientSharedKey(srpData: clientSRPData)
-        XCTAssertEqual(clientSharedKey_256.hexString(), expectedStringSharedKey_256)
+            
+            let clientSharedKey_256 = try! srp256.calculateClientSharedKey(srpData: clientSRPData)
+            XCTAssertEqual(clientSharedKey_256.hexString(), expectedStringSharedKey_256)
 
-        let clientSharedHMacKey_256 = try! srp256.calculateClientSharedKey(srpData: clientSRPData, salt: hmacSalt256)
-        XCTAssertEqual(clientSharedHMacKey_256.hexString(), expectedStringSharedHMacKey_256)
-        
+            let clientSharedHMacKey_256 = try! srp256.calculateClientSharedKey(srpData: clientSRPData, salt: hmacSalt256)
+            XCTAssertEqual(clientSharedHMacKey_256.hexString(), expectedStringSharedHMacKey_256)
+            
+            
+        }
+        catch let e {
+            XCTFail("Caught exception: \(e)")
+            return
+        }
+
     }
     
     /// This test verifies that the client and server way of calculating the shared secret produce the same shared secret value.
@@ -289,62 +407,64 @@ class SwiftySRPTests: XCTestCase
         
         let fixed_a_512 = BigUInt(fixedString_a_512, radix: 16)!
         let fixed_b_512 = BigUInt(fixedString_b_512, radix: 16)!
+        let srp512: SRPProtocol
         
-        let srp512 = SRP(configuration: SRPConfiguration(N: N, g:g, digest: SRPConfiguration.sha512DigestFunc, hmac:SRPConfiguration.sha512HMacFunc,
-                                                         a: { _ in return fixed_a_512 }, b: { _ in return fixed_b_512 }))
-        
-        var clientSRPData = try! srp512.verifier(s: s, I: I, p: p)
-        
-        var serverSRPData = try! srp512.generateServerCredentials(verifier: clientSRPData.v.serialize())
-        
-        XCTAssertEqual(serverSRPData.b.hexString(), fixedString_b_512)
-        XCTAssertEqual(serverSRPData.B.hexString(), expectedString_B_512)
-
-        // Pretend that the server has communicated its public value
-        clientSRPData.B = serverSRPData.B
-        
-        clientSRPData = try! srp512.calculateClientSecret(srpData: clientSRPData)
-        
-        // Pretend that the client has communicated its public value
-        serverSRPData.A = clientSRPData.A
-        
-        serverSRPData = try! srp512.calculateServerSecret(srpData: serverSRPData)
-        
-        // Here we make sure the secrets are the same (but in real life the secret is NEVER sent over the wire).
-        XCTAssertEqual(clientSRPData.clientS.hexString(), serverSRPData.serverS.hexString())
-        
-        // Check the client evidence message.
-        clientSRPData = try! srp512.clientEvidenceMessage(srpData: clientSRPData)
-        XCTAssertEqual(clientSRPData.clientM.hexString(), expectedStringM_512)
-        
-        // Pretend that the server has received the client evidence:
-        serverSRPData.clientM = clientSRPData.clientM
         do {
+            srp512 = SRP.srpProtocol(try SRP.configuration(N: N, g:g,
+                                                           digest: SRP.sha512DigestFunc,
+                                                           hmac:SRP.sha512HMacFunc,
+                                                             a: { _ in return fixed_a_512 },
+                                                             b: { _ in return fixed_b_512 }))
+            
+            var clientSRPData = try! srp512.verifier(s: s, I: I, p: p)
+            
+            var serverSRPData = try! srp512.generateServerCredentials(verifier: clientSRPData.v.serialize())
+            
+            XCTAssertEqual(serverSRPData.b.hexString(), fixedString_b_512)
+            XCTAssertEqual(serverSRPData.B.hexString(), expectedString_B_512)
+
+            // Pretend that the server has communicated its public value
+            clientSRPData.B = serverSRPData.B
+            
+            clientSRPData = try! srp512.calculateClientSecret(srpData: clientSRPData)
+            
+            // Pretend that the client has communicated its public value
+            serverSRPData.A = clientSRPData.A
+            
+            serverSRPData = try! srp512.calculateServerSecret(srpData: serverSRPData)
+            
+            // Here we make sure the secrets are the same (but in real life the secret is NEVER sent over the wire).
+            XCTAssertEqual(clientSRPData.clientS.hexString(), serverSRPData.serverS.hexString())
+            
+            // Check the client evidence message.
+            clientSRPData = try! srp512.clientEvidenceMessage(srpData: clientSRPData)
+            XCTAssertEqual(clientSRPData.clientM.hexString(), expectedStringM_512)
+            
+            // Pretend that the server has received the client evidence:
+            serverSRPData.clientM = clientSRPData.clientM
             try srp512.verifyClientEvidenceMessage(srpData: serverSRPData)
-        } catch {
-            XCTFail("Failed to verify client evidence message")
-        }
 
-        serverSRPData = try! srp512.serverEvidenceMessage(srpData: serverSRPData)
-        XCTAssertEqual(serverSRPData.serverM.hexString(), expectedString_sM_512)
-        
-        // Pretend that the client has received the server evidence:
-        clientSRPData.serverM = serverSRPData.serverM
-        
-        do {
+            serverSRPData = try! srp512.serverEvidenceMessage(srpData: serverSRPData)
+            XCTAssertEqual(serverSRPData.serverM.hexString(), expectedString_sM_512)
+            
+            // Pretend that the client has received the server evidence:
+            clientSRPData.serverM = serverSRPData.serverM
+            
             try srp512.verifyServerEvidenceMessage(srpData: clientSRPData)
-        } catch {
-            XCTFail("Failed to verify server evidence message")
+
+            let clientSharedKey_512 = try! srp512.calculateClientSharedKey(srpData: clientSRPData)
+            
+            XCTAssertEqual(clientSharedKey_512.hexString(), expectedStringSharedKey_512)
+
+            
+            let sharedHMacKey_512 = try! srp512.calculateClientSharedKey(srpData: clientSRPData, salt: hmacSalt512)
+            let stringSharedHMacKey_512 = sharedHMacKey_512.hexString()
+            XCTAssertEqual(stringSharedHMacKey_512, expectedStringSharedHMacKey_512)
         }
-
-        let clientSharedKey_512 = try! srp512.calculateClientSharedKey(srpData: clientSRPData)
-        
-        XCTAssertEqual(clientSharedKey_512.hexString(), expectedStringSharedKey_512)
-
-        
-        let sharedHMacKey_512 = try! srp512.calculateClientSharedKey(srpData: clientSRPData, salt: hmacSalt512)
-        let stringSharedHMacKey_512 = sharedHMacKey_512.hexString()
-        XCTAssertEqual(stringSharedHMacKey_512, expectedStringSharedHMacKey_512)
+        catch let e {
+            XCTFail("Caught exception: \(e)")
+            return
+        }
 
     }
     

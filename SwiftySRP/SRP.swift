@@ -71,29 +71,277 @@ import CommonCrypto
 //    The host will abort if it detects that A == 0 (mod N).
 //    The user must show his proof of K first. If the server detects that the user's proof is incorrect, it must abort without showing its own proof of K.
 
-public typealias DigestFunc = (Data) -> Data
-public typealias HMacFunc = (Data, Data) -> Data
-public typealias PrivateValueFunc = (BigUInt) -> BigUInt
-
-
-enum SRPError: Error
+public protocol SRPProtocol
 {
-    case invalidSalt
-    case invalidUserName
-    case invalidPassword
-    case invalidVerifier
-    case invalidClientPublicValue
-    case invalidServerPublicValue
-    case invalidClientPrivateValue
-    case invalidServerPrivateValue
-    case invalidPasswordHash
-    case invalidClientEvidenceMessage
-    case invalidServerEvidenceMessage
-    case invalidClientSharedSecret
-    case invalidServerSharedSecret
+    /// Compute the verifier and client credentials.
+    ///
+    /// - Parameters:
+    ///   - s: SRP salt
+    ///   - I: User name
+    ///   - p: Password
+    /// - Returns: SRPData with parameters v, x, a, and A populated.
+    /// - Throws: SRPError if input parameters or configuration are not valid.
+    func verifier(s: Data, I: Data,  p: Data) throws -> SRPData
+
+    /// Calculate the shared secret on the client side: S = (B - kg^x) ^ (a + ux)
+    ///
+    /// - Parameter srpData: SRP data to use in the calculation.
+    ///   Must have the following parameters populated and valid: B (received from the server), A (computed previously), a, x
+    /// - Returns: SRPData with parameter S populated
+    /// - Throws: SRPError if some of the input parameters is not set or invalid.
+    func calculateClientSecret(srpData: SRPData) throws -> SRPData
+
+    /// Compute the client evidence message.
+    /// NOTE: This is different from the spec. above and is done the BouncyCastle way:
+    /// M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S
+    /// - Parameter srpData: SRP data to use in the calculation.
+    ///   Must have the following fields populated:
+    ///   - a: Private ephemeral value a (per spec. above)
+    ///   - A: Public ephemeral value A (per spec. above)
+    ///   - x: Identity hash (computed the BouncyCastle way)
+    ///   - B: Server public ephemeral value B (per spec. above)
+    /// - Returns: SRPData with the client evidence message populated.
+    /// - Throws: SRPError if some of the required parameters are invalid.
+    func clientEvidenceMessage(srpData: SRPData) throws -> SRPData
+
+    /// Verify the client evidence message (received from the client)
+    ///
+    /// - Parameter srpData: SRPData with the following fields populated: A, B, clientM, serverS
+    /// - Throws: SRPError in case verification fails or when some of the required parameters are invalid.
+    func verifyClientEvidenceMessage(srpData: SRPData) throws
+
+    /// Calculate the shared key (client side) in the standard way: sharedKey = H(clientS)
+    ///
+    /// - Parameter srpData: SRPData with clientS populated.
+    /// - Returns: Shared key
+    /// - Throws: SRPError if some of the required parameters is invalid.
+    func calculateClientSharedKey(srpData: SRPData) throws -> Data
+
+    /// Calculate the shared key (client side) by using HMAC: sharedKey = HMAC(salt, clientS)
+    /// This version can be used to derive multiple shared keys from the same shared secret (by using different salts)
+    /// - Parameter srpData: SRPData with clientS populated.
+    /// - Returns: Shared key
+    /// - Throws: SRPError if some of the required parameters is invalid.
+    func calculateClientSharedKey(srpData: SRPData, salt: Data) throws -> Data
+
     
-    case configurationPrimeTooShort
-    case configurationGeneratorInvalid
+    /// Generate the server side SRP parameters. This method normally will NOT be used by the client.
+    /// It's included here for testing purposes.
+    /// - Parameter verifier: SRP verifier received from the client.
+    /// - Returns: SRP data with parameters v, k, b, and B populated.
+    /// - Throws: SRPError if the verifier or configuration is invalid.
+    func generateServerCredentials(verifier: Data) throws -> SRPData
+
+    /// Calculate the shared secret on the server side: S = (Av^u) ^ b
+    ///
+    /// - Parameter srpData: SRPData with the following parameters populated: A, v, b, B
+    /// - Returns: SRPData with the computed u and serverS
+    /// - Throws: SRPError if some of the required parameters are invalid.
+    func calculateServerSecret(srpData: SRPData) throws -> SRPData
+
+    /// Compute the server evidence message.
+    /// NOTE: This is different from the spec above and is done the BouncyCastle way:
+    /// M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret.
+    /// - Parameter srpData: SRP Data with the following fields populated:
+    ///   - A: Client value A
+    ///   - v: Password verifier v (per spec above)
+    ///   - b: Private ephemeral value b
+    ///   - B: Public ephemeral value B
+    ///   - clientM: Client evidence message
+    /// - Returns: SRPData with the computed server evidence message field populated.
+    /// - Throws: SRPError if some of the required parameters are invalid.
+    func serverEvidenceMessage(srpData: SRPData) throws -> SRPData
+
+    /// Verify the server evidence message (received from the server)
+    ///
+    /// - Parameter srpData: SRPData with the following fields populated: serverM, clientM, A, clientS
+    /// - Throws: SRPError if verification fails or if some of the input parameters is invalid.
+    func verifyServerEvidenceMessage(srpData: SRPData) throws
+
+    /// Calculate the shared key (server side) in the standard way: sharedKey = H(serverS)
+    ///
+    /// - Parameter srpData: SRPData with serverS populated.
+    /// - Returns: Shared key
+    /// - Throws: SRPError if some of the required parameters is invalid.
+    func calculateServerSharedKey(srpData: SRPData) throws -> Data
+
+    /// Calculate the shared key (server side) by using HMAC: sharedKey = HMAC(salt, clientS)
+    /// This version can be used to derive multiple shared keys from the same shared secret (by using different salts)
+    /// - Parameter srpData: SRPData with clientS populated.
+    /// - Returns: Shared key
+    /// - Throws: SRPError if some of the required parameters is invalid.
+    func calculateServerSharedKey(srpData: SRPData, salt: Data) throws -> Data
+
+}
+
+/// Configuration for SRP algorithms (see the spec. above for more information about the meaning of parameters).
+public protocol SRPConfiguration
+{
+    /// A large safe prime per SRP spec.
+    var N: BigUInt { get }
+    
+    /// A generator modulo N
+    var g: BigUInt { get }
+    
+    /// Hash function to be used.
+    var digest: DigestFunc { get }
+    
+    /// Function to calculate HMAC
+    var hmac: HMacFunc { get }
+    
+    /// Function to calculate parameter a (per SRP spec above)
+    var a: BigUIntPrivateValueFunc { get }
+    
+    /// Function to calculate parameter b (per SRP spec above)
+    var b: BigUIntPrivateValueFunc { get }
+
+    /// Check if configuration is valid.
+    /// Currently only requires the size of the prime to be >= 256 and the g to be non-zero.
+    /// - Throws: SRPError if invalid.
+    func validate() throws
+}
+
+/// This class serves as a namespace for SRP related methods. It is not meant to be instantiated.
+public class SRP
+{
+    
+    /// Create an SRP configuration with the given parameters.
+    ///
+    /// - Parameters:
+    ///   - N: Safe large prime per SRP spec.
+    ///   - g: Group generator per SRP spec.
+    ///   - digest: Hash function to be used.
+    ///   - hmac: HMAC function to be used.
+    /// - Throws: SRPError if configuration parameters are not valid.
+    /// - Returns: The resulting SRP configuration.
+    static func configuration(N: Data,
+                              g: Data,
+                              digest: @escaping DigestFunc = SRP.sha256DigestFunc,
+                              hmac: @escaping HMacFunc = SRP.sha256HMacFunc) throws -> SRPConfiguration
+    {
+        let result = SRPConfigurationImpl(N: BigUInt(N),
+                                          g: BigUInt(g),
+                                          digest: digest,
+                                          hmac: hmac,
+                                          a: SRPConfigurationImpl.generatePrivateValue,
+                                          b: SRPConfigurationImpl.generatePrivateValue)
+        try result.validate()
+        return result
+    }
+    
+    
+    /// Only for use in testing! Create an SRP configuration and provide custom closures to generate private ephemeral values 'a' and 'b'
+    /// This is done to be able to use fixed values for 'a' and 'b' and make generated values predictable (and compare them with expected values).
+    /// - Parameters:
+    ///   - N: Safe large prime per SRP spec.
+    ///   - g: Group generator per SRP spec.
+    ///   - digest: Hash function to be used.
+    ///   - hmac: HMAC function to be used.
+    ///   - a: Custom closure to generate the private ephemeral value 'a'
+    ///   - b: Custom closure to generate the private ephemeral value 'b'
+    /// - Throws: SRPError if configuration parameters are not valid.
+    /// - Returns: The resulting SRP configuration.
+    internal static func configuration(N: Data,
+                                       g: Data,
+                                       digest: @escaping DigestFunc = SRP.sha256DigestFunc,
+                                       hmac: @escaping HMacFunc = SRP.sha256HMacFunc,
+                                       a: @escaping BigUIntPrivateValueFunc,
+                                       b: @escaping BigUIntPrivateValueFunc) throws -> SRPConfiguration
+    {
+        let result = SRPConfigurationImpl(N: BigUInt(N),
+                                          g: BigUInt(g),
+                                          digest: digest,
+                                          hmac: hmac,
+                                          a: a,
+                                          b: b)
+        try result.validate()
+        return result
+    }
+    
+    
+    /// Create an instance of SRPProtocol with the given configuration.
+    ///
+    /// - Parameter configuration: SRP configuration to use.
+    /// - Returns: The resulting SRP protocol implementation.
+    static func srpProtocol(_ configuration: SRPConfiguration) -> SRPProtocol
+    {
+        return SRPImpl(configuration: configuration)
+    }
+    
+    /// SHA256 hash function
+    public static let sha256DigestFunc: DigestFunc = { (data: Data) in
+        var hash = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
+        CC_SHA256(Array<UInt8>(data), CC_LONG(data.count), &hash)
+        return Data(hash)
+    }
+    
+    /// SHA512 hash function
+    public static let sha512DigestFunc: DigestFunc = { (data: Data) in
+        var hash = [UInt8](repeating: 0, count: Int(CC_SHA512_DIGEST_LENGTH))
+        CC_SHA512(Array<UInt8>(data), CC_LONG(data.count), &hash)
+        return Data(hash)
+    }
+    
+    
+    /// SHA256 hash function
+    public static let sha256HMacFunc: HMacFunc = { (key, data) in
+        var result: [UInt8] = Array(repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
+        
+        key.withUnsafeBytes { keyBytes in
+            data.withUnsafeBytes { dataBytes in
+                CCHmac(CCHmacAlgorithm(kCCHmacAlgSHA256), keyBytes, key.count, dataBytes, data.count, &result)
+            }
+        }
+        
+        return Data(result)
+    }
+    
+    /// SHA512 hash function
+    public static let sha512HMacFunc: HMacFunc = { (key, data) in
+        var result: [UInt8] = Array(repeating: 0, count: Int(CC_SHA512_DIGEST_LENGTH))
+        
+        key.withUnsafeBytes { keyBytes in
+            data.withUnsafeBytes { dataBytes in
+                CCHmac(CCHmacAlgorithm(kCCHmacAlgSHA512), keyBytes, key.count, dataBytes, data.count, &result)
+            }
+        }
+        
+        return Data(result)
+    }
+    
+    /// Generate a random private value less than the given value N and at least half the bit size of N
+    ///
+    /// - Parameter N: The value determining the range of the random value to generate.
+    /// - Returns: Randomly generate value.
+    public static func generatePrivateValue(N: Data) -> Data
+    {
+        return SRPConfigurationImpl.generatePrivateValue(N: BigUInt(N)).serialize()
+    }
+}
+
+/// Various SRP related errors that can be thrown
+enum SRPError: String, Error, CustomStringConvertible
+{
+    case invalidSalt = "SRP salt is too short"
+    case invalidUserName = "SRP user name cannot be empty"
+    case invalidPassword = "SRP password cannot be empty"
+    case invalidVerifier = "SRP verifier is invalid"
+    case invalidClientPublicValue = "SRP client public value is invalid"
+    case invalidServerPublicValue = "SRP server public value is invalid"
+    case invalidClientPrivateValue = "SRP client private value is invalid"
+    case invalidServerPrivateValue = "SRP server private value is invalid"
+    case invalidPasswordHash = "SRP password hash is invalid"
+    case invalidClientEvidenceMessage = "SRP client evidence message is invalid"
+    case invalidServerEvidenceMessage = "SRP server evidence message is invalid"
+    case invalidClientSharedSecret = "SRP client shared secret is invalid"
+    case invalidServerSharedSecret = "SRP server shared secret is invalid"
+    
+    case configurationPrimeTooShort = "SRP configuration safe prime is too short"
+    case configurationGeneratorInvalid = "SRP generator is invalid"
+    
+    var description: String {
+        return self.rawValue
+    }
 }
 
 /// Protocol defining SRP intermediate data.
@@ -131,6 +379,7 @@ public protocol SRPData
     
     // Server specific data
     
+    /// Multiplier. Computed as: k = H(N, g)
     var k: BigUInt { get set }
     
     /// Server private value 'b' (see the spec. above)
@@ -167,10 +416,23 @@ internal struct SRPDataImpl: SRPData
     var serverS: BigUInt
     
     // Server specific data
+    
+    /// Multiplier. Computed as: k = H(N, g)
     var k: BigUInt
+    
+    /// Private ephemeral value 'b'
     var b: BigUInt
+    
+    /// Public ephemeral value 'B'
     var B: BigUInt
 
+    
+    /// Initializer to be used for client size data.
+    ///
+    /// - Parameters:
+    ///   - x: Salted password hash (= H(s, p))
+    ///   - a: Private ephemeral value 'a' (per SRP spec. above)
+    ///   - A: Public ephemeral value 'A' (per SRP spec. above)
     init(x: BigUInt, a: BigUInt, A: BigUInt)
     {
         self.x = x
@@ -188,6 +450,14 @@ internal struct SRPDataImpl: SRPData
         self.serverM = 0
     }
     
+    
+    /// Initializer to be used for the server side data.
+    ///
+    /// - Parameters:
+    ///   - v: SRP verifier (received from the client)
+    ///   - k: Parameter 'k' (per SRP spec. above)
+    ///   - b: Private ephemeral value 'b' (per SRP spec. above)
+    ///   - B: Public ephemeral value 'B' (per SRP spec. above)
     init(v: BigUInt, k: BigUInt, b: BigUInt, B: BigUInt)
     {
         self.v = v
@@ -206,7 +476,13 @@ internal struct SRPDataImpl: SRPData
     }
 }
 
-public struct SRP
+public typealias DigestFunc = (Data) -> Data
+public typealias HMacFunc = (Data, Data) -> Data
+public typealias BigUIntPrivateValueFunc = (BigUInt) -> BigUInt
+
+/// Implementation of the SRP protocol. Although it's primarily intended to be used on the client side, it includes the server side methods
+/// as well (for testing purposes).
+public struct SRPImpl: SRPProtocol
 {
     /// SRP configuration. Defines the prime N and generator g to be used, and also the relevant hashing functions.
     public let configuration: SRPConfiguration
@@ -566,7 +842,7 @@ public struct SRP
 }
 
 /// Configuration for SRP algorithms (see the spec. above for more information about the meaning of parameters).
-public struct SRPConfiguration
+struct SRPConfigurationImpl: SRPConfiguration
 {
     /// A large safe prime per SRP spec.
     let N: BigUInt
@@ -581,17 +857,17 @@ public struct SRPConfiguration
     let hmac: HMacFunc
     
     /// Function to calculate parameter a (per SRP spec above)
-    let a: PrivateValueFunc
+    let a: BigUIntPrivateValueFunc
     
     /// Function to calculate parameter b (per SRP spec above)
-    let b: PrivateValueFunc
+    let b: BigUIntPrivateValueFunc
     
     init(N: BigUInt,
          g: BigUInt,
-         digest: @escaping DigestFunc = SRPConfiguration.sha256DigestFunc,
-         hmac: @escaping HMacFunc = SRPConfiguration.sha256HMacFunc,
-         a: @escaping PrivateValueFunc = SRPConfiguration.generatePrivateValue,
-         b: @escaping PrivateValueFunc = SRPConfiguration.generatePrivateValue)
+         digest: @escaping DigestFunc = SRP.sha256DigestFunc,
+         hmac: @escaping HMacFunc = SRP.sha256HMacFunc,
+         a: @escaping BigUIntPrivateValueFunc = SRPConfigurationImpl.generatePrivateValue,
+         b: @escaping BigUIntPrivateValueFunc = SRPConfigurationImpl.generatePrivateValue)
     {
         self.N = N
         self.g = g
@@ -610,48 +886,6 @@ public struct SRPConfiguration
         guard N.width >= 256 else { throw SRPError.configurationPrimeTooShort }
         guard g > 0 else { throw SRPError.configurationGeneratorInvalid }
     }
-    
-    /// SHA256 hash function
-    public static let sha256DigestFunc: DigestFunc = { (data: Data) in
-        var hash = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
-        CC_SHA256(Array<UInt8>(data), CC_LONG(data.count), &hash)
-        return Data(hash)
-    }
-    
-    /// SHA512 hash function
-    public static let sha512DigestFunc: DigestFunc = { (data: Data) in
-        var hash = [UInt8](repeating: 0, count: Int(CC_SHA512_DIGEST_LENGTH))
-        CC_SHA512(Array<UInt8>(data), CC_LONG(data.count), &hash)
-        return Data(hash)
-    }
-    
-    
-    /// SHA256 hash function
-    public static let sha256HMacFunc: HMacFunc = { (key, data) in
-        var result: [UInt8] = Array(repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
-        
-        key.withUnsafeBytes { keyBytes in
-            data.withUnsafeBytes { dataBytes in
-                CCHmac(CCHmacAlgorithm(kCCHmacAlgSHA256), keyBytes, key.count, dataBytes, data.count, &result)
-            }
-        }
-        
-        return Data(result)
-    }
-    
-    /// SHA512 hash function
-    public static let sha512HMacFunc: HMacFunc = { (key, data) in
-        var result: [UInt8] = Array(repeating: 0, count: Int(CC_SHA512_DIGEST_LENGTH))
-        
-        key.withUnsafeBytes { keyBytes in
-            data.withUnsafeBytes { dataBytes in
-                CCHmac(CCHmacAlgorithm(kCCHmacAlgSHA512), keyBytes, key.count, dataBytes, data.count, &result)
-            }
-        }
-        
-        return Data(result)
-    }
-    
     
     /// Generate a random private value less than the given value N and at least half the bit size of N
     ///
@@ -719,12 +953,20 @@ extension Data
     }
 }
 
-/// Helper category to convert BitUInt value to a hex string.
-extension BigUInt
+public extension BigUInt
 {
     func hexString() -> String
     {
         return String(self, radix: 16, uppercase: true)
     }
 }
+
+/// Helper category to convert BitUInt value to a hex string.
+extension BigUInt: CustomDebugStringConvertible
+{
+    public var debugDescription: String {
+        return String(self, radix: 16, uppercase: true)
+    }
+}
+
 
