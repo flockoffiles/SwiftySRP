@@ -208,7 +208,7 @@ public class SRP
     /// Create an SRP configuration with the given parameters.
     ///
     /// - Parameters:
-    ///   - N: Safe large prime per SRP spec.
+    ///   - N: Safe large prime per SRP spec. You can generate the prime with openssl: openssl dhparam -text 2048
     ///   - g: Group generator per SRP spec.
     ///   - digest: Hash function to be used.
     ///   - hmac: HMAC function to be used.
