@@ -10,7 +10,7 @@ Pod::Spec.new do |spec|
     spec.source_files = 'SwiftySRP/*.swift'
     spec.documentation_url = 'https://github.com/serieuxchat/SwiftySRP/'
     spec.dependency 'BigInt', '~> 2.1'
-    spec.preserve_paths = 'CommonCrypto/module.modulemap'
+    spec.preserve_paths = 'CommonCrypto/module.modulemap', 'README', 'SwiftySRPTests/*.swift'
     spec.xcconfig = { 'SWIFT_INCLUDE_PATHS' => '$(PODS_ROOT)/SwiftySRP/CommonCrypto' }
     
     
