@@ -319,6 +319,20 @@ enum SRPError: String, Error, CustomStringConvertible
 /// Protocol defining SRP intermediate data.
 public protocol SRPData
 {
+    /// Client public value 'A' (see the spec. above)
+    var clientPublicValue: Data { get set }
+
+    /// Client evidence message, computed as: M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S
+    var clientEvidenceMessage: Data { get set }
+    
+    /// SRP Verifier.
+    var verifier: Data { get set }
+    
+    /// Server public value 'B' (see the spec. above)
+    var serverPublicValue: Data { get set }
+    
+    /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret.
+    var serverEvidenceMessage: Data { get set }
 }
 
 internal protocol SRPDataInternal: SRPData
@@ -449,6 +463,60 @@ internal struct SRPDataImpl: SRPDataInternal
         self.clientM = 0
         self.serverM = 0
     }
+    
+    /// Client public value 'A' (see the spec. above)
+    var clientPublicValue: Data {
+        get {
+            return self.A.serialize()
+        }
+        set {
+            self.A = BigUInt(newValue)
+        }
+    }
+    
+    /// Client evidence message, computed as: M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S
+    var clientEvidenceMessage: Data {
+        get {
+            return self.clientM.serialize()
+        }
+        set {
+            self.clientM = BigUInt(newValue)
+        }
+    }
+    
+    /// SRP Verifier.
+    var verifier: Data {
+        get {
+            return self.v.serialize()
+        }
+        set {
+            self.v = BigUInt(newValue)
+        }
+    }
+    
+    /// Server public value 'B' (see the spec. above)
+    var serverPublicValue: Data {
+        get {
+            return self.B.serialize()
+        }
+        
+        set {
+            self.B = BigUInt(newValue)
+        }
+    }
+    
+    /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret.
+    var serverEvidenceMessage: Data {
+        get {
+            return self.serverM.serialize()
+        }
+        
+        set {
+            self.serverM = BigUInt(newValue)
+        }
+    }
+    
+
 }
 
 public typealias DigestFunc = (Data) -> Data
