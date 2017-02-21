@@ -491,7 +491,7 @@ public enum CryptoAlgorithm
         return Int(result)
     }
     
-    /// Returns the associated DigestFunc that
+    /// Returns the associated DigestFunc
     public func digestFunc()-> DigestFunc
     {
         return { (data: Data) in
@@ -509,7 +509,7 @@ public enum CryptoAlgorithm
         }
     }
     
-    /// Returns the associated HMacFunc that
+    /// Returns the associated HMacFunc
     public func hmacFunc()-> HMacFunc
     {
         return { (key, data) in
