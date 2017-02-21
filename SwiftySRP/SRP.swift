@@ -71,6 +71,7 @@ import CommonCrypto
 //    The host will abort if it detects that A == 0 (mod N).
 //    The user must show his proof of K first. If the server detects that the user's proof is incorrect, it must abort without showing its own proof of K.
 
+
 public protocol SRPProtocol
 {
     /// Compute the verifier and client credentials.
@@ -269,45 +270,16 @@ public class SRP
     }
     
     /// SHA256 hash function
-    public static let sha256DigestFunc: DigestFunc = { (data: Data) in
-        var hash = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
-        CC_SHA256(Array<UInt8>(data), CC_LONG(data.count), &hash)
-        return Data(hash)
-    }
+    public static let sha256DigestFunc: DigestFunc = CryptoAlgorithm.SHA256.digestFunc()
     
     /// SHA512 hash function
-    public static let sha512DigestFunc: DigestFunc = { (data: Data) in
-        var hash = [UInt8](repeating: 0, count: Int(CC_SHA512_DIGEST_LENGTH))
-        CC_SHA512(Array<UInt8>(data), CC_LONG(data.count), &hash)
-        return Data(hash)
-    }
-    
+    public static let sha512DigestFunc: DigestFunc = CryptoAlgorithm.SHA512.digestFunc()
     
     /// SHA256 hash function
-    public static let sha256HMacFunc: HMacFunc = { (key, data) in
-        var result: [UInt8] = Array(repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
-        
-        key.withUnsafeBytes { keyBytes in
-            data.withUnsafeBytes { dataBytes in
-                CCHmac(CCHmacAlgorithm(kCCHmacAlgSHA256), keyBytes, key.count, dataBytes, data.count, &result)
-            }
-        }
-        
-        return Data(result)
-    }
+    public static let sha256HMacFunc: HMacFunc = CryptoAlgorithm.SHA256.hmacFunc()
     
     /// SHA512 hash function
-    public static let sha512HMacFunc: HMacFunc = { (key, data) in
-        var result: [UInt8] = Array(repeating: 0, count: Int(CC_SHA512_DIGEST_LENGTH))
-        
-        key.withUnsafeBytes { keyBytes in
-            data.withUnsafeBytes { dataBytes in
-                CCHmac(CCHmacAlgorithm(kCCHmacAlgSHA512), keyBytes, key.count, dataBytes, data.count, &result)
-            }
-        }
-        
-        return Data(result)
-    }
+    public static let sha512HMacFunc: HMacFunc = CryptoAlgorithm.SHA512.hmacFunc()
     
     /// Generate a random private value less than the given value N and at least half the bit size of N
     ///
@@ -479,6 +451,80 @@ internal struct SRPDataImpl: SRPData
 public typealias DigestFunc = (Data) -> Data
 public typealias HMacFunc = (Data, Data) -> Data
 public typealias BigUIntPrivateValueFunc = (BigUInt) -> BigUInt
+
+/// Convenience enum to specify a hashing algorithm
+public enum CryptoAlgorithm
+{
+    case MD5, SHA1, SHA224, SHA256, SHA384, SHA512
+    
+    /// Returns the associated CCHmacAlgorithm
+    var hmacAlgorithm: CCHmacAlgorithm
+    {
+        var result: Int = 0
+        switch self
+        {
+            case .MD5:      result = kCCHmacAlgMD5
+            case .SHA1:     result = kCCHmacAlgSHA1
+            case .SHA224:   result = kCCHmacAlgSHA224
+            case .SHA256:   result = kCCHmacAlgSHA256
+            case .SHA384:   result = kCCHmacAlgSHA384
+            case .SHA512:   result = kCCHmacAlgSHA512
+        }
+        
+        return CCHmacAlgorithm(result)
+    }
+    
+    /// Returns the associated digest length
+    var digestLength: Int
+    {
+        var result: Int32 = 0
+        switch self
+        {
+            case .MD5:      result = CC_MD5_DIGEST_LENGTH
+            case .SHA1:     result = CC_SHA1_DIGEST_LENGTH
+            case .SHA224:   result = CC_SHA224_DIGEST_LENGTH
+            case .SHA256:   result = CC_SHA256_DIGEST_LENGTH
+            case .SHA384:   result = CC_SHA384_DIGEST_LENGTH
+            case .SHA512:   result = CC_SHA512_DIGEST_LENGTH
+        }
+        
+        return Int(result)
+    }
+    
+    /// Returns the associated DigestFunc that
+    public func digestFunc()-> DigestFunc
+    {
+        return { (data: Data) in
+            var hash = [UInt8](repeating: 0, count: self.digestLength)
+            switch self
+            {
+                case .MD5:      CC_MD5(Array<UInt8>(data), CC_LONG(data.count), &hash)
+                case .SHA1:     CC_SHA1(Array<UInt8>(data), CC_LONG(data.count), &hash)
+                case .SHA224:   CC_SHA224(Array<UInt8>(data), CC_LONG(data.count), &hash)
+                case .SHA256:   CC_SHA256(Array<UInt8>(data), CC_LONG(data.count), &hash)
+                case .SHA384:   CC_SHA384(Array<UInt8>(data), CC_LONG(data.count), &hash)
+                case .SHA512:   CC_SHA512(Array<UInt8>(data), CC_LONG(data.count), &hash)
+            }
+            return Data(hash)
+        }
+    }
+    
+    /// Returns the associated HMacFunc that
+    public func hmacFunc()-> HMacFunc
+    {
+        return { (key, data) in
+            var result: [UInt8] = Array(repeating: 0, count: self.digestLength)
+            
+            key.withUnsafeBytes { keyBytes in
+                data.withUnsafeBytes { dataBytes in
+                    CCHmac(CCHmacAlgorithm(self.hmacAlgorithm), keyBytes, key.count, dataBytes, data.count, &result)
+                }
+            }
+            
+            return Data(result)
+        }
+    }
+}
 
 /// Implementation of the SRP protocol. Although it's primarily intended to be used on the client side, it includes the server side methods
 /// as well (for testing purposes).
