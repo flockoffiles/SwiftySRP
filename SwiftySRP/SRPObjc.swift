@@ -61,12 +61,12 @@ class SRPConfigurationObjectImpl: NSObject, SRPConfigurationObject
     }
     
     /// Function to calculate parameter a (per SRP spec above)
-    public var a: BigUIntPrivateValueFunc {
+    public var a: PrivateValueFunc {
         return configuration.a
     }
 
     /// Function to calculate parameter b (per SRP spec above)
-    public var b: BigUIntPrivateValueFunc {
+    public var b: PrivateValueFunc {
         return configuration.b
     }
 

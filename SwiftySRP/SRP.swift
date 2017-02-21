@@ -179,28 +179,49 @@ public protocol SRPProtocol
 public protocol SRPConfiguration
 {
     /// A large safe prime per SRP spec. (Also see: https://tools.ietf.org/html/rfc5054#appendix-A)
-    var N: BigUInt { get }
-    
+    var modulus: Data { get }
+
     /// A generator modulo N. (Also see: https://tools.ietf.org/html/rfc5054#appendix-A)
-    var g: BigUInt { get }
+    var generator: Data { get }
     
     /// Hash function to be used.
     var digest: DigestFunc { get }
     
     /// Function to calculate HMAC
     var hmac: HMacFunc { get }
-    
+
     /// Function to calculate parameter a (per SRP spec above)
-    var a: BigUIntPrivateValueFunc { get }
+    var a: PrivateValueFunc { get }
     
     /// Function to calculate parameter b (per SRP spec above)
-    var b: BigUIntPrivateValueFunc { get }
-
+    var b: PrivateValueFunc { get }
+    
     /// Check if configuration is valid.
     /// Currently only requires the size of the prime to be >= 256 and the g to be greater than 1.
     /// - Throws: SRPError if invalid.
     func validate() throws
 }
+
+// Internal extension adding more properties
+extension SRPConfiguration
+{
+    /// A large safe prime per SRP spec. (Also see: https://tools.ietf.org/html/rfc5054#appendix-A)
+    var N: BigUInt {
+        get {
+            return BigUInt(modulus)
+        }
+    }
+    
+    /// A generator modulo N. (Also see: https://tools.ietf.org/html/rfc5054#appendix-A)
+    var g: BigUInt {
+        get {
+            return BigUInt(generator)
+        }
+        
+    }
+
+}
+
 
 /// This class serves as a namespace for SRP related methods. It is not meant to be instantiated.
 public class SRP
@@ -246,8 +267,8 @@ public class SRP
                                        g: Data,
                                        digest: @escaping DigestFunc = SRP.sha256DigestFunc,
                                        hmac: @escaping HMacFunc = SRP.sha256HMacFunc,
-                                       a: @escaping BigUIntPrivateValueFunc,
-                                       b: @escaping BigUIntPrivateValueFunc) throws -> SRPConfiguration
+                                       a: @escaping PrivateValueFunc,
+                                       b: @escaping PrivateValueFunc) throws -> SRPConfiguration
     {
         let result = SRPConfigurationImpl(N: BigUInt(N),
                                           g: BigUInt(g),
@@ -287,7 +308,7 @@ public class SRP
     /// - Returns: Randomly generate value.
     public static func generatePrivateValue(N: Data) -> Data
     {
-        return SRPConfigurationImpl.generatePrivateValue(N: BigUInt(N)).serialize()
+        return SRPConfigurationImpl.generatePrivateValue(dataN: N)
     }
 }
 
@@ -333,54 +354,147 @@ public protocol SRPData
     
     /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret.
     var serverEvidenceMessage: Data { get set }
+    
+    /// Password hash (see the spec. above)
+    var passwordHash: Data { get }
+
+    /// Client private value 'a' (see the spec. above)
+    var clientPrivateValue: Data { get }
+    
+    // u = H(A, B)
+    var scrambler: Data { get set }
+    
+    var clientSecret: Data { get set }
+    
+    var serverSecret: Data { get set }
+    
+    var multiplier: Data { get set }
+    
+    var serverPrivateValue: Data { get }
+    
+    
 }
 
-internal protocol SRPDataInternal: SRPData
+extension SRPData
 {
     // Client specific data
     
     /// Password hash (see the spec. above)
-    var x: BigUInt { get set }
+    var x: BigUInt {
+        get {
+            return BigUInt(passwordHash)
+        }
+    }
     
     /// Client private value 'a' (see the spec. above)
-    var a: BigUInt { get set }
+    var a: BigUInt {
+        get {
+            return BigUInt(clientPrivateValue)
+        }
+    }
     
     /// Client public value 'A' (see the spec. above)
-    var A: BigUInt { get set }
+    var A: BigUInt {
+        get {
+            return BigUInt(clientPublicValue)
+        }
+    }
     
     /// Client evidence message, computed as: M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S
-    var clientM: BigUInt { get set }
+    var clientM: BigUInt {
+        get {
+            return BigUInt(clientEvidenceMessage)
+        }
+        set {
+            clientEvidenceMessage = newValue.serialize()
+        }
+    }
+    
     /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret.
-    var serverM: BigUInt { get set }
+    var serverM: BigUInt {
+        get {
+            return BigUInt(serverEvidenceMessage)
+        }
+        set {
+            serverEvidenceMessage = newValue.serialize()
+        }
+    }
     
     // Common data:
     
     /// SRP Verifier.
-    var v: BigUInt { get set }
+    var v: BigUInt {
+        get {
+            return BigUInt(verifier)
+        }
+        set {
+            self.verifier = newValue.serialize()
+        }
+    }
     
     // u = H(A, B)
-    var u: BigUInt { get set }
+    var u: BigUInt {
+        get {
+            return BigUInt(scrambler)
+        }
+        set {
+            self.scrambler = newValue.serialize()
+        }
+    }
     
     /// Shared secret. Computed on the client as: S = (B - kg^x) ^ (a + ux)
-    var clientS: BigUInt { get set }
+    var clientS: BigUInt {
+        get {
+            return BigUInt(clientSecret)
+        }
+        set {
+            self.clientSecret = newValue.serialize()
+        }
+    }
     
     /// Shared secret. Computed on the server as: S = (Av^u) ^ b
-    var serverS: BigUInt { get set }
+    var serverS: BigUInt {
+        get {
+            return BigUInt(serverSecret)
+        }
+        set {
+            self.serverSecret = newValue.serialize()
+        }
+    }
+
     
     // Server specific data
     
     /// Multiplier. Computed as: k = H(N, g)
-    var k: BigUInt { get set }
+    var k: BigUInt {
+        get {
+            return BigUInt(multiplier)
+        }
+        set {
+            self.multiplier = newValue.serialize()
+        }
+    }
+
     
     /// Server private value 'b' (see the spec. above)
-    var b: BigUInt { get set }
+    var b: BigUInt {
+        get {
+            return BigUInt(serverPrivateValue)
+        }
+    }
+
     
     /// Server public value 'B' (see the spec. above)
-    var B: BigUInt { get set }
+    var B: BigUInt {
+        get {
+            return BigUInt(serverPublicValue)
+        }
+    }
+
 }
 
 /// SRP intermediate data (implementation)
-internal struct SRPDataImpl: SRPDataInternal
+struct SRPDataImpl: SRPData
 {
     // Client specific data
     var x: BigUInt
@@ -396,7 +510,8 @@ internal struct SRPDataImpl: SRPDataInternal
     // Common data
     /// SRP Verifier
     var v: BigUInt
-    /// u = H(A, B)
+    
+    /// scrambler u = H(A, B)
     var u: BigUInt
     
     /// Shared secret. Computed on the client as: S = (B - kg^x) ^ (a + ux)
@@ -474,6 +589,17 @@ internal struct SRPDataImpl: SRPDataInternal
         }
     }
     
+    /// Client private value 'a' (see the spec. above)
+    public var clientPrivateValue: Data {
+        get {
+            return self.a.serialize()
+        }
+        set {
+            self.a = BigUInt(newValue)
+        }
+    }
+    
+
     /// Client evidence message, computed as: M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S
     var clientEvidenceMessage: Data {
         get {
@@ -484,6 +610,36 @@ internal struct SRPDataImpl: SRPDataInternal
         }
     }
     
+    /// Password hash (see the spec. above)
+    public var passwordHash: Data {
+        get {
+            return x.serialize()
+        }
+        
+        set {
+            x = BigUInt(newValue)
+        }
+    }
+    
+    /// Scrambler u
+    public var scrambler: Data {
+        get {
+            return u.serialize()
+        }
+        set {
+            u = BigUInt(newValue)
+        }
+    }
+    
+    public var clientSecret: Data {
+        get {
+            return clientS.serialize()
+        }
+        set {
+            clientS = BigUInt(newValue)
+        }
+    }
+
     /// SRP Verifier.
     var verifier: Data {
         get {
@@ -505,6 +661,38 @@ internal struct SRPDataImpl: SRPDataInternal
         }
     }
     
+    public var serverPrivateValue: Data {
+        get {
+            return b.serialize()
+        }
+        set {
+            self.b = BigUInt(newValue)
+        }
+    }
+    
+
+    
+    public var serverSecret: Data {
+        get {
+            return serverS.serialize()
+        }
+        set {
+            self.serverS = BigUInt(newValue)
+        }
+    }
+    
+    // k
+    public var multiplier: Data {
+        get {
+            return k.serialize()
+        }
+        set {
+            self.k = BigUInt(newValue)
+        }
+    }
+    
+
+    
     /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret.
     var serverEvidenceMessage: Data {
         get {
@@ -521,7 +709,7 @@ internal struct SRPDataImpl: SRPDataInternal
 
 public typealias DigestFunc = (Data) -> Data
 public typealias HMacFunc = (Data, Data) -> Data
-public typealias BigUIntPrivateValueFunc = (BigUInt) -> BigUInt
+public typealias PrivateValueFunc = (Data) -> Data
 
 /// Convenience enum to specify a hashing algorithm
 public enum CryptoAlgorithm
@@ -602,8 +790,7 @@ public enum CryptoAlgorithm
 public struct SRPImpl: SRPProtocol
 {
     /// SRP configuration. Defines the prime N and generator g to be used, and also the relevant hashing functions.
-    public let configuration: SRPConfiguration
-    
+    public var configuration: SRPConfiguration
     
     /// Generate client credentials (parameters x, a, and A) from the SRP salt, user name (I), and password (p)
     ///
@@ -622,10 +809,10 @@ public struct SRPImpl: SRPProtocol
         guard !p.isEmpty else { throw SRPError.invalidPassword }
         
         let value_x = x(s: s, I: I, p: p)
-        let value_a = configuration.a(configuration.N)
+        let value_a = BigUInt(configuration.a(configuration.modulus))
 
         // A = g^a
-        let value_A = configuration.g.power(configuration.a(configuration.N), modulus: configuration.N)
+        let value_A = configuration.g.power(BigUInt(configuration.a(configuration.modulus)), modulus: configuration.N)
         
         return SRPDataImpl(x: value_x, a: value_a, A: value_A)
     }
@@ -643,7 +830,7 @@ public struct SRPImpl: SRPProtocol
         
         let v = BigUInt(verifier)
         let k = hashPaddedPair(digest: configuration.digest, N: configuration.N, n1: configuration.N, n2: configuration.g)
-        let b = configuration.b(configuration.N)
+        let b = BigUInt(configuration.b(configuration.modulus))
         // B = kv + g^b
         let B = (((k * v) % configuration.N) + configuration.g.power(b, modulus: configuration.N)) % configuration.N
         
@@ -662,7 +849,7 @@ public struct SRPImpl: SRPProtocol
     public func verifier(s: Data, I: Data,  p: Data) throws -> SRPData
     {
         // let valueX = x(s:s, I:I, p:p)
-        var srpData = try generateClientCredentials(s: s, I: I, p: p) as! SRPDataInternal
+        var srpData = try generateClientCredentials(s: s, I: I, p: p)
         
         srpData.v = configuration.g.power(srpData.x, modulus:configuration.N)
         
@@ -679,7 +866,7 @@ public struct SRPImpl: SRPProtocol
     public func calculateClientSecret(srpData: SRPData) throws -> SRPData
     {
         try configuration.validate()
-        var resultData = srpData as! SRPDataInternal
+        var resultData = srpData
         guard (resultData.A % configuration.N) > 0 else { throw SRPError.invalidClientPublicValue }
         guard (resultData.B % configuration.N) > 0 else { throw SRPError.invalidServerPublicValue }
         guard resultData.a > 0 else { throw SRPError.invalidClientPrivateValue }
@@ -708,7 +895,7 @@ public struct SRPImpl: SRPProtocol
     public func calculateServerSecret(srpData: SRPData) throws -> SRPData
     {
         try configuration.validate()
-        var resultData = srpData as! SRPDataInternal
+        var resultData = srpData
 
         guard (resultData.A % configuration.N) > 0 else { throw SRPError.invalidClientPublicValue }
         guard (resultData.B % configuration.N) > 0 else { throw SRPError.invalidServerPublicValue }
@@ -737,14 +924,14 @@ public struct SRPImpl: SRPProtocol
     public func clientEvidenceMessage(srpData: SRPData) throws -> SRPData
     {
         try configuration.validate()
-        var resultData = srpData as! SRPDataInternal
+        var resultData = srpData
         
         guard (resultData.A % configuration.N) > 0 else { throw SRPError.invalidClientPublicValue }
         guard (resultData.B % configuration.N) > 0 else { throw SRPError.invalidServerPublicValue }
         
         if resultData.clientS == 0
         {
-            resultData = try calculateClientSecret(srpData: resultData) as! SRPDataInternal
+            resultData = try calculateClientSecret(srpData: resultData)
         }
         
         resultData.clientM = hashPaddedTriplet(digest: configuration.digest, N: configuration.N, n1: resultData.A, n2: resultData.B, n3: resultData.clientS)
@@ -766,12 +953,12 @@ public struct SRPImpl: SRPProtocol
     public func serverEvidenceMessage(srpData: SRPData) throws -> SRPData
     {
         try configuration.validate()
-        var resultData = srpData as! SRPDataInternal
+        var resultData = srpData
         guard (resultData.A % configuration.N) > 0 else { throw SRPError.invalidClientPublicValue }
         guard (resultData.B % configuration.N) > 0 else { throw SRPError.invalidServerPublicValue }
         if resultData.serverS == 0
         {
-            resultData = try calculateServerSecret(srpData: resultData) as! SRPDataInternal
+            resultData = try calculateServerSecret(srpData: resultData)
         }
         
         resultData.serverM = hashPaddedTriplet(digest: configuration.digest,
@@ -791,7 +978,7 @@ public struct SRPImpl: SRPProtocol
     public func verifyClientEvidenceMessage(srpData: SRPData) throws
     {
         try configuration.validate()
-        let resultData = srpData as! SRPDataInternal
+        let resultData = srpData
         guard resultData.clientM > 0 else { throw SRPError.invalidClientEvidenceMessage }
         guard (resultData.A % configuration.N) > 0 else { throw SRPError.invalidClientPublicValue }
         guard (resultData.B % configuration.N) > 0 else { throw SRPError.invalidServerPublicValue }
@@ -809,7 +996,7 @@ public struct SRPImpl: SRPProtocol
     public func verifyServerEvidenceMessage(srpData: SRPData) throws
     {
         try configuration.validate()
-        let resultData = srpData as! SRPDataInternal
+        let resultData = srpData
         guard resultData.serverM > 0 else { throw SRPError.invalidServerEvidenceMessage }
         guard resultData.clientM > 0 else { throw SRPError.invalidClientEvidenceMessage }
         guard (resultData.A % configuration.N) > 0 else { throw SRPError.invalidClientPublicValue }
@@ -828,7 +1015,7 @@ public struct SRPImpl: SRPProtocol
     public func calculateClientSharedKey(srpData: SRPData) throws -> Data
     {
         try configuration.validate()
-        let resultData = srpData as! SRPDataInternal
+        let resultData = srpData
         guard resultData.clientS > 0 else { throw SRPError.invalidClientSharedSecret }
         let padLength = (configuration.N.width + 7) / 8
         let paddedS = pad(resultData.clientS.serialize(), to: padLength)
@@ -845,7 +1032,7 @@ public struct SRPImpl: SRPProtocol
     public func calculateServerSharedKey(srpData: SRPData) throws -> Data
     {
         try configuration.validate()
-        let resultData = srpData as! SRPDataInternal
+        let resultData = srpData
         guard resultData.serverS > 0 else { throw SRPError.invalidServerSharedSecret }
         let padLength = (configuration.N.width + 7) / 8
         let paddedS = pad(resultData.clientS.serialize(), to: padLength)
@@ -862,7 +1049,7 @@ public struct SRPImpl: SRPProtocol
     public func calculateClientSharedKey(srpData: SRPData, salt: Data) throws -> Data
     {
         try configuration.validate()
-        let resultData = srpData as! SRPDataInternal
+        let resultData = srpData
         return configuration.hmac(salt, resultData.clientS.serialize())
     }
 
@@ -874,7 +1061,7 @@ public struct SRPImpl: SRPProtocol
     public func calculateServerSharedKey(srpData: SRPData, salt: Data) throws -> Data
     {
         try configuration.validate()
-        let resultData = srpData as! SRPDataInternal
+        let resultData = srpData
         return configuration.hmac(salt, resultData.serverS.serialize())
     }
 
@@ -978,8 +1165,18 @@ public struct SRPImpl: SRPProtocol
 }
 
 /// Configuration for SRP algorithms (see the spec. above for more information about the meaning of parameters).
-struct SRPConfigurationImpl: SRPConfiguration
+class SRPConfigurationImpl: SRPConfiguration
 {
+    /// A large safe prime per SRP spec. (Also see: https://tools.ietf.org/html/rfc5054#appendix-A)
+    public var modulus: Data {
+        return N.serialize()
+    }
+
+    /// A generator modulo N. (Also see: https://tools.ietf.org/html/rfc5054#appendix-A)
+    public var generator: Data {
+        return g.serialize()
+    }
+    
     /// A large safe prime per SRP spec.
     let N: BigUInt
     
@@ -993,17 +1190,17 @@ struct SRPConfigurationImpl: SRPConfiguration
     let hmac: HMacFunc
     
     /// Function to calculate parameter a (per SRP spec above)
-    let a: BigUIntPrivateValueFunc
+    let a: PrivateValueFunc
     
     /// Function to calculate parameter b (per SRP spec above)
-    let b: BigUIntPrivateValueFunc
+    let b: PrivateValueFunc
     
     init(N: BigUInt,
          g: BigUInt,
          digest: @escaping DigestFunc = SRP.sha256DigestFunc,
          hmac: @escaping HMacFunc = SRP.sha256HMacFunc,
-         a: @escaping BigUIntPrivateValueFunc = SRPConfigurationImpl.generatePrivateValue,
-         b: @escaping BigUIntPrivateValueFunc = SRPConfigurationImpl.generatePrivateValue)
+         a: @escaping PrivateValueFunc = SRPConfigurationImpl.generatePrivateValue,
+         b: @escaping PrivateValueFunc = SRPConfigurationImpl.generatePrivateValue)
     {
         self.N = N
         self.g = g
@@ -1027,8 +1224,9 @@ struct SRPConfigurationImpl: SRPConfiguration
     ///
     /// - Parameter N: The value determining the range of the random value to generate.
     /// - Returns: Randomly generate value.
-    public static func generatePrivateValue(N: BigUInt) -> BigUInt
+    public static func generatePrivateValue(dataN: Data) -> Data
     {
+        let N = BigUInt(dataN)
         let minBits = N.width / 2
         var random = BigUInt.randomIntegerLessThan(N)
         while (random.width < minBits)
@@ -1036,7 +1234,7 @@ struct SRPConfigurationImpl: SRPConfiguration
             random = BigUInt.randomIntegerLessThan(N)
         }
         
-        return random
+        return random.serialize()
     }
 }
 
