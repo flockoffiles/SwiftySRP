@@ -9,7 +9,8 @@
 import Foundation
 import BigInt
 
-// Internal extension adding more properties
+// Internal extension to short-circuit conversions between Data and BigUInt
+// in case the default implementation struct (SRPConfigurationImpl) is used
 extension SRPConfiguration
 {
     /// A large safe prime per SRP spec. (Also see: https://tools.ietf.org/html/rfc5054#appendix-A)
@@ -34,7 +35,26 @@ extension SRPConfiguration
             }
             return BigUInt(generator)
         }
-        
+    }
+    
+    /// Client private value
+    func a() -> BigUInt
+    {
+        if let impl = self as? SRPConfigurationImpl
+        {
+            return impl.uint_a()
+        }
+        return BigUInt(clientPrivateValue())
+    }
+    
+    /// Server private value
+    func b() -> BigUInt
+    {
+        if let impl = self as? SRPConfigurationImpl
+        {
+            return impl.uint_b()
+        }
+        return BigUInt(serverPrivateValue())
     }
 }
 
@@ -112,23 +132,35 @@ struct SRPConfigurationImpl: SRPConfiguration
     }
     
     /// Function to calculate parameter a (per SRP spec above)
-    func a() -> Data
+    func uint_a() -> BigUInt
     {
         if let aFunc = self.aFunc
         {
-            return aFunc().serialize()
+            return aFunc()
         }
-        return SRPConfigurationImpl.generatePrivateValue(N: uint_N).serialize()
+        return SRPConfigurationImpl.generatePrivateValue(N: uint_N)
+    }
+    
+    /// Function to calculate parameter a (per SRP spec above)
+    func clientPrivateValue() -> Data
+    {
+        return uint_a().serialize()
     }
     
     /// Function to calculate parameter b (per SRP spec above)
-    func b() -> Data
+    func uint_b() -> BigUInt
     {
         if let bFunc = self.bFunc
         {
-            return bFunc().serialize()
+            return bFunc()
         }
-        return SRPConfigurationImpl.generatePrivateValue(N: uint_N).serialize()
+        return SRPConfigurationImpl.generatePrivateValue(N: uint_N)
+    }
+    
+    /// Function to calculate parameter b (per SRP spec above)
+    func serverPrivateValue() -> Data
+    {
+        return uint_b().serialize()
     }
 }
 

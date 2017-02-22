@@ -28,10 +28,10 @@ public protocol SRPConfiguration
     var hmac: HMacFunc { get }
     
     /// Function to calculate parameter a (per SRP spec above)
-    func a() -> Data
+    func clientPrivateValue() -> Data
     
     /// Function to calculate parameter b (per SRP spec above)
-    func b() -> Data
+    func serverPrivateValue() -> Data
     
     /// Check if configuration is valid.
     /// Currently only requires the size of the prime to be >= 256 and the g to be greater than 1.

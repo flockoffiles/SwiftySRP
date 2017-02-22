@@ -9,42 +9,43 @@
 import Foundation
 import BigInt
 
+
 /// SRP intermediate data (implementation)
 struct SRPDataImpl: SRPData
 {
     // Client specific data
-    var x: BigUInt
-    var a: BigUInt
-    var A: BigUInt
+    var uint_x: BigUInt
+    var uint_a: BigUInt
+    var uint_A: BigUInt
     
     /// Client evidence message, computed as: M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S
-    var clientM: BigUInt
+    var uint_clientM: BigUInt
     
     /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret.
-    var serverM: BigUInt
+    var uint_serverM: BigUInt
     
     // Common data
     /// SRP Verifier
-    var v: BigUInt
+    var uint_v: BigUInt
     
     /// scrambler u = H(A, B)
-    var u: BigUInt
+    var uint_u: BigUInt
     
     /// Shared secret. Computed on the client as: S = (B - kg^x) ^ (a + ux)
-    var clientS: BigUInt
+    var uint_clientS: BigUInt
     /// Shared secret. Computed on the server as: S = (Av^u) ^ b
-    var serverS: BigUInt
+    var uint_serverS: BigUInt
     
     // Server specific data
     
     /// Multiplier. Computed as: k = H(N, g)
-    var k: BigUInt
+    var uint_k: BigUInt
     
     /// Private ephemeral value 'b'
-    var b: BigUInt
+    var uint_b: BigUInt
     
     /// Public ephemeral value 'B'
-    var B: BigUInt
+    var uint_B: BigUInt
     
     
     /// Initializer to be used for client size data.
@@ -55,19 +56,19 @@ struct SRPDataImpl: SRPData
     ///   - A: Public ephemeral value 'A' (per SRP spec. above)
     init(x: BigUInt, a: BigUInt, A: BigUInt)
     {
-        self.x = x
-        self.a = a
-        self.A = A
+        self.uint_x = x
+        self.uint_a = a
+        self.uint_A = A
         
-        self.v = 0
-        self.b = 0
-        self.k = 0
-        self.B = 0
-        self.u = 0
-        self.clientS = 0
-        self.serverS = 0
-        self.clientM = 0
-        self.serverM = 0
+        self.uint_v = 0
+        self.uint_b = 0
+        self.uint_k = 0
+        self.uint_B = 0
+        self.uint_u = 0
+        self.uint_clientS = 0
+        self.uint_serverS = 0
+        self.uint_clientM = 0
+        self.uint_serverM = 0
     }
     
     
@@ -80,38 +81,38 @@ struct SRPDataImpl: SRPData
     ///   - B: Public ephemeral value 'B' (per SRP spec. above)
     init(v: BigUInt, k: BigUInt, b: BigUInt, B: BigUInt)
     {
-        self.v = v
-        self.k = k
-        self.b = b
-        self.B = B
+        self.uint_v = v
+        self.uint_k = k
+        self.uint_b = b
+        self.uint_B = B
         
-        self.x = 0
-        self.a = 0
-        self.A = 0
-        self.u = 0
-        self.clientS = 0
-        self.serverS = 0
-        self.clientM = 0
-        self.serverM = 0
+        self.uint_x = 0
+        self.uint_a = 0
+        self.uint_A = 0
+        self.uint_u = 0
+        self.uint_clientS = 0
+        self.uint_serverS = 0
+        self.uint_clientM = 0
+        self.uint_serverM = 0
     }
     
     /// Client public value 'A' (see the spec. above)
     var clientPublicValue: Data {
         get {
-            return self.A.serialize()
+            return uint_A.serialize()
         }
         set {
-            self.A = BigUInt(newValue)
+            uint_A = BigUInt(newValue)
         }
     }
     
     /// Client private value 'a' (see the spec. above)
     public var clientPrivateValue: Data {
         get {
-            return self.a.serialize()
+            return uint_a.serialize()
         }
         set {
-            self.a = BigUInt(newValue)
+            uint_a = BigUInt(newValue)
         }
     }
     
@@ -119,70 +120,70 @@ struct SRPDataImpl: SRPData
     /// Client evidence message, computed as: M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S
     var clientEvidenceMessage: Data {
         get {
-            return self.clientM.serialize()
+            return uint_clientM.serialize()
         }
         set {
-            self.clientM = BigUInt(newValue)
+            uint_clientM = BigUInt(newValue)
         }
     }
     
     /// Password hash (see the spec. above)
     public var passwordHash: Data {
         get {
-            return x.serialize()
+            return uint_x.serialize()
         }
         
         set {
-            x = BigUInt(newValue)
+            uint_x = BigUInt(newValue)
         }
     }
     
     /// Scrambler u
     public var scrambler: Data {
         get {
-            return u.serialize()
+            return uint_u.serialize()
         }
         set {
-            u = BigUInt(newValue)
+            uint_u = BigUInt(newValue)
         }
     }
     
     public var clientSecret: Data {
         get {
-            return clientS.serialize()
+            return uint_clientS.serialize()
         }
         set {
-            clientS = BigUInt(newValue)
+            uint_clientS = BigUInt(newValue)
         }
     }
     
     /// SRP Verifier.
     var verifier: Data {
         get {
-            return self.v.serialize()
+            return uint_v.serialize()
         }
         set {
-            self.v = BigUInt(newValue)
+            uint_v = BigUInt(newValue)
         }
     }
     
     /// Server public value 'B' (see the spec. above)
     var serverPublicValue: Data {
         get {
-            return self.B.serialize()
+            return uint_B.serialize()
         }
         
         set {
-            self.B = BigUInt(newValue)
+            uint_B = BigUInt(newValue)
         }
     }
     
     public var serverPrivateValue: Data {
         get {
-            return b.serialize()
+            return uint_b.serialize()
         }
         set {
-            self.b = BigUInt(newValue)
+            uint_b = BigUInt(newValue)
         }
     }
     
@@ -190,20 +191,20 @@ struct SRPDataImpl: SRPData
     
     public var serverSecret: Data {
         get {
-            return serverS.serialize()
+            return uint_serverS.serialize()
         }
         set {
-            self.serverS = BigUInt(newValue)
+            uint_serverS = BigUInt(newValue)
         }
     }
     
     // k
     public var multiplier: Data {
         get {
-            return k.serialize()
+            return uint_k.serialize()
         }
         set {
-            self.k = BigUInt(newValue)
+            uint_k = BigUInt(newValue)
         }
     }
     
@@ -212,13 +213,244 @@ struct SRPDataImpl: SRPData
     /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret.
     var serverEvidenceMessage: Data {
         get {
-            return self.serverM.serialize()
+            return uint_serverM.serialize()
         }
         
         set {
-            self.serverM = BigUInt(newValue)
+            uint_serverM = BigUInt(newValue)
+        }
+    }
+    
+}
+
+/// Internal extension to short-circuit conversions between Data and BigUInt
+/// in case the implementation of SRPData is SRPDataImpl (which uses BigUInt)
+extension SRPData
+{
+    // Client specific data
+    
+    /// Password hash (see the spec. above)
+    var x: BigUInt {
+        get {
+            // Short-circuit conversions between Data and BigUInt if possible
+            if let impl = self as? SRPDataImpl
+            {
+                return impl.uint_x
+            }
+            return BigUInt(passwordHash)
+        }
+    }
+    
+    /// Client private value 'a' (see the spec. above)
+    var a: BigUInt {
+        get {
+            // Short-circuit conversions between Data and BigUInt if possible
+            if let impl = self as? SRPDataImpl
+            {
+                return impl.uint_a
+            }
+            return BigUInt(clientPrivateValue)
+        }
+    }
+    
+    /// Client public value 'A' (see the spec. above)
+    var A: BigUInt {
+        get {
+            // Short-circuit conversions between Data and BigUInt if possible
+            if let impl = self as? SRPDataImpl
+            {
+                return impl.uint_A
+            }
+            
+            return BigUInt(clientPublicValue)
+        }
+    }
+    
+    /// Client evidence message, computed as: M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S
+    var clientM: BigUInt {
+        get {
+            // Short-circuit conversions between Data and BigUInt if possible
+            if let impl = self as? SRPDataImpl
+            {
+                return impl.uint_clientM
+            }
+            
+            return BigUInt(clientEvidenceMessage)
+        }
+        set {
+            // Short-circuit conversions between Data and BigUInt if possible
+            if var impl = self as? SRPDataImpl
+            {
+                impl.uint_clientM = newValue
+                self = impl as! Self
+            }
+            else
+            {
+                clientEvidenceMessage = newValue.serialize()
+            }
+        }
+    }
+    
+    /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret.
+    var serverM: BigUInt {
+        get {
+            if let impl = self as? SRPDataImpl
+            {
+                return impl.uint_serverM
+            }
+            return BigUInt(serverEvidenceMessage)
+        }
+        set {
+            if var impl = self as? SRPDataImpl
+            {
+                impl.uint_serverM = newValue
+                self = impl as! Self
+            }
+            else
+            {
+                serverEvidenceMessage = newValue.serialize()
+            }
+        }
+    }
+    
+    // Common data:
+    
+    /// SRP Verifier.
+    var v: BigUInt {
+        get {
+            if let impl = self as? SRPDataImpl
+            {
+                return impl.uint_v
+            }
+            return BigUInt(verifier)
+        }
+        set {
+            if var impl = self as? SRPDataImpl
+            {
+                impl.uint_v = newValue
+                self = impl as! Self
+            }
+            else
+            {
+                self.verifier = newValue.serialize()
+            }
+        }
+    }
+    
+    // u = H(A, B)
+    var u: BigUInt {
+        get {
+            if let impl = self as? SRPDataImpl
+            {
+                return impl.uint_u
+            }
+            return BigUInt(scrambler)
+        }
+        set {
+            if var impl = self as? SRPDataImpl
+            {
+                impl.uint_u = newValue
+                self = impl as! Self
+            }
+            else
+            {
+                self.scrambler = newValue.serialize()
+            }
+        }
+    }
+    
+    /// Shared secret. Computed on the client as: S = (B - kg^x) ^ (a + ux)
+    var clientS: BigUInt {
+        get {
+            if let impl = self as? SRPDataImpl
+            {
+                return impl.uint_clientS
+            }
+            return BigUInt(clientSecret)
+        }
+        set {
+            if var impl = self as? SRPDataImpl
+            {
+                impl.uint_clientS = newValue
+                self = impl as! Self
+            }
+            else
+            {
+                self.clientSecret = newValue.serialize()
+            }
+        }
+    }
+    
+    /// Shared secret. Computed on the server as: S = (Av^u) ^ b
+    var serverS: BigUInt {
+        get {
+            if let impl = self as? SRPDataImpl
+            {
+                return impl.uint_serverS
+            }
+            return BigUInt(serverSecret)
+        }
+        set {
+            if var impl = self as? SRPDataImpl
+            {
+                impl.uint_serverS = newValue
+                self = impl as! Self
+            }
+            else
+            {
+                self.serverSecret = newValue.serialize()
+            }
         }
     }
     
     
+    // Server specific data
+    
+    /// Multiplier. Computed as: k = H(N, g)
+    var k: BigUInt {
+        get {
+            if let impl = self as? SRPDataImpl
+            {
+                return impl.uint_k
+            }
+            return BigUInt(multiplier)
+        }
+        set {
+            if var impl = self as? SRPDataImpl
+            {
+                impl.uint_k = newValue
+                self = impl as! Self
+            }
+            else
+            {
+                self.multiplier = newValue.serialize()
+            }
+        }
+    }
+    
+    
+    /// Server private value 'b' (see the spec. above)
+    var b: BigUInt {
+        get {
+            if let impl = self as? SRPDataImpl
+            {
+                return impl.uint_b
+            }
+            return BigUInt(serverPrivateValue)
+        }
+    }
+    
+    
+    /// Server public value 'B' (see the spec. above)
+    var B: BigUInt {
+        get {
+            if let impl = self as? SRPDataImpl
+            {
+                return impl.uint_B
+            }
+            return BigUInt(serverPublicValue)
+        }
+    }
+    
 }
+
