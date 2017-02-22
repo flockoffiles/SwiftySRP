@@ -13,9 +13,16 @@
 		A50090C41E4C74BD00238562 /* SwiftySRPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50090C31E4C74BD00238562 /* SwiftySRPTests.swift */; };
 		A50090C61E4C74BD00238562 /* SwiftySRP.h in Headers */ = {isa = PBXBuildFile; fileRef = A50090B81E4C74BD00238562 /* SwiftySRP.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A50091051E4C961100238562 /* SRP.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50091041E4C961100238562 /* SRP.swift */; };
-		A53E4F211E5B522100C7DDEA /* SwiftySRPObjcTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A53E4F201E5B522100C7DDEA /* SwiftySRPObjcTests.m */; };
-		A5A56B661E5B53970024CA0A /* SRPObjc.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5A56B651E5B53970024CA0A /* SRPObjc.swift */; };
-		A5A56B681E5C34560024CA0A /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = A5A56B671E5C34560024CA0A /* README.md */; };
+		A58ACE871E5D818000FF2C0D /* SRPConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE861E5D818000FF2C0D /* SRPConfiguration.swift */; };
+		A58ACE8B1E5D823700FF2C0D /* SRPConfigurationImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE8A1E5D823700FF2C0D /* SRPConfigurationImpl.swift */; };
+		A58ACE8D1E5D826400FF2C0D /* SRPUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE8C1E5D826400FF2C0D /* SRPUtil.swift */; };
+		A58ACE8F1E5D82B400FF2C0D /* SRPProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE8E1E5D82B400FF2C0D /* SRPProtocol.swift */; };
+		A58ACE911E5D858B00FF2C0D /* SRPData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE901E5D858B00FF2C0D /* SRPData.swift */; };
+		A58ACE931E5D85B300FF2C0D /* SRPData+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE921E5D85B300FF2C0D /* SRPData+Extensions.swift */; };
+		A58ACE951E5D88AD00FF2C0D /* SRPDataImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE941E5D88AD00FF2C0D /* SRPDataImpl.swift */; };
+		A58ACE971E5D8A8500FF2C0D /* SRPError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE961E5D8A8500FF2C0D /* SRPError.swift */; };
+		A58ACE991E5D8AD700FF2C0D /* SRPImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE981E5D8AD700FF2C0D /* SRPImpl.swift */; };
+		A58ACE9B1E5D93CE00FF2C0D /* SRP+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE9A1E5D93CE00FF2C0D /* SRP+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,8 +48,16 @@
 		A50090C51E4C74BD00238562 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A50091041E4C961100238562 /* SRP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRP.swift; sourceTree = "<group>"; };
 		A53E4F1F1E5B522000C7DDEA /* SwiftySRPTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SwiftySRPTests-Bridging-Header.h"; sourceTree = "<group>"; };
-		A53E4F201E5B522100C7DDEA /* SwiftySRPObjcTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SwiftySRPObjcTests.m; sourceTree = "<group>"; };
-		A5A56B651E5B53970024CA0A /* SRPObjc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPObjc.swift; sourceTree = "<group>"; };
+		A58ACE861E5D818000FF2C0D /* SRPConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPConfiguration.swift; sourceTree = "<group>"; };
+		A58ACE8A1E5D823700FF2C0D /* SRPConfigurationImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPConfigurationImpl.swift; sourceTree = "<group>"; };
+		A58ACE8C1E5D826400FF2C0D /* SRPUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPUtil.swift; sourceTree = "<group>"; };
+		A58ACE8E1E5D82B400FF2C0D /* SRPProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPProtocol.swift; sourceTree = "<group>"; };
+		A58ACE901E5D858B00FF2C0D /* SRPData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPData.swift; sourceTree = "<group>"; };
+		A58ACE921E5D85B300FF2C0D /* SRPData+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SRPData+Extensions.swift"; sourceTree = "<group>"; };
+		A58ACE941E5D88AD00FF2C0D /* SRPDataImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPDataImpl.swift; sourceTree = "<group>"; };
+		A58ACE961E5D8A8500FF2C0D /* SRPError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPError.swift; sourceTree = "<group>"; };
+		A58ACE981E5D8AD700FF2C0D /* SRPImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPImpl.swift; sourceTree = "<group>"; };
+		A58ACE9A1E5D93CE00FF2C0D /* SRP+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SRP+Extensions.swift"; sourceTree = "<group>"; };
 		A5A56B671E5C34560024CA0A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B15B2BD877A371ACD21A17B5 /* Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig"; path = "Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRP/Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig"; sourceTree = "<group>"; };
 		F59A7100C8CBC36C1AB01B41 /* Pods_SwiftySRP_Base_SwiftySRP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SwiftySRP_Base_SwiftySRP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -116,7 +131,16 @@
 				A50090B81E4C74BD00238562 /* SwiftySRP.h */,
 				A50090B91E4C74BD00238562 /* Info.plist */,
 				A50091041E4C961100238562 /* SRP.swift */,
-				A5A56B651E5B53970024CA0A /* SRPObjc.swift */,
+				A58ACE861E5D818000FF2C0D /* SRPConfiguration.swift */,
+				A58ACE8A1E5D823700FF2C0D /* SRPConfigurationImpl.swift */,
+				A58ACE8C1E5D826400FF2C0D /* SRPUtil.swift */,
+				A58ACE8E1E5D82B400FF2C0D /* SRPProtocol.swift */,
+				A58ACE901E5D858B00FF2C0D /* SRPData.swift */,
+				A58ACE921E5D85B300FF2C0D /* SRPData+Extensions.swift */,
+				A58ACE941E5D88AD00FF2C0D /* SRPDataImpl.swift */,
+				A58ACE961E5D8A8500FF2C0D /* SRPError.swift */,
+				A58ACE981E5D8AD700FF2C0D /* SRPImpl.swift */,
+				A58ACE9A1E5D93CE00FF2C0D /* SRP+Extensions.swift */,
 			);
 			path = SwiftySRP;
 			sourceTree = "<group>";
@@ -125,7 +149,6 @@
 			isa = PBXGroup;
 			children = (
 				A50090C31E4C74BD00238562 /* SwiftySRPTests.swift */,
-				A53E4F201E5B522100C7DDEA /* SwiftySRPObjcTests.m */,
 				A50090C51E4C74BD00238562 /* Info.plist */,
 				A53E4F1F1E5B522000C7DDEA /* SwiftySRPTests-Bridging-Header.h */,
 			);
@@ -329,9 +352,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5A56B681E5C34560024CA0A /* README.md in Sources */,
+				A58ACE911E5D858B00FF2C0D /* SRPData.swift in Sources */,
 				A50091051E4C961100238562 /* SRP.swift in Sources */,
-				A5A56B661E5B53970024CA0A /* SRPObjc.swift in Sources */,
+				A58ACE8B1E5D823700FF2C0D /* SRPConfigurationImpl.swift in Sources */,
+				A58ACE971E5D8A8500FF2C0D /* SRPError.swift in Sources */,
+				A58ACE951E5D88AD00FF2C0D /* SRPDataImpl.swift in Sources */,
+				A58ACE8F1E5D82B400FF2C0D /* SRPProtocol.swift in Sources */,
+				A58ACE931E5D85B300FF2C0D /* SRPData+Extensions.swift in Sources */,
+				A58ACE871E5D818000FF2C0D /* SRPConfiguration.swift in Sources */,
+				A58ACE9B1E5D93CE00FF2C0D /* SRP+Extensions.swift in Sources */,
+				A58ACE991E5D8AD700FF2C0D /* SRPImpl.swift in Sources */,
+				A58ACE8D1E5D826400FF2C0D /* SRPUtil.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,7 +371,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A50090C41E4C74BD00238562 /* SwiftySRPTests.swift in Sources */,
-				A53E4F211E5B522100C7DDEA /* SwiftySRPObjcTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

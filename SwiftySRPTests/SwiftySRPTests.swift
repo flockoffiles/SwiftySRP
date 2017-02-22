@@ -187,8 +187,8 @@ class SwiftySRPTests: XCTestCase
         let srp256: SRPImpl
         do {
             // a is fixed in this test (not generated randomly)
-            let fixed_a_256 = BigUInt(fixedString_a_256, radix: 16)!.serialize()
-            let fixed_b_256 = BigUInt(fixedString_b_256, radix: 16)!.serialize()
+            let fixed_a_256 = BigUInt(fixedString_a_256, radix: 16)!
+            let fixed_b_256 = BigUInt(fixedString_b_256, radix: 16)!
             
             srp256 = SRP.srpProtocol(try SRP.configuration(N: N, g:g, digest: SRP.sha256DigestFunc,
                                                            hmac: SRP.sha256HMacFunc,
@@ -255,8 +255,8 @@ class SwiftySRPTests: XCTestCase
     /// This test is for SRP using SHA512 as the hashing function.
     func test05GenerateClientCredentials_SHA512()
     {
-        let fixed_a_512 = BigUInt(fixedString_a_512, radix: 16)!.serialize()
-        let fixed_b_512 = BigUInt(fixedString_b_512, radix: 16)!.serialize()
+        let fixed_a_512 = BigUInt(fixedString_a_512, radix: 16)!
+        let fixed_b_512 = BigUInt(fixedString_b_512, radix: 16)!
         let srp_512: SRPImpl
         
         do {
@@ -283,8 +283,8 @@ class SwiftySRPTests: XCTestCase
     func test06Verifier_SHA256()
     {
         // a is fixed in this test (not generated randomly)
-        let fixed_a_256 = BigUInt(fixedString_a_256, radix: 16)!.serialize()
-        let fixed_b_256 = BigUInt(fixedString_b_256, radix: 16)!.serialize()
+        let fixed_a_256 = BigUInt(fixedString_a_256, radix: 16)!
+        let fixed_b_256 = BigUInt(fixedString_b_256, radix: 16)!
         
         let srp256: SRPImpl
         do {
@@ -309,8 +309,8 @@ class SwiftySRPTests: XCTestCase
     func test06Verifier_SHA512()
     {
         // a is fixed in this test (not generated randomly)
-        let fixed_a_512 = BigUInt(fixedString_a_512, radix: 16)!.serialize()
-        let fixed_b_512 = BigUInt(fixedString_b_512, radix: 16)!.serialize()
+        let fixed_a_512 = BigUInt(fixedString_a_512, radix: 16)!
+        let fixed_b_512 = BigUInt(fixedString_b_512, radix: 16)!
         let srp512: SRPImpl
         
         do {
@@ -335,8 +335,8 @@ class SwiftySRPTests: XCTestCase
     /// (This version is for SHA256 hash function)
     func test07Verification_SHA256()
     {
-        let fixed_a_256 = BigUInt(fixedString_a_256, radix: 16)!.serialize()
-        let fixed_b_256 = BigUInt(fixedString_b_256, radix: 16)!.serialize()
+        let fixed_a_256 = BigUInt(fixedString_a_256, radix: 16)!
+        let fixed_b_256 = BigUInt(fixedString_b_256, radix: 16)!
         
         let srp256: SRPProtocol
         do {
@@ -404,8 +404,8 @@ class SwiftySRPTests: XCTestCase
     func test07Verification_SHA512()
     {
         
-        let fixed_a_512 = BigUInt(fixedString_a_512, radix: 16)!.serialize()
-        let fixed_b_512 = BigUInt(fixedString_b_512, radix: 16)!.serialize()
+        let fixed_a_512 = BigUInt(fixedString_a_512, radix: 16)!
+        let fixed_b_512 = BigUInt(fixedString_b_512, radix: 16)!
         let srp512: SRPProtocol
         
         do {
