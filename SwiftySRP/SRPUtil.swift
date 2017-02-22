@@ -108,6 +108,10 @@ extension UnicodeScalar
 /// Helper category to perform conversion of hex strings to data
 extension Data
 {
+    
+    /// Create an instance of Data from a hex string representation.
+    ///
+    /// - Parameter hex: hex string from which to create the data
     init(hex:String)
     {
         let scalars = hex.unicodeScalars
@@ -123,6 +127,10 @@ extension Data
         self = Data(bytes: bytes)
     }
     
+    
+    /// Convert data to a hex string
+    ///
+    /// - Returns: hex string representation of the data.
     func hexString() -> String
     {
         var result = String()
@@ -134,15 +142,20 @@ extension Data
     }
 }
 
+/// Helper extension to provide a simple method for conversion to hex string.
 public extension BigUInt
 {
+    
+    /// Convert to hex string. Uses a String initializer from BigUInt
+    ///
+    /// - Returns: Hex string representation (uppercase, without 0x) of the current BigUInt
     func hexString() -> String
     {
         return String(self, radix: 16, uppercase: true)
     }
 }
 
-/// Helper category to convert BitUInt value to a hex string.
+/// Helper category to output hex string representation to the debug console.
 extension BigUInt: CustomDebugStringConvertible
 {
     public var debugDescription: String {

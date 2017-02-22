@@ -27,6 +27,7 @@ import Foundation
 import BigInt
 
 /// This class serves as a namespace for SRP related methods. It is not meant to be instantiated.
+/// For a short description of the SRP protocol, see SRPProtocol.swift
 public class SRP
 {
     

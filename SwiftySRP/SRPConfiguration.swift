@@ -8,7 +8,10 @@
 
 import Foundation
 
+/// Digest (hash) function to use in SRP (used in calculations and to derive a single shared key from the shared secret).
 public typealias DigestFunc = (Data) -> Data
+
+/// HMAC function to use in SRP (used to derive multiple keys from the same shared secret).
 public typealias HMacFunc = (Data, Data) -> Data
 
 

@@ -59,7 +59,7 @@ extension SRPConfiguration
 }
 
 
-/// Configuration for SRP algorithms (see the spec. above for more information about the meaning of parameters).
+/// Implementation: configuration for SRP algorithms (see the spec. above for more information about the meaning of parameters).
 struct SRPConfigurationImpl: SRPConfiguration
 {
     /// A large safe prime per SRP spec. (Also see: https://tools.ietf.org/html/rfc5054#appendix-A)
@@ -90,6 +90,16 @@ struct SRPConfigurationImpl: SRPConfiguration
     /// Custom function to generate 'b'
     let bFunc: PrivateValueFunc?
     
+    
+    /// Create a configuration with the given parameters.
+    ///
+    /// - Parameters:
+    ///   - N: The modulus (large safe prime) (per SRP spec.)
+    ///   - g: The group generator (per SRP spec.)
+    ///   - digest: Hash function to be used in intermediate calculations and to derive a single shared key from the shared secret.
+    ///   - hmac: HMAC function to be used when deriving multiple shared keys from a single shared secret.
+    ///   - aFunc: (ONLY for testing purposes) Custom function to generate the client private value.
+    ///   - bFunc: (ONLY for testing purposes) Custom function to generate the server private value.
     init(N: BigUInt,
          g: BigUInt,
          digest: @escaping DigestFunc = SRP.sha256DigestFunc,

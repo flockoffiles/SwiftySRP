@@ -14,37 +14,44 @@ import BigInt
 struct SRPDataImpl: SRPData
 {
     // Client specific data
+    
+    /// Password hash 'x' as BigUInt (see SRP spec. in SRPProtocol.swift)
     var uint_x: BigUInt
+    
+    /// Client private value 'a' as BigUInt (see SRP spec. in SRPProtocol.swift)
     var uint_a: BigUInt
+    
+    /// Client public value 'A' as BigUInt (see SRP spec. in SRPProtocol.swift)
     var uint_A: BigUInt
     
-    /// Client evidence message, computed as: M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S
+    /// Client evidence message, computed as: M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S (see SRP spec. in SRPProtocol.swift)
     var uint_clientM: BigUInt
     
-    /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret.
+    /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret. (see SRP spec. in SRPProtocol.swift)
     var uint_serverM: BigUInt
     
     // Common data
-    /// SRP Verifier
+    /// SRP Verifier 'v' (see SRP spec. in SRPProtocol.swift)
     var uint_v: BigUInt
     
-    /// scrambler u = H(A, B)
+    /// scrambler u = H(A, B) (see SRP spec. in SRPProtocol.swift)
     var uint_u: BigUInt
     
-    /// Shared secret. Computed on the client as: S = (B - kg^x) ^ (a + ux)
+    /// Shared secret. Computed on the client as: S = (B - kg^x) ^ (a + ux) (see SRP spec. in SRPProtocol.swift)
     var uint_clientS: BigUInt
-    /// Shared secret. Computed on the server as: S = (Av^u) ^ b
+    
+    /// Shared secret. Computed on the server as: S = (Av^u) ^ b (see SRP spec. in SRPProtocol.swift)
     var uint_serverS: BigUInt
     
     // Server specific data
     
-    /// Multiplier. Computed as: k = H(N, g)
+    /// Multiplier 'k'. Computed as: k = H(N, g) (see SRP spec. in SRPProtocol.swift)
     var uint_k: BigUInt
     
-    /// Private ephemeral value 'b'
+    /// Server private ephemeral value 'b' (see SRP spec. in SRPProtocol.swift)
     var uint_b: BigUInt
     
-    /// Public ephemeral value 'B'
+    /// Server public ephemeral value 'B' (see SRP spec. in SRPProtocol.swift)
     var uint_B: BigUInt
     
     
@@ -148,6 +155,7 @@ struct SRPDataImpl: SRPData
         }
     }
     
+    /// Client secret 'S' (see SRP spec. in SRPProtocol.swift)
     public var clientSecret: Data {
         get {
             return uint_clientS.serialize()
@@ -157,7 +165,7 @@ struct SRPDataImpl: SRPData
         }
     }
     
-    /// SRP Verifier.
+    /// SRP Verifier 'v' (see SRP spec. in SRPProtocol.swift)
     var verifier: Data {
         get {
             return uint_v.serialize()
@@ -167,7 +175,7 @@ struct SRPDataImpl: SRPData
         }
     }
     
-    /// Server public value 'B' (see the spec. above)
+    /// Server public value 'B' (see SRP spec. in SRPProtocol.swift)
     var serverPublicValue: Data {
         get {
             return uint_B.serialize()
@@ -178,6 +186,7 @@ struct SRPDataImpl: SRPData
         }
     }
     
+    /// Server private value 'b' (see SRP spec. in SRPProtocol.swift)
     public var serverPrivateValue: Data {
         get {
             return uint_b.serialize()
@@ -187,8 +196,7 @@ struct SRPDataImpl: SRPData
         }
     }
     
-    
-    
+    /// Server shared secret 'S' (see SRP spec. in SRPProtocol.swift)
     public var serverSecret: Data {
         get {
             return uint_serverS.serialize()
@@ -198,7 +206,7 @@ struct SRPDataImpl: SRPData
         }
     }
     
-    // k
+    // Multiplier parameter 'k' (see SRP spec. in SRPProtocol.swift)
     public var multiplier: Data {
         get {
             return uint_k.serialize()
@@ -208,9 +216,7 @@ struct SRPDataImpl: SRPData
         }
     }
     
-    
-    
-    /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret.
+    /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret. (see SRP spec. in SRPProtocol.swift)
     var serverEvidenceMessage: Data {
         get {
             return uint_serverM.serialize()
@@ -229,7 +235,7 @@ extension SRPData
 {
     // Client specific data
     
-    /// Password hash (see the spec. above)
+    /// Password hash 'x' (see SRP spec. in SRPProtocol.swift)
     var x: BigUInt {
         get {
             // Short-circuit conversions between Data and BigUInt if possible
@@ -241,7 +247,7 @@ extension SRPData
         }
     }
     
-    /// Client private value 'a' (see the spec. above)
+    /// Client private value 'a' (see SRP spec. in SRPProtocol.swift)
     var a: BigUInt {
         get {
             // Short-circuit conversions between Data and BigUInt if possible
@@ -253,7 +259,7 @@ extension SRPData
         }
     }
     
-    /// Client public value 'A' (see the spec. above)
+    /// Client public value 'A' (see SRP spec. in SRPProtocol.swift)
     var A: BigUInt {
         get {
             // Short-circuit conversions between Data and BigUInt if possible
@@ -266,7 +272,7 @@ extension SRPData
         }
     }
     
-    /// Client evidence message, computed as: M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S
+    /// Client evidence message, computed as: M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S (see SRP spec. in SRPProtocol.swift)
     var clientM: BigUInt {
         get {
             // Short-circuit conversions between Data and BigUInt if possible
@@ -291,9 +297,10 @@ extension SRPData
         }
     }
     
-    /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret.
+    /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret. (see SRP spec. in SRPProtocol.swift)
     var serverM: BigUInt {
         get {
+            // Short-circuit conversions between Data and BigUInt if possible
             if let impl = self as? SRPDataImpl
             {
                 return impl.uint_serverM
@@ -301,6 +308,7 @@ extension SRPData
             return BigUInt(serverEvidenceMessage)
         }
         set {
+            // Short-circuit conversions between Data and BigUInt if possible
             if var impl = self as? SRPDataImpl
             {
                 impl.uint_serverM = newValue
@@ -315,9 +323,10 @@ extension SRPData
     
     // Common data:
     
-    /// SRP Verifier.
+    /// SRP Verifier 'v' (see SRP spec. in SRPProtocol.swift)
     var v: BigUInt {
         get {
+            // Short-circuit conversions between Data and BigUInt if possible
             if let impl = self as? SRPDataImpl
             {
                 return impl.uint_v
@@ -325,6 +334,7 @@ extension SRPData
             return BigUInt(verifier)
         }
         set {
+            // Short-circuit conversions between Data and BigUInt if possible
             if var impl = self as? SRPDataImpl
             {
                 impl.uint_v = newValue
@@ -337,9 +347,10 @@ extension SRPData
         }
     }
     
-    // u = H(A, B)
+    // Scrambler parameter 'u'. u = H(A, B) (see SRP spec. in SRPProtocol.swift)
     var u: BigUInt {
         get {
+            // Short-circuit conversions between Data and BigUInt if possible
             if let impl = self as? SRPDataImpl
             {
                 return impl.uint_u
@@ -347,6 +358,7 @@ extension SRPData
             return BigUInt(scrambler)
         }
         set {
+            // Short-circuit conversions between Data and BigUInt if possible
             if var impl = self as? SRPDataImpl
             {
                 impl.uint_u = newValue
@@ -359,9 +371,10 @@ extension SRPData
         }
     }
     
-    /// Shared secret. Computed on the client as: S = (B - kg^x) ^ (a + ux)
+    /// Shared secret 'S' . Computed on the client as: S = (B - kg^x) ^ (a + ux) (see SRP spec. in SRPProtocol.swift)
     var clientS: BigUInt {
         get {
+            // Short-circuit conversions between Data and BigUInt if possible
             if let impl = self as? SRPDataImpl
             {
                 return impl.uint_clientS
@@ -369,6 +382,7 @@ extension SRPData
             return BigUInt(clientSecret)
         }
         set {
+            // Short-circuit conversions between Data and BigUInt if possible
             if var impl = self as? SRPDataImpl
             {
                 impl.uint_clientS = newValue
@@ -381,9 +395,10 @@ extension SRPData
         }
     }
     
-    /// Shared secret. Computed on the server as: S = (Av^u) ^ b
+    /// Shared secret 'S'. Computed on the server as: S = (Av^u) ^ b (see SRP spec. in SRPProtocol.swift)
     var serverS: BigUInt {
         get {
+            // Short-circuit conversions between Data and BigUInt if possible
             if let impl = self as? SRPDataImpl
             {
                 return impl.uint_serverS
@@ -391,6 +406,7 @@ extension SRPData
             return BigUInt(serverSecret)
         }
         set {
+            // Short-circuit conversions between Data and BigUInt if possible
             if var impl = self as? SRPDataImpl
             {
                 impl.uint_serverS = newValue
@@ -406,9 +422,10 @@ extension SRPData
     
     // Server specific data
     
-    /// Multiplier. Computed as: k = H(N, g)
+    /// Multiplier parameter 'k'. Computed as: k = H(N, g) (see SRP spec. in SRPProtocol.swift)
     var k: BigUInt {
         get {
+            // Short-circuit conversions between Data and BigUInt if possible
             if let impl = self as? SRPDataImpl
             {
                 return impl.uint_k
@@ -416,6 +433,7 @@ extension SRPData
             return BigUInt(multiplier)
         }
         set {
+            // Short-circuit conversions between Data and BigUInt if possible
             if var impl = self as? SRPDataImpl
             {
                 impl.uint_k = newValue
@@ -429,9 +447,10 @@ extension SRPData
     }
     
     
-    /// Server private value 'b' (see the spec. above)
+    /// Server private value 'b' (see SRP spec. in SRPProtocol.swift)
     var b: BigUInt {
         get {
+            // Short-circuit conversions between Data and BigUInt if possible
             if let impl = self as? SRPDataImpl
             {
                 return impl.uint_b
@@ -441,9 +460,10 @@ extension SRPData
     }
     
     
-    /// Server public value 'B' (see the spec. above)
+    /// Server public value 'B' (see SRP spec. in SRPProtocol.swift)
     var B: BigUInt {
         get {
+            // Short-circuit conversions between Data and BigUInt if possible
             if let impl = self as? SRPDataImpl
             {
                 return impl.uint_B
@@ -451,6 +471,5 @@ extension SRPData
             return BigUInt(serverPublicValue)
         }
     }
-    
 }
 

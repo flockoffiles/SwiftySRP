@@ -46,7 +46,7 @@ Once you have a configuration object, create an SRPProtocol instance:
 let srp = try SRP.srpProtocol(configuration)
 ```
 
-Afterwards, you should generate the verifier and send them over to the server.
+Afterwards, you should generate the verifier and send it over to the server.
 (You need to generate an SRP salt and obtain the user's name and password to generate the verifier.)
 
 
@@ -84,7 +84,7 @@ let srp = try SRP.srpProtocol(configuration)
 
 var srpData = try srp.generateClientCredentials(s:salt, I:userName, p:password)
 
-srpData.B = BigUInt(B)
+srpData.serverPublicValue = B
 
 srpData = try srp.clientEvidenceMessage(srpData: srpData)
 
@@ -94,7 +94,7 @@ srpData = try srp.clientEvidenceMessage(srpData: srpData)
 // - srpData.A.serialize()
 
 // The server will verify the client evidence and, if successful, should send back its own evidence message: serverM
-srpData.serverM = server.M
+srpData.serverEvidenceMessage = serverM
 
 // Validate the server evidence message:
 try srp.verifyServerEvidenceMessage(srpData: clientSRPData)
