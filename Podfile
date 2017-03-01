@@ -17,7 +17,7 @@ abstract_target 'SwiftySRP_Base' do
     target 'SwiftySRPTestApp' do
         project 'SwiftySRPTestApp'
         pod 'SwiftySRP', :path => './SwiftySRP.podspec'
-        
+
         target 'SwiftySRPTestAppTests' do
         end
         
