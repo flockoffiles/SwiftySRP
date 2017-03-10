@@ -86,7 +86,7 @@ public enum CryptoAlgorithm
 
 
 /// Helper category to perform conversion of hex strings to data
-extension UnicodeScalar
+public extension UnicodeScalar
 {
     var hexNibble:UInt8
     {
@@ -106,7 +106,7 @@ extension UnicodeScalar
 
 
 /// Helper category to perform conversion of hex strings to data
-extension Data
+public extension Data
 {
     
     /// Create an instance of Data from a hex string representation.
