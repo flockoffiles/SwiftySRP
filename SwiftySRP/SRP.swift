@@ -40,7 +40,7 @@ public class SRP
     ///   - hmac: HMAC function to be used.
     /// - Throws: SRPError if configuration parameters are not valid.
     /// - Returns: The resulting SRP configuration.
-    static func configuration(N: Data,
+    public static func configuration(N: Data,
                               g: Data,
                               digest: @escaping DigestFunc = SRP.sha256DigestFunc,
                               hmac: @escaping HMacFunc = SRP.sha256HMacFunc) throws -> SRPConfiguration
@@ -60,7 +60,7 @@ public class SRP
     ///
     /// - Parameter configuration: SRP configuration to use.
     /// - Returns: The resulting SRP protocol implementation.
-    static func srpProtocol(_ configuration: SRPConfiguration) -> SRPProtocol
+    public static func srpProtocol(_ configuration: SRPConfiguration) -> SRPProtocol
     {
         return SRPImpl(configuration: configuration)
     }
