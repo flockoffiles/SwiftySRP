@@ -24,7 +24,7 @@ public struct SRPImpl: SRPProtocol
     ///   - p: Password
     /// - Returns: SRP data with parameters x, a, and A populated.
     /// - Throws: SRPError if input parameters or configuration are not valid.
-    internal func generateClientCredentials(s: Data, I: Data, p: Data) throws -> SRPData
+    public func generateClientCredentials(s: Data, I: Data, p: Data) throws -> SRPData
     {
         // TODO: There may be more stringent requirements about salt.
         try configuration.validate()

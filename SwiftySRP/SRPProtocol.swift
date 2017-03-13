@@ -65,6 +65,17 @@ public protocol SRPProtocol
     /// - Throws: SRPError if input parameters or configuration are not valid.
     func verifier(s: Data, I: Data,  p: Data) throws -> SRPData
     
+    /// Generate client credentials (parameters x, a, and A) from the SRP salt, user name (I), and password (p)
+    ///
+    /// - Parameters:
+    ///   - s: SRP salt
+    ///   - I: User name
+    ///   - p: Password
+    /// - Returns: SRP data with parameters x, a, and A populated.
+    /// - Throws: SRPError if input parameters or configuration are not valid.
+    func generateClientCredentials(s: Data, I: Data, p: Data) throws -> SRPData
+
+    
     /// Calculate the shared secret on the client side: S = (B - kg^x) ^ (a + ux)
     ///
     /// - Parameter srpData: SRP data to use in the calculation.
