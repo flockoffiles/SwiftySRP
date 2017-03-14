@@ -102,13 +102,12 @@ public struct SRPImpl: SRPProtocol
         resultData.u = hashPaddedPair(digest: configuration.digest, N: N, n1: resultData.A, n2: resultData.B)
         resultData.k = hashPaddedPair(digest: configuration.digest, N: N, n1: N, n2: configuration.g)
         
-        let exp = ((resultData.u * resultData.x) + resultData.a) % configuration.N
+        let exp = ((resultData.u * resultData.x) + resultData.a)
         
         let tmp = (configuration.g.power(resultData.x, modulus: N) * resultData.k) % N
-        
-        // Will subtraction always be positive here?
-        // Apparently, yes: https://groups.google.com/forum/#!topic/clipperz/5H-tKD-l9VU
-        resultData.clientS = ((resultData.B - tmp) % N).power(exp, modulus: N)
+
+        // Add N to avoid the possible negative number.
+        resultData.clientS = ((resultData.B + N - tmp) % N).power(exp, modulus: N)
         
         return resultData
     }
