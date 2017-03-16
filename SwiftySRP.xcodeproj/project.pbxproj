@@ -22,6 +22,9 @@
 		A58ACE971E5D8A8500FF2C0D /* SRPError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE961E5D8A8500FF2C0D /* SRPError.swift */; };
 		A58ACE991E5D8AD700FF2C0D /* SRPImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE981E5D8AD700FF2C0D /* SRPImpl.swift */; };
 		A58ACE9B1E5D93CE00FF2C0D /* SRP+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE9A1E5D93CE00FF2C0D /* SRP+Extensions.swift */; };
+		A5BF31AA1E7A9AA400EC5BCA /* imath.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF31A71E7A9AA400EC5BCA /* imath.c */; };
+		A5BF31AB1E7A9AA400EC5BCA /* imath.h in Headers */ = {isa = PBXBuildFile; fileRef = A5BF31A81E7A9AA400EC5BCA /* imath.h */; };
+		A5BF31AD1E7A9B2B00EC5BCA /* SRPDataIMathImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5BF31AC1E7A9B2B00EC5BCA /* SRPDataIMathImpl.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +60,10 @@
 		A58ACE981E5D8AD700FF2C0D /* SRPImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPImpl.swift; sourceTree = "<group>"; };
 		A58ACE9A1E5D93CE00FF2C0D /* SRP+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SRP+Extensions.swift"; sourceTree = "<group>"; };
 		A5A56B671E5C34560024CA0A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		A5BF31A71E7A9AA400EC5BCA /* imath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = imath.c; sourceTree = "<group>"; };
+		A5BF31A81E7A9AA400EC5BCA /* imath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imath.h; sourceTree = "<group>"; };
+		A5BF31A91E7A9AA400EC5BCA /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
+		A5BF31AC1E7A9B2B00EC5BCA /* SRPDataIMathImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPDataIMathImpl.swift; sourceTree = "<group>"; };
 		B15B2BD877A371ACD21A17B5 /* Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig"; path = "Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRP/Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig"; sourceTree = "<group>"; };
 		F59A7100C8CBC36C1AB01B41 /* Pods_SwiftySRP_Base_SwiftySRP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SwiftySRP_Base_SwiftySRP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -105,6 +112,7 @@
 		A50090AB1E4C74BD00238562 = {
 			isa = PBXGroup;
 			children = (
+				A5BF31A61E7A9A8500EC5BCA /* imath */,
 				A5A56B671E5C34560024CA0A /* README.md */,
 				A50090B71E4C74BD00238562 /* SwiftySRP */,
 				A50090C21E4C74BD00238562 /* SwiftySRPTests */,
@@ -138,6 +146,7 @@
 				A58ACE961E5D8A8500FF2C0D /* SRPError.swift */,
 				A58ACE981E5D8AD700FF2C0D /* SRPImpl.swift */,
 				A58ACE9A1E5D93CE00FF2C0D /* SRP+Extensions.swift */,
+				A5BF31AC1E7A9B2B00EC5BCA /* SRPDataIMathImpl.swift */,
 			);
 			path = SwiftySRP;
 			sourceTree = "<group>";
@@ -152,6 +161,16 @@
 			path = SwiftySRPTests;
 			sourceTree = "<group>";
 		};
+		A5BF31A61E7A9A8500EC5BCA /* imath */ = {
+			isa = PBXGroup;
+			children = (
+				A5BF31A71E7A9AA400EC5BCA /* imath.c */,
+				A5BF31A81E7A9AA400EC5BCA /* imath.h */,
+				A5BF31A91E7A9AA400EC5BCA /* module.modulemap */,
+			);
+			path = imath;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -159,6 +178,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5BF31AB1E7A9AA400EC5BCA /* imath.h in Headers */,
 				A50090C61E4C74BD00238562 /* SwiftySRP.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -350,6 +370,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A58ACE911E5D858B00FF2C0D /* SRPData.swift in Sources */,
+				A5BF31AD1E7A9B2B00EC5BCA /* SRPDataIMathImpl.swift in Sources */,
 				A50091051E4C961100238562 /* SRP.swift in Sources */,
 				A58ACE8B1E5D823700FF2C0D /* SRPConfigurationImpl.swift in Sources */,
 				A58ACE971E5D8A8500FF2C0D /* SRPError.swift in Sources */,
@@ -358,6 +379,7 @@
 				A58ACE871E5D818000FF2C0D /* SRPConfiguration.swift in Sources */,
 				A58ACE9B1E5D93CE00FF2C0D /* SRP+Extensions.swift in Sources */,
 				A58ACE991E5D8AD700FF2C0D /* SRPImpl.swift in Sources */,
+				A5BF31AA1E7A9AA400EC5BCA /* imath.c in Sources */,
 				A58ACE8D1E5D826400FF2C0D /* SRPUtil.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -497,7 +519,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.flockoffiles.SwiftySRP;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/CommonCrypto";
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/CommonCrypto $(SRCROOT)/imath";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
@@ -520,7 +542,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.flockoffiles.SwiftySRP;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/CommonCrypto";
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/CommonCrypto $(SRCROOT)/imath";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

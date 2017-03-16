@@ -1,0 +1,5 @@
+module imath {
+  header "imath.h"
+  export *
+}
+
