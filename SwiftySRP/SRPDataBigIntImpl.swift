@@ -1,53 +1,59 @@
 //
-//  SRPDataIMathImpl.swift
+//  SRPDataBigIntImpl.swift
 //  SwiftySRP
 //
-//  Created by Sergey A. Novitsky on 16/03/2017.
+//  Created by Sergey A. Novitsky on 22/02/2017.
 //  Copyright © 2017 Flock of Files. All rights reserved.
 //
 
 import Foundation
+import BigInt
 
-struct SRPDataIMathImpl: SRPData
+
+/// SRP intermediate data (implementation)
+struct SRPDataBigIntImpl: SRPData
 {
+    // Client specific data
+    
     /// Password hash 'x' as BigUInt (see SRP spec. in SRPProtocol.swift)
-    var _x = SRPMpzT()
+    var _x: BigUInt = 0
     
     /// Client private value 'a' as BigUInt (see SRP spec. in SRPProtocol.swift)
-    var _a = SRPMpzT()
+    var _a: BigUInt = 0
     
     /// Client public value 'A' as BigUInt (see SRP spec. in SRPProtocol.swift)
-    var _A = SRPMpzT()
+    var _A: BigUInt = 0
     
     /// Client evidence message, computed as: M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S (see SRP spec. in SRPProtocol.swift)
-    var _clientM = SRPMpzT()
+    var _clientM: BigUInt = 0
     
     /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret. (see SRP spec. in SRPProtocol.swift)
-    var _serverM = SRPMpzT()
+    var _serverM: BigUInt = 0
     
     // Common data
     /// SRP Verifier 'v' (see SRP spec. in SRPProtocol.swift)
-    var _v = SRPMpzT()
+    var _v: BigUInt = 0
     
     /// scrambler u = H(A, B) (see SRP spec. in SRPProtocol.swift)
-    var _u = SRPMpzT()
+    var _u: BigUInt = 0
     
     /// Shared secret. Computed on the client as: S = (B - kg^x) ^ (a + ux) (see SRP spec. in SRPProtocol.swift)
-    var _clientS = SRPMpzT()
+    var _clientS: BigUInt = 0
     
     /// Shared secret. Computed on the server as: S = (Av^u) ^ b (see SRP spec. in SRPProtocol.swift)
-    var _serverS = SRPMpzT()
+    var _serverS: BigUInt = 0
     
     // Server specific data
     
     /// Multiplier 'k'. Computed as: k = H(N, g) (see SRP spec. in SRPProtocol.swift)
-    var _k = SRPMpzT()
+    var _k: BigUInt = 0
     
     /// Server private ephemeral value 'b' (see SRP spec. in SRPProtocol.swift)
-    var _b = SRPMpzT()
+    var _b: BigUInt = 0
     
     /// Server public ephemeral value 'B' (see SRP spec. in SRPProtocol.swift)
-    var _B = SRPMpzT()
+    var _B: BigUInt = 0
+    
     
     /// Initializer to be used for client size data.
     ///
@@ -55,12 +61,11 @@ struct SRPDataIMathImpl: SRPData
     ///   - x: Salted password hash (= H(s, p))
     ///   - a: Private ephemeral value 'a' (per SRP spec. above)
     ///   - A: Public ephemeral value 'A' (per SRP spec. above)
-    init(x: SRPMpzT, a: SRPMpzT, A: SRPMpzT)
+    init(x: BigUInt, a: BigUInt, A: BigUInt)
     {
-        // Actually copy the values.
-        _x = SRPMpzT(x)
-        _a = SRPMpzT(a)
-        _A = SRPMpzT(A)
+        _x = x
+        _a = a
+        _A = A
     }
     
     
@@ -71,21 +76,21 @@ struct SRPDataIMathImpl: SRPData
     ///   - k: Parameter 'k' (per SRP spec. above)
     ///   - b: Private ephemeral value 'b' (per SRP spec. above)
     ///   - B: Public ephemeral value 'B' (per SRP spec. above)
-    init(v: SRPMpzT, k: SRPMpzT, b: SRPMpzT, B: SRPMpzT)
+    init(v: BigUInt, k: BigUInt, b: BigUInt, B: BigUInt)
     {
         _v = v
         _k = k
         _b = b
         _B = B
     }
-
+    
     /// Client public value 'A' (see the spec. above)
     var clientPublicValue: Data {
         get {
             return _A.serialize()
         }
         set {
-            _A = SRPMpzT(newValue)
+            _A = BigUInt(newValue)
         }
     }
     
@@ -95,7 +100,7 @@ struct SRPDataIMathImpl: SRPData
             return _a.serialize()
         }
         set {
-            _a = SRPMpzT(newValue)
+            _a = BigUInt(newValue)
         }
     }
     
@@ -106,7 +111,7 @@ struct SRPDataIMathImpl: SRPData
             return _clientM.serialize()
         }
         set {
-            _clientM = SRPMpzT(newValue)
+            _clientM = BigUInt(newValue)
         }
     }
     
@@ -117,7 +122,7 @@ struct SRPDataIMathImpl: SRPData
         }
         
         set {
-            _x = SRPMpzT(newValue)
+            _x = BigUInt(newValue)
         }
     }
     
@@ -127,7 +132,7 @@ struct SRPDataIMathImpl: SRPData
             return _u.serialize()
         }
         set {
-            _u = SRPMpzT(newValue)
+            _u = BigUInt(newValue)
         }
     }
     
@@ -137,7 +142,7 @@ struct SRPDataIMathImpl: SRPData
             return _clientS.serialize()
         }
         set {
-            _clientS = SRPMpzT(newValue)
+            _clientS = BigUInt(newValue)
         }
     }
     
@@ -147,7 +152,7 @@ struct SRPDataIMathImpl: SRPData
             return _v.serialize()
         }
         set {
-            _v = SRPMpzT(newValue)
+            _v = BigUInt(newValue)
         }
     }
     
@@ -158,7 +163,7 @@ struct SRPDataIMathImpl: SRPData
         }
         
         set {
-            _B = SRPMpzT(newValue)
+            _B = BigUInt(newValue)
         }
     }
     
@@ -168,7 +173,7 @@ struct SRPDataIMathImpl: SRPData
             return _b.serialize()
         }
         set {
-            _b = SRPMpzT(newValue)
+            _b = BigUInt(newValue)
         }
     }
     
@@ -178,7 +183,7 @@ struct SRPDataIMathImpl: SRPData
             return _serverS.serialize()
         }
         set {
-            _serverS = SRPMpzT(newValue)
+            _serverS = BigUInt(newValue)
         }
     }
     
@@ -188,7 +193,7 @@ struct SRPDataIMathImpl: SRPData
             return _k.serialize()
         }
         set {
-            _k = SRPMpzT(newValue)
+            _k = BigUInt(newValue)
         }
     }
     
@@ -199,8 +204,9 @@ struct SRPDataIMathImpl: SRPData
         }
         
         set {
-            _serverM = SRPMpzT(newValue)
+            _serverM = BigUInt(newValue)
         }
     }
-
+    
 }
+

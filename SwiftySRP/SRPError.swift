@@ -27,6 +27,7 @@ enum SRPError: String, Error, CustomStringConvertible
     
     case configurationPrimeTooShort = "SRP configuration safe prime is too short"
     case configurationGeneratorInvalid = "SRP generator is invalid"
+    case dataConversionError = "Data conversion error"
     
     var description: String {
         return self.rawValue

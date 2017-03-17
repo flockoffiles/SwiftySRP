@@ -1,17 +1,17 @@
 //
-//  SRPImpl.swift
+//  SRPIMathImpl.swift
 //  SwiftySRP
 //
-//  Created by Sergey A. Novitsky on 22/02/2017.
+//  Created by Sergey A. Novitsky on 16/03/2017.
 //  Copyright © 2017 Flock of Files. All rights reserved.
 //
 
 import Foundation
-import BigInt
+import imath
 
 /// Implementation of the SRP protocol. Although it's primarily intended to be used on the client side, it includes the server side methods
 /// as well (for testing purposes).
-public struct SRPImpl: SRPProtocol
+public struct SRPIMathImpl: SRPProtocol
 {
     /// SRP configuration. Defines the prime N and generator g to be used, and also the relevant hashing functions.
     public var configuration: SRPConfiguration
@@ -32,13 +32,13 @@ public struct SRPImpl: SRPProtocol
         guard !I.isEmpty else { throw SRPError.invalidUserName }
         guard !p.isEmpty else { throw SRPError.invalidPassword }
         
-        let value_x = x(s: s, I: I, p: p)
-        let value_a = configuration.a()
+        let value_x: SRPMpzT = x(s: s, I: I, p: p)
+        let value_a: SRPMpzT = SRPMpzT(configuration.clientPrivateValue())
         
         // A = g^a
-        let value_A = configuration.g.power(value_a, modulus: configuration.N)
+        let value_A = SRPMpzT(configuration.generator).power(value_a, modulus: SRPMpzT(configuration.modulus))
         
-        return SRPDataImpl(x: value_x, a: value_a, A: value_A)
+        return SRPDataIMathImpl(x: value_x, a: value_a, A: value_A)
     }
     
     
@@ -51,16 +51,16 @@ public struct SRPImpl: SRPProtocol
     {
         guard !verifier.isEmpty else { throw SRPError.invalidVerifier }
         try configuration.validate()
-        let N = configuration.N
-        
-        let v = BigUInt(verifier)
-        let k = hashPaddedPair(digest: configuration.digest, N: N, n1: N, n2: configuration.g)
-        let b = configuration.b()
+        let N = SRPMpzT(configuration.modulus)
+        let g = SRPMpzT(configuration.generator)
+        let v:SRPMpzT = SRPMpzT(verifier)
+        let k:SRPMpzT = hashPaddedPair(digest: configuration.digest, N: N, n1: N, n2: SRPMpzT(configuration.generator))
+        let b:SRPMpzT = SRPMpzT(configuration.serverPrivateValue())
         
         // B = kv + g^b
-        let B = (((k * v) % N) + configuration.g.power(b, modulus: N)) % N
+        let B = (((k * v) % N) + g.power(b, modulus: N)) % N
         
-        return SRPDataImpl(v:v, k:k, b:b, B:B)
+        return SRPDataIMathImpl(v:v, k:k, b:b, B:B)
     }
     
     
@@ -76,8 +76,9 @@ public struct SRPImpl: SRPProtocol
     {
         // let valueX = x(s:s, I:I, p:p)
         var srpData = try generateClientCredentials(s: s, I: I, p: p)
-        
-        srpData.v = configuration.g.power(srpData.x, modulus:configuration.N)
+        let g = SRPMpzT(configuration.generator)
+        let N = SRPMpzT(configuration.modulus)
+        srpData.mpz_v = g.power(srpData.mpz_x, modulus:N)
         
         return srpData
     }
@@ -92,22 +93,23 @@ public struct SRPImpl: SRPProtocol
     public func calculateClientSecret(srpData: SRPData) throws -> SRPData
     {
         try configuration.validate()
-        let N = configuration.N
+        let N = configuration.mpz_N
+        let g = configuration.mpz_g
         var resultData = srpData
-        guard (resultData.A % N) > 0 else { throw SRPError.invalidClientPublicValue }
-        guard (resultData.B % N) > 0 else { throw SRPError.invalidServerPublicValue }
-        guard resultData.a > 0 else { throw SRPError.invalidClientPrivateValue }
-        guard resultData.x > 0 else { throw SRPError.invalidPasswordHash }
+        guard (resultData.mpz_A % N) > SRPMpzT(0) else { throw SRPError.invalidClientPublicValue }
+        guard (resultData.mpz_B % N) > SRPMpzT(0) else { throw SRPError.invalidServerPublicValue }
+        guard resultData.mpz_a > SRPMpzT(0) else { throw SRPError.invalidClientPrivateValue }
+        guard resultData.mpz_x > SRPMpzT(0) else { throw SRPError.invalidPasswordHash }
         
-        resultData.u = hashPaddedPair(digest: configuration.digest, N: N, n1: resultData.A, n2: resultData.B)
-        resultData.k = hashPaddedPair(digest: configuration.digest, N: N, n1: N, n2: configuration.g)
+        resultData.mpz_u = hashPaddedPair(digest: configuration.digest, N: N, n1: resultData.mpz_A, n2: resultData.mpz_B)
+        resultData.mpz_k = hashPaddedPair(digest: configuration.digest, N: N, n1: N, n2: g)
         
-        let exp = ((resultData.u * resultData.x) + resultData.a)
+        let exp = ((resultData.mpz_u * resultData.mpz_x) + resultData.mpz_a)
         
-        let tmp = (configuration.g.power(resultData.x, modulus: N) * resultData.k) % N
-
+        let tmp = (g.power(resultData.mpz_x, modulus: N) * resultData.mpz_k) % N
+        
         // Add N to avoid the possible negative number.
-        resultData.clientS = ((resultData.B + N - tmp) % N).power(exp, modulus: N)
+        resultData.mpz_clientS = ((resultData.mpz_B + N - tmp) % N).power(exp, modulus: N)
         
         return resultData
     }
@@ -121,18 +123,18 @@ public struct SRPImpl: SRPProtocol
     public func calculateServerSecret(srpData: SRPData) throws -> SRPData
     {
         try configuration.validate()
-        let N = configuration.N
-
-        var resultData = srpData
-        guard (resultData.A % N) > 0 else { throw SRPError.invalidClientPublicValue }
-        guard (resultData.B % N) > 0 else { throw SRPError.invalidServerPublicValue }
-        guard resultData.b > 0 else { throw SRPError.invalidServerPrivateValue }
-        guard resultData.v > 0 else { throw SRPError.invalidVerifier }
+        let N = configuration.mpz_N
         
-        resultData.u = hashPaddedPair(digest: configuration.digest, N: N, n1: resultData.A, n2: resultData.B)
+        var resultData = srpData
+        guard (resultData.mpz_A % N) > SRPMpzT(0) else { throw SRPError.invalidClientPublicValue }
+        guard (resultData.mpz_B % N) > SRPMpzT(0) else { throw SRPError.invalidServerPublicValue }
+        guard resultData.mpz_b > SRPMpzT(0) else { throw SRPError.invalidServerPrivateValue }
+        guard resultData.mpz_v > SRPMpzT(0) else { throw SRPError.invalidVerifier }
+        
+        resultData.mpz_u = hashPaddedPair(digest: configuration.digest, N: N, n1: resultData.mpz_A, n2: resultData.mpz_B)
         
         // S = (Av^u) ^ b
-        resultData.serverS = ((resultData.A * resultData.v.power(resultData.u, modulus: N)) % N).power(resultData.b, modulus: N)
+        resultData.mpz_serverS = ((resultData.mpz_A * resultData.mpz_v.power(resultData.mpz_u, modulus: N)) % N).power(resultData.mpz_b, modulus: N)
         
         return resultData
     }
@@ -151,19 +153,19 @@ public struct SRPImpl: SRPProtocol
     public func clientEvidenceMessage(srpData: SRPData) throws -> SRPData
     {
         try configuration.validate()
-        let N = configuration.N
-
+        let N = configuration.mpz_N
+        
         var resultData = srpData
         
-        guard (resultData.A % N) > 0 else { throw SRPError.invalidClientPublicValue }
-        guard (resultData.B % N) > 0 else { throw SRPError.invalidServerPublicValue }
+        guard (resultData.mpz_A % N) > SRPMpzT(0) else { throw SRPError.invalidClientPublicValue }
+        guard (resultData.mpz_B % N) > SRPMpzT(0) else { throw SRPError.invalidServerPublicValue }
         
-        if resultData.clientS == 0
+        if resultData.mpz_clientS == SRPMpzT(0)
         {
             resultData = try calculateClientSecret(srpData: resultData)
         }
         
-        resultData.clientM = hashPaddedTriplet(digest: configuration.digest, N: N, n1: resultData.A, n2: resultData.B, n3: resultData.clientS)
+        resultData.mpz_clientM = hashPaddedTriplet(digest: configuration.digest, N: N, n1: resultData.mpz_A, n2: resultData.mpz_B, n3: resultData.mpz_clientS)
         return resultData
     }
     
@@ -182,21 +184,21 @@ public struct SRPImpl: SRPProtocol
     public func serverEvidenceMessage(srpData: SRPData) throws -> SRPData
     {
         try configuration.validate()
-        let N = configuration.N
-
+        let N = SRPMpzT(configuration.modulus)
+        
         var resultData = srpData
-        guard (resultData.A % N) > 0 else { throw SRPError.invalidClientPublicValue }
-        guard (resultData.B % N) > 0 else { throw SRPError.invalidServerPublicValue }
-        if resultData.serverS == 0
+        guard (resultData.mpz_A % N) > SRPMpzT(0) else { throw SRPError.invalidClientPublicValue }
+        guard (resultData.mpz_B % N) > SRPMpzT(0) else { throw SRPError.invalidServerPublicValue }
+        if resultData.mpz_serverS == SRPMpzT(0)
         {
             resultData = try calculateServerSecret(srpData: resultData)
         }
         
-        resultData.serverM = hashPaddedTriplet(digest: configuration.digest,
+        resultData.mpz_serverM = hashPaddedTriplet(digest: configuration.digest,
                                                N: N,
-                                               n1: resultData.A,
-                                               n2: resultData.clientM,
-                                               n3: resultData.serverS)
+                                               n1: resultData.mpz_A,
+                                               n2: resultData.mpz_clientM,
+                                               n3: resultData.mpz_serverS)
         
         return resultData
     }
@@ -209,15 +211,15 @@ public struct SRPImpl: SRPProtocol
     public func verifyClientEvidenceMessage(srpData: SRPData) throws
     {
         try configuration.validate()
-        let N = configuration.N
+        let N = configuration.mpz_N
         let resultData = srpData
-        guard resultData.clientM > 0 else { throw SRPError.invalidClientEvidenceMessage }
-        guard (resultData.A % N) > 0 else { throw SRPError.invalidClientPublicValue }
-        guard (resultData.B % N) > 0 else { throw SRPError.invalidServerPublicValue }
-        guard resultData.serverS > 0 else { throw SRPError.invalidServerSharedSecret }
+        guard resultData.mpz_clientM > SRPMpzT(0) else { throw SRPError.invalidClientEvidenceMessage }
+        guard (resultData.mpz_A % N) > SRPMpzT(0) else { throw SRPError.invalidClientPublicValue }
+        guard (resultData.mpz_B % N) > SRPMpzT(0) else { throw SRPError.invalidServerPublicValue }
+        guard resultData.mpz_serverS > SRPMpzT(0) else { throw SRPError.invalidServerSharedSecret }
         
-        let M = hashPaddedTriplet(digest: configuration.digest, N: N, n1: resultData.A, n2: resultData.B, n3: resultData.serverS)
-        guard (M == resultData.clientM) else { throw SRPError.invalidClientEvidenceMessage }
+        let M = hashPaddedTriplet(digest: configuration.digest, N: N, n1: resultData.mpz_A, n2: resultData.mpz_B, n3: resultData.mpz_serverS)
+        guard (M == resultData.mpz_clientM) else { throw SRPError.invalidClientEvidenceMessage }
     }
     
     
@@ -228,15 +230,19 @@ public struct SRPImpl: SRPProtocol
     public func verifyServerEvidenceMessage(srpData: SRPData) throws
     {
         try configuration.validate()
-        let N = configuration.N
+        let N = configuration.mpz_N
         let resultData = srpData
-        guard resultData.serverM > 0 else { throw SRPError.invalidServerEvidenceMessage }
-        guard resultData.clientM > 0 else { throw SRPError.invalidClientEvidenceMessage }
-        guard (resultData.A % N) > 0 else { throw SRPError.invalidClientPublicValue }
-        guard resultData.clientS > 0 else { throw SRPError.invalidClientSharedSecret }
+        guard resultData.mpz_serverM > SRPMpzT(0) else { throw SRPError.invalidServerEvidenceMessage }
+        guard resultData.mpz_clientM > SRPMpzT(0) else { throw SRPError.invalidClientEvidenceMessage }
+        guard (resultData.mpz_A % N) > SRPMpzT(0) else { throw SRPError.invalidClientPublicValue }
+        guard resultData.mpz_clientS > SRPMpzT(0) else { throw SRPError.invalidClientSharedSecret }
         
-        let M = hashPaddedTriplet(digest: configuration.digest, N: N, n1: resultData.A, n2: resultData.clientM, n3: resultData.clientS)
-        guard (M == resultData.serverM) else { throw SRPError.invalidServerEvidenceMessage }
+        let M = hashPaddedTriplet(digest: configuration.digest,
+                                  N: N,
+                                  n1: resultData.mpz_A,
+                                  n2: resultData.mpz_clientM,
+                                  n3: resultData.mpz_clientS)
+        guard (M == resultData.mpz_serverM) else { throw SRPError.invalidServerEvidenceMessage }
     }
     
     
@@ -249,9 +255,9 @@ public struct SRPImpl: SRPProtocol
     {
         try configuration.validate()
         let resultData = srpData
-        guard resultData.clientS > 0 else { throw SRPError.invalidClientSharedSecret }
-        let padLength = (configuration.N.width + 7) / 8
-        let paddedS = pad(resultData.clientS.serialize(), to: padLength)
+        guard resultData.mpz_clientS > SRPMpzT(0) else { throw SRPError.invalidClientSharedSecret }
+        let padLength = (configuration.mpz_N.width + 7) / 8
+        let paddedS = pad(resultData.mpz_clientS.serialize(), to: padLength)
         let hash = configuration.digest(paddedS)
         
         return hash
@@ -266,9 +272,9 @@ public struct SRPImpl: SRPProtocol
     {
         try configuration.validate()
         let resultData = srpData
-        guard resultData.serverS > 0 else { throw SRPError.invalidServerSharedSecret }
-        let padLength = (configuration.N.width + 7) / 8
-        let paddedS = pad(resultData.clientS.serialize(), to: padLength)
+        guard resultData.mpz_serverS > SRPMpzT(0) else { throw SRPError.invalidServerSharedSecret }
+        let padLength = (configuration.mpz_N.width + 7) / 8
+        let paddedS = pad(resultData.mpz_clientS.serialize(), to: padLength)
         let hash = configuration.digest(paddedS)
         
         return hash
@@ -283,7 +289,7 @@ public struct SRPImpl: SRPProtocol
     {
         try configuration.validate()
         let resultData = srpData
-        return configuration.hmac(salt, resultData.clientS.serialize())
+        return configuration.hmac(salt, resultData.mpz_clientS.serialize())
     }
     
     /// Calculate the shared key (server side) by using HMAC: sharedKey = HMAC(salt, clientS)
@@ -295,7 +301,7 @@ public struct SRPImpl: SRPProtocol
     {
         try configuration.validate()
         let resultData = srpData
-        return configuration.hmac(salt, resultData.serverS.serialize())
+        return configuration.hmac(salt, resultData.mpz_serverS.serialize())
     }
     
     
@@ -307,7 +313,7 @@ public struct SRPImpl: SRPProtocol
     ///   - n1: First value
     ///   - n2: Second value
     /// - Returns: Result of hashing.
-    internal func hashPaddedPair(digest: DigestFunc, N: BigUInt, n1: BigUInt, n2: BigUInt) -> BigUInt
+    internal func hashPaddedPair(digest: DigestFunc, N: SRPMpzT, n1: SRPMpzT, n2: SRPMpzT) -> SRPMpzT
     {
         let padLength = (N.width + 7) / 8
         
@@ -319,7 +325,7 @@ public struct SRPImpl: SRPProtocol
         
         let hash = digest(dataToHash)
         
-        return BigUInt(hash) % N
+        return SRPMpzT(hash) % N
     }
     
     
@@ -332,7 +338,7 @@ public struct SRPImpl: SRPProtocol
     ///   - n2: Second value
     ///   - n3: Third value
     /// - Returns: Result of hashing.
-    internal func hashPaddedTriplet(digest: DigestFunc, N: BigUInt, n1: BigUInt, n2: BigUInt, n3: BigUInt) -> BigUInt
+    internal func hashPaddedTriplet(digest: DigestFunc, N: SRPMpzT, n1: SRPMpzT, n2: SRPMpzT, n3: SRPMpzT) -> SRPMpzT
     {
         let padLength = (N.width + 7) / 8
         
@@ -345,7 +351,7 @@ public struct SRPImpl: SRPProtocol
         dataToHash.append(paddedN3)
         let hash = digest(dataToHash)
         
-        return BigUInt(hash) % N
+        return SRPMpzT(hash) % N
     }
     
     
@@ -375,7 +381,7 @@ public struct SRPImpl: SRPProtocol
     ///   - I: User name
     ///   - p: password
     /// - Returns: SRP value x calculated as x = H(s | H(I | ":" | p)) (where H is the configured hash function)
-    internal func x(s: Data, I: Data,  p: Data) -> BigUInt
+    internal func x(s: Data, I: Data,  p: Data) -> SRPMpzT
     {
         var identityData = Data(capacity: I.count + 1 + p.count)
         
@@ -391,10 +397,7 @@ public struct SRPImpl: SRPProtocol
         xData.append(identityHash)
         
         let xHash = configuration.digest(xData)
-        let x = BigUInt(xHash) % configuration.N
-        
-        return x
+        return SRPMpzT(xHash) % SRPMpzT(configuration.modulus)
     }
 }
-
 

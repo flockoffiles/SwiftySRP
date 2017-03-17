@@ -1,15 +1,14 @@
 //
-//  SRP+Extensions.swift
+//  SRP+IMath.swift
 //  SwiftySRP
 //
-//  Created by Sergey A. Novitsky on 22/02/2017.
+//  Created by Sergey A. Novitsky on 17/03/2017.
 //  Copyright © 2017 Flock of Files. All rights reserved.
 //
 
 import Foundation
-import BigInt
 
-typealias PrivateValueFunc = () -> BigUInt
+typealias PrivateValueIMathFunc = () -> SRPMpzT
 
 /// Internal extension. For test purposes only.
 /// Allows to create a configuration with custom (fixed) private ephemeral values 'a' and 'b'
@@ -30,15 +29,15 @@ extension SRP
                               g: Data,
                               digest: @escaping DigestFunc = SRP.sha256DigestFunc,
                               hmac: @escaping HMacFunc = SRP.sha256HMacFunc,
-                              a: @escaping PrivateValueFunc,
-                              b: @escaping PrivateValueFunc) throws -> SRPConfiguration
+                              a: @escaping PrivateValueIMathFunc,
+                              b: @escaping PrivateValueIMathFunc) throws -> SRPConfiguration
     {
-        let result = SRPConfigurationImpl(N: BigUInt(N),
-                                          g: BigUInt(g),
-                                          digest: digest,
-                                          hmac: hmac,
-                                          aFunc: a,
-                                          bFunc: b)
+        let result = SRPConfigurationIMathImpl(N: SRPMpzT(N),
+                                                g: SRPMpzT(g),
+                                                digest: digest,
+                                                hmac: hmac,
+                                                aFunc: a,
+                                                bFunc: b)
         try result.validate()
         return result
     }

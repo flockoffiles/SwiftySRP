@@ -142,6 +142,32 @@ public extension Data
     }
 }
 
+public func pow(_ base: Int, _ power: Int) -> Int
+{
+    func expBySq(_ y: Int, _ x: Int, _ n: Int) -> Int
+    {
+        precondition(n >= 0)
+        if n == 0
+        {
+            return y
+        }
+        else if n == 1
+        {
+            return y * x
+        }
+        else if n % 2 == 0
+        {
+            return expBySq(y, x * x, n / 2)
+        }
+        else
+        { // n is odd
+            return expBySq(y * x, x * x, (n - 1) / 2)
+        }
+    }
+    
+    return expBySq(1, base, power)
+}
+
 /// Helper extension to provide a simple method for conversion to hex string.
 public extension BigUInt
 {

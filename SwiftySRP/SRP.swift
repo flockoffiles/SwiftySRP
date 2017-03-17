@@ -45,7 +45,7 @@ public class SRP
                               digest: @escaping DigestFunc = SRP.sha256DigestFunc,
                               hmac: @escaping HMacFunc = SRP.sha256HMacFunc) throws -> SRPConfiguration
     {
-        let result = SRPConfigurationImpl(N: BigUInt(N),
+        let result = SRPConfigurationBigIntImpl(N: BigUInt(N),
                                           g: BigUInt(g),
                                           digest: digest,
                                           hmac: hmac,
@@ -62,7 +62,7 @@ public class SRP
     /// - Returns: The resulting SRP protocol implementation.
     public static func srpProtocol(_ configuration: SRPConfiguration) -> SRPProtocol
     {
-        return SRPImpl(configuration: configuration)
+        return SRPIMathImpl(configuration: configuration)
     }
     
     /// SHA256 hash function

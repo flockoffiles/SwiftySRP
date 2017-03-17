@@ -168,7 +168,7 @@ class SwiftySRPTests: XCTestCase
     func test04Generate_x_SHA256()
     {
         do {
-            let srp256 = SRP.srpProtocol(try SRP.configuration(N: N, g:g, digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc)) as! SRPImpl
+            let srp256 = SRP.srpProtocol(try SRP.configuration(N: N, g:g, digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc)) as! SRPBigIntImpl
             let x_256 = srp256.x(s: s, I: I, p: p)
             let string_x_256 = String(x_256, radix: 16, uppercase: true)
             XCTAssertEqual(string_x_256, expected_x_256)
@@ -184,7 +184,7 @@ class SwiftySRPTests: XCTestCase
     func test04Generate_x_SHA512()
     {
         do {
-            let srp512 = SRP.srpProtocol(try SRP.configuration(N: N, g:g, digest: SRP.sha512DigestFunc, hmac:SRP.sha512HMacFunc)) as! SRPImpl
+            let srp512 = SRP.srpProtocol(try SRP.configuration(N: N, g:g, digest: SRP.sha512DigestFunc, hmac:SRP.sha512HMacFunc)) as! SRPBigIntImpl
             let x_512 = srp512.x(s: s, I: I, p: p)
             let string_x_512 = String(x_512, radix: 16, uppercase: true)
             XCTAssertEqual(string_x_512, expected_x_512)
@@ -200,7 +200,7 @@ class SwiftySRPTests: XCTestCase
     /// This test is for SRP using SHA256 as the hashing function.
     func test05GenerateClientCredentials_SHA256()
     {
-        let srp256: SRPImpl
+        let srp256: SRPBigIntImpl
         do {
             // a is fixed in this test (not generated randomly)
             let fixed_a_256 = BigUInt(fixedString_a_256, radix: 16)!
@@ -209,7 +209,7 @@ class SwiftySRPTests: XCTestCase
             srp256 = SRP.srpProtocol(try SRP.configuration(N: N, g:g, digest: SRP.sha256DigestFunc,
                                                            hmac: SRP.sha256HMacFunc,
                                                            a: { _ in return fixed_a_256 },
-                                                           b: { _ in return fixed_b_256 })) as! SRPImpl
+                                                           b: { _ in return fixed_b_256 })) as! SRPBigIntImpl
 
             
             let clientSRPData = (try srp256.generateClientCredentials(s: s, I: I, p: p))
@@ -273,12 +273,12 @@ class SwiftySRPTests: XCTestCase
     {
         let fixed_a_512 = BigUInt(fixedString_a_512, radix: 16)!
         let fixed_b_512 = BigUInt(fixedString_b_512, radix: 16)!
-        let srp_512: SRPImpl
+        let srp_512: SRPBigIntImpl
         
         do {
             srp_512 = SRP.srpProtocol(try SRP.configuration(N: N, g:g, digest: SRP.sha512DigestFunc, hmac:SRP.sha512HMacFunc,
                                                             a: { _ in return fixed_a_512 },
-                                                            b: { _ in return fixed_b_512 })) as! SRPImpl
+                                                            b: { _ in return fixed_b_512 })) as! SRPBigIntImpl
             
             let clientSRPData = try srp_512.generateClientCredentials(s: s, I: I, p: p)
             let string_x_512 = String(clientSRPData.x, radix: 16, uppercase: true)
@@ -302,11 +302,11 @@ class SwiftySRPTests: XCTestCase
         let fixed_a_256 = BigUInt(fixedString_a_256, radix: 16)!
         let fixed_b_256 = BigUInt(fixedString_b_256, radix: 16)!
         
-        let srp256: SRPImpl
+        let srp256: SRPBigIntImpl
         do {
             srp256 = SRP.srpProtocol(try SRP.configuration(N: N, g:g, digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc,
                                                            a: { _ in return fixed_a_256 },
-                                                           b: { _ in return fixed_b_256 })) as! SRPImpl
+                                                           b: { _ in return fixed_b_256 })) as! SRPBigIntImpl
             
             let clientSRPData = try srp256.verifier(s: s, I: I, p: p)
 
@@ -327,12 +327,12 @@ class SwiftySRPTests: XCTestCase
         // a is fixed in this test (not generated randomly)
         let fixed_a_512 = BigUInt(fixedString_a_512, radix: 16)!
         let fixed_b_512 = BigUInt(fixedString_b_512, radix: 16)!
-        let srp512: SRPImpl
+        let srp512: SRPBigIntImpl
         
         do {
             srp512 = SRP.srpProtocol(try SRP.configuration(N: N, g:g, digest: SRP.sha512DigestFunc, hmac:SRP.sha512HMacFunc,
                                                              a: { _ in return fixed_a_512 },
-                                                             b: { _ in return fixed_b_512 })) as! SRPImpl
+                                                             b: { _ in return fixed_b_512 })) as! SRPBigIntImpl
             
             let clientSRPData = try srp512.verifier(s: s, I: I, p: p)
             

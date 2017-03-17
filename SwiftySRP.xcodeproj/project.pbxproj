@@ -13,18 +13,29 @@
 		A50090C41E4C74BD00238562 /* SwiftySRPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50090C31E4C74BD00238562 /* SwiftySRPTests.swift */; };
 		A50090C61E4C74BD00238562 /* SwiftySRP.h in Headers */ = {isa = PBXBuildFile; fileRef = A50090B81E4C74BD00238562 /* SwiftySRP.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A50091051E4C961100238562 /* SRP.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50091041E4C961100238562 /* SRP.swift */; };
+		A54DFB681E7AD094003F4DB0 /* SRPMpzT.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54DFB671E7AD094003F4DB0 /* SRPMpzT.swift */; };
+		A54DFB6E1E7AE706003F4DB0 /* SRPData+IMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54DFB6D1E7AE706003F4DB0 /* SRPData+IMath.swift */; };
 		A58ACE871E5D818000FF2C0D /* SRPConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE861E5D818000FF2C0D /* SRPConfiguration.swift */; };
-		A58ACE8B1E5D823700FF2C0D /* SRPConfigurationImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE8A1E5D823700FF2C0D /* SRPConfigurationImpl.swift */; };
+		A58ACE8B1E5D823700FF2C0D /* SRPConfigurationBigIntImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE8A1E5D823700FF2C0D /* SRPConfigurationBigIntImpl.swift */; };
 		A58ACE8D1E5D826400FF2C0D /* SRPUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE8C1E5D826400FF2C0D /* SRPUtil.swift */; };
 		A58ACE8F1E5D82B400FF2C0D /* SRPProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE8E1E5D82B400FF2C0D /* SRPProtocol.swift */; };
 		A58ACE911E5D858B00FF2C0D /* SRPData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE901E5D858B00FF2C0D /* SRPData.swift */; };
-		A58ACE951E5D88AD00FF2C0D /* SRPDataImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE941E5D88AD00FF2C0D /* SRPDataImpl.swift */; };
+		A58ACE951E5D88AD00FF2C0D /* SRPDataBigIntImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE941E5D88AD00FF2C0D /* SRPDataBigIntImpl.swift */; };
 		A58ACE971E5D8A8500FF2C0D /* SRPError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE961E5D8A8500FF2C0D /* SRPError.swift */; };
-		A58ACE991E5D8AD700FF2C0D /* SRPImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE981E5D8AD700FF2C0D /* SRPImpl.swift */; };
-		A58ACE9B1E5D93CE00FF2C0D /* SRP+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE9A1E5D93CE00FF2C0D /* SRP+Extensions.swift */; };
+		A58ACE9B1E5D93CE00FF2C0D /* SRP+BigInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE9A1E5D93CE00FF2C0D /* SRP+BigInt.swift */; };
 		A5BF31AA1E7A9AA400EC5BCA /* imath.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF31A71E7A9AA400EC5BCA /* imath.c */; };
 		A5BF31AB1E7A9AA400EC5BCA /* imath.h in Headers */ = {isa = PBXBuildFile; fileRef = A5BF31A81E7A9AA400EC5BCA /* imath.h */; };
 		A5BF31AD1E7A9B2B00EC5BCA /* SRPDataIMathImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5BF31AC1E7A9B2B00EC5BCA /* SRPDataIMathImpl.swift */; };
+		A5BF31B01E7ABFEE00EC5BCA /* imath+additions.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF31AE1E7ABFEE00EC5BCA /* imath+additions.c */; };
+		A5BF31B11E7ABFEE00EC5BCA /* imath+additions.h in Headers */ = {isa = PBXBuildFile; fileRef = A5BF31AF1E7ABFEE00EC5BCA /* imath+additions.h */; };
+		A5D4B1C71E7BE4F800BC9A9A /* SRPConfiguration+BigInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1C61E7BE4F800BC9A9A /* SRPConfiguration+BigInt.swift */; };
+		A5D4B1C91E7BE5C800BC9A9A /* SRPBigIntProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1C81E7BE5C800BC9A9A /* SRPBigIntProtocol.swift */; };
+		A5D4B1CA1E7BE7F600BC9A9A /* SRPData+BigInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54DFB6B1E7AE6A2003F4DB0 /* SRPData+BigInt.swift */; };
+		A5D4B1CB1E7BE87200BC9A9A /* SRPBigIntImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE981E5D8AD700FF2C0D /* SRPBigIntImpl.swift */; };
+		A5D4B1CC1E7BE9C500BC9A9A /* SRPIMathImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54DFB631E7ACB60003F4DB0 /* SRPIMathImpl.swift */; };
+		A5D4B1D41E7BEE4600BC9A9A /* SRPConfiguration+IMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1D31E7BEE4600BC9A9A /* SRPConfiguration+IMath.swift */; };
+		A5D4B1D61E7BEF9E00BC9A9A /* SRPConfigurationIMathImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1D51E7BEF9E00BC9A9A /* SRPConfigurationIMathImpl.swift */; };
+		A5D4B1D81E7BF13700BC9A9A /* SRP+IMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1D71E7BF13700BC9A9A /* SRP+IMath.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,20 +61,31 @@
 		A50090C51E4C74BD00238562 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A50091041E4C961100238562 /* SRP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRP.swift; sourceTree = "<group>"; };
 		A53E4F1F1E5B522000C7DDEA /* SwiftySRPTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SwiftySRPTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		A54DFB631E7ACB60003F4DB0 /* SRPIMathImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPIMathImpl.swift; sourceTree = "<group>"; };
+		A54DFB671E7AD094003F4DB0 /* SRPMpzT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPMpzT.swift; sourceTree = "<group>"; };
+		A54DFB6B1E7AE6A2003F4DB0 /* SRPData+BigInt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SRPData+BigInt.swift"; sourceTree = "<group>"; };
+		A54DFB6D1E7AE706003F4DB0 /* SRPData+IMath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SRPData+IMath.swift"; sourceTree = "<group>"; };
 		A58ACE861E5D818000FF2C0D /* SRPConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPConfiguration.swift; sourceTree = "<group>"; };
-		A58ACE8A1E5D823700FF2C0D /* SRPConfigurationImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPConfigurationImpl.swift; sourceTree = "<group>"; };
+		A58ACE8A1E5D823700FF2C0D /* SRPConfigurationBigIntImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPConfigurationBigIntImpl.swift; sourceTree = "<group>"; };
 		A58ACE8C1E5D826400FF2C0D /* SRPUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPUtil.swift; sourceTree = "<group>"; };
 		A58ACE8E1E5D82B400FF2C0D /* SRPProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPProtocol.swift; sourceTree = "<group>"; };
 		A58ACE901E5D858B00FF2C0D /* SRPData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPData.swift; sourceTree = "<group>"; };
-		A58ACE941E5D88AD00FF2C0D /* SRPDataImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPDataImpl.swift; sourceTree = "<group>"; };
+		A58ACE941E5D88AD00FF2C0D /* SRPDataBigIntImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPDataBigIntImpl.swift; sourceTree = "<group>"; };
 		A58ACE961E5D8A8500FF2C0D /* SRPError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPError.swift; sourceTree = "<group>"; };
-		A58ACE981E5D8AD700FF2C0D /* SRPImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPImpl.swift; sourceTree = "<group>"; };
-		A58ACE9A1E5D93CE00FF2C0D /* SRP+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SRP+Extensions.swift"; sourceTree = "<group>"; };
+		A58ACE981E5D8AD700FF2C0D /* SRPBigIntImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPBigIntImpl.swift; sourceTree = "<group>"; };
+		A58ACE9A1E5D93CE00FF2C0D /* SRP+BigInt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SRP+BigInt.swift"; sourceTree = "<group>"; };
 		A5A56B671E5C34560024CA0A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A5BF31A71E7A9AA400EC5BCA /* imath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = imath.c; sourceTree = "<group>"; };
 		A5BF31A81E7A9AA400EC5BCA /* imath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imath.h; sourceTree = "<group>"; };
 		A5BF31A91E7A9AA400EC5BCA /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		A5BF31AC1E7A9B2B00EC5BCA /* SRPDataIMathImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPDataIMathImpl.swift; sourceTree = "<group>"; };
+		A5BF31AE1E7ABFEE00EC5BCA /* imath+additions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "imath+additions.c"; sourceTree = "<group>"; };
+		A5BF31AF1E7ABFEE00EC5BCA /* imath+additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "imath+additions.h"; sourceTree = "<group>"; };
+		A5D4B1C61E7BE4F800BC9A9A /* SRPConfiguration+BigInt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SRPConfiguration+BigInt.swift"; sourceTree = "<group>"; };
+		A5D4B1C81E7BE5C800BC9A9A /* SRPBigIntProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPBigIntProtocol.swift; sourceTree = "<group>"; };
+		A5D4B1D31E7BEE4600BC9A9A /* SRPConfiguration+IMath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SRPConfiguration+IMath.swift"; sourceTree = "<group>"; };
+		A5D4B1D51E7BEF9E00BC9A9A /* SRPConfigurationIMathImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPConfigurationIMathImpl.swift; sourceTree = "<group>"; };
+		A5D4B1D71E7BF13700BC9A9A /* SRP+IMath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SRP+IMath.swift"; sourceTree = "<group>"; };
 		B15B2BD877A371ACD21A17B5 /* Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig"; path = "Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRP/Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig"; sourceTree = "<group>"; };
 		F59A7100C8CBC36C1AB01B41 /* Pods_SwiftySRP_Base_SwiftySRP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SwiftySRP_Base_SwiftySRP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -136,17 +158,10 @@
 			children = (
 				A50090B81E4C74BD00238562 /* SwiftySRP.h */,
 				A50090B91E4C74BD00238562 /* Info.plist */,
-				A50091041E4C961100238562 /* SRP.swift */,
-				A58ACE861E5D818000FF2C0D /* SRPConfiguration.swift */,
-				A58ACE8A1E5D823700FF2C0D /* SRPConfigurationImpl.swift */,
-				A58ACE8C1E5D826400FF2C0D /* SRPUtil.swift */,
-				A58ACE8E1E5D82B400FF2C0D /* SRPProtocol.swift */,
-				A58ACE901E5D858B00FF2C0D /* SRPData.swift */,
-				A58ACE941E5D88AD00FF2C0D /* SRPDataImpl.swift */,
-				A58ACE961E5D8A8500FF2C0D /* SRPError.swift */,
-				A58ACE981E5D8AD700FF2C0D /* SRPImpl.swift */,
-				A58ACE9A1E5D93CE00FF2C0D /* SRP+Extensions.swift */,
-				A5BF31AC1E7A9B2B00EC5BCA /* SRPDataIMathImpl.swift */,
+				A5D4B1CD1E7BE9E500BC9A9A /* Configuration */,
+				A5D4B1CF1E7BEA5700BC9A9A /* Common */,
+				A5D4B1CE1E7BEA3400BC9A9A /* Main */,
+				A5D4B1D11E7BEB0300BC9A9A /* Implementation */,
 			);
 			path = SwiftySRP;
 			sourceTree = "<group>";
@@ -167,8 +182,74 @@
 				A5BF31A71E7A9AA400EC5BCA /* imath.c */,
 				A5BF31A81E7A9AA400EC5BCA /* imath.h */,
 				A5BF31A91E7A9AA400EC5BCA /* module.modulemap */,
+				A5BF31AE1E7ABFEE00EC5BCA /* imath+additions.c */,
+				A5BF31AF1E7ABFEE00EC5BCA /* imath+additions.h */,
 			);
 			path = imath;
+			sourceTree = "<group>";
+		};
+		A5D4B1CD1E7BE9E500BC9A9A /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				A58ACE861E5D818000FF2C0D /* SRPConfiguration.swift */,
+			);
+			name = Configuration;
+			sourceTree = "<group>";
+		};
+		A5D4B1CE1E7BEA3400BC9A9A /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				A50091041E4C961100238562 /* SRP.swift */,
+				A58ACE8E1E5D82B400FF2C0D /* SRPProtocol.swift */,
+			);
+			name = Main;
+			sourceTree = "<group>";
+		};
+		A5D4B1CF1E7BEA5700BC9A9A /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				A58ACE901E5D858B00FF2C0D /* SRPData.swift */,
+				A58ACE961E5D8A8500FF2C0D /* SRPError.swift */,
+				A58ACE8C1E5D826400FF2C0D /* SRPUtil.swift */,
+			);
+			name = Common;
+			sourceTree = "<group>";
+		};
+		A5D4B1D01E7BEAF800BC9A9A /* BigInt */ = {
+			isa = PBXGroup;
+			children = (
+				A58ACE9A1E5D93CE00FF2C0D /* SRP+BigInt.swift */,
+				A58ACE8A1E5D823700FF2C0D /* SRPConfigurationBigIntImpl.swift */,
+				A5D4B1C61E7BE4F800BC9A9A /* SRPConfiguration+BigInt.swift */,
+				A58ACE981E5D8AD700FF2C0D /* SRPBigIntImpl.swift */,
+				A5D4B1C81E7BE5C800BC9A9A /* SRPBigIntProtocol.swift */,
+				A54DFB6B1E7AE6A2003F4DB0 /* SRPData+BigInt.swift */,
+				A58ACE941E5D88AD00FF2C0D /* SRPDataBigIntImpl.swift */,
+			);
+			name = BigInt;
+			sourceTree = "<group>";
+		};
+		A5D4B1D11E7BEB0300BC9A9A /* Implementation */ = {
+			isa = PBXGroup;
+			children = (
+				A5D4B1D21E7BEB5200BC9A9A /* IMath */,
+				A5D4B1D01E7BEAF800BC9A9A /* BigInt */,
+			);
+			name = Implementation;
+			sourceTree = "<group>";
+		};
+		A5D4B1D21E7BEB5200BC9A9A /* IMath */ = {
+			isa = PBXGroup;
+			children = (
+				A5D4B1D71E7BF13700BC9A9A /* SRP+IMath.swift */,
+				A5D4B1D51E7BEF9E00BC9A9A /* SRPConfigurationIMathImpl.swift */,
+				A5D4B1D31E7BEE4600BC9A9A /* SRPConfiguration+IMath.swift */,
+				A54DFB6D1E7AE706003F4DB0 /* SRPData+IMath.swift */,
+				A5BF31AC1E7A9B2B00EC5BCA /* SRPDataIMathImpl.swift */,
+				A54DFB631E7ACB60003F4DB0 /* SRPIMathImpl.swift */,
+				A54DFB671E7AD094003F4DB0 /* SRPMpzT.swift */,
+			);
+			name = IMath;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -179,6 +260,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A5BF31AB1E7A9AA400EC5BCA /* imath.h in Headers */,
+				A5BF31B11E7ABFEE00EC5BCA /* imath+additions.h in Headers */,
 				A50090C61E4C74BD00238562 /* SwiftySRP.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -372,15 +454,25 @@
 				A58ACE911E5D858B00FF2C0D /* SRPData.swift in Sources */,
 				A5BF31AD1E7A9B2B00EC5BCA /* SRPDataIMathImpl.swift in Sources */,
 				A50091051E4C961100238562 /* SRP.swift in Sources */,
-				A58ACE8B1E5D823700FF2C0D /* SRPConfigurationImpl.swift in Sources */,
+				A5D4B1CB1E7BE87200BC9A9A /* SRPBigIntImpl.swift in Sources */,
+				A58ACE8B1E5D823700FF2C0D /* SRPConfigurationBigIntImpl.swift in Sources */,
 				A58ACE971E5D8A8500FF2C0D /* SRPError.swift in Sources */,
-				A58ACE951E5D88AD00FF2C0D /* SRPDataImpl.swift in Sources */,
+				A5BF31B01E7ABFEE00EC5BCA /* imath+additions.c in Sources */,
+				A58ACE951E5D88AD00FF2C0D /* SRPDataBigIntImpl.swift in Sources */,
+				A54DFB681E7AD094003F4DB0 /* SRPMpzT.swift in Sources */,
+				A5D4B1D81E7BF13700BC9A9A /* SRP+IMath.swift in Sources */,
 				A58ACE8F1E5D82B400FF2C0D /* SRPProtocol.swift in Sources */,
 				A58ACE871E5D818000FF2C0D /* SRPConfiguration.swift in Sources */,
-				A58ACE9B1E5D93CE00FF2C0D /* SRP+Extensions.swift in Sources */,
-				A58ACE991E5D8AD700FF2C0D /* SRPImpl.swift in Sources */,
+				A54DFB6E1E7AE706003F4DB0 /* SRPData+IMath.swift in Sources */,
+				A5D4B1D61E7BEF9E00BC9A9A /* SRPConfigurationIMathImpl.swift in Sources */,
+				A5D4B1C71E7BE4F800BC9A9A /* SRPConfiguration+BigInt.swift in Sources */,
+				A58ACE9B1E5D93CE00FF2C0D /* SRP+BigInt.swift in Sources */,
 				A5BF31AA1E7A9AA400EC5BCA /* imath.c in Sources */,
+				A5D4B1C91E7BE5C800BC9A9A /* SRPBigIntProtocol.swift in Sources */,
+				A5D4B1CA1E7BE7F600BC9A9A /* SRPData+BigInt.swift in Sources */,
 				A58ACE8D1E5D826400FF2C0D /* SRPUtil.swift in Sources */,
+				A5D4B1D41E7BEE4600BC9A9A /* SRPConfiguration+IMath.swift in Sources */,
+				A5D4B1CC1E7BE9C500BC9A9A /* SRPIMathImpl.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

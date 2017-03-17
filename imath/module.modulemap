@@ -1,5 +1,6 @@
 module imath {
   header "imath.h"
+  header "imath+additions.h"
   export *
 }
 

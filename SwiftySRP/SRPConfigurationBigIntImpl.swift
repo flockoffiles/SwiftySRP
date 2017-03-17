@@ -1,5 +1,5 @@
 //
-//  SRPConfigurationImpl.swift
+//  SRPConfigurationBigIntImpl.swift
 //  SwiftySRP
 //
 //  Created by Sergey A. Novitsky on 22/02/2017.
@@ -9,74 +9,25 @@
 import Foundation
 import BigInt
 
-// Internal extension to short-circuit conversions between Data and BigUInt
-// in case the default implementation struct (SRPConfigurationImpl) is used
-extension SRPConfiguration
-{
-    /// A large safe prime per SRP spec. (Also see: https://tools.ietf.org/html/rfc5054#appendix-A)
-    var N: BigUInt {
-        get {
-            // Shortcut to avoid converting to Data and back.
-            if let impl = self as? SRPConfigurationImpl
-            {
-                return impl.uint_N
-            }
-            return BigUInt(modulus)
-        }
-    }
-    
-    /// A generator modulo N. (Also see: https://tools.ietf.org/html/rfc5054#appendix-A)
-    var g: BigUInt {
-        get {
-            // Shortcut to avoid converting to Data and back.
-            if let impl = self as? SRPConfigurationImpl
-            {
-                return impl.uint_g
-            }
-            return BigUInt(generator)
-        }
-    }
-    
-    /// Client private value
-    func a() -> BigUInt
-    {
-        if let impl = self as? SRPConfigurationImpl
-        {
-            return impl.uint_a()
-        }
-        return BigUInt(clientPrivateValue())
-    }
-    
-    /// Server private value
-    func b() -> BigUInt
-    {
-        if let impl = self as? SRPConfigurationImpl
-        {
-            return impl.uint_b()
-        }
-        return BigUInt(serverPrivateValue())
-    }
-}
-
 
 /// Implementation: configuration for SRP algorithms (see the spec. above for more information about the meaning of parameters).
-struct SRPConfigurationImpl: SRPConfiguration
+struct SRPConfigurationBigIntImpl: SRPConfiguration
 {
     /// A large safe prime per SRP spec. (Also see: https://tools.ietf.org/html/rfc5054#appendix-A)
     public var modulus: Data {
-        return uint_N.serialize()
+        return _N.serialize()
     }
     
     /// A generator modulo N. (Also see: https://tools.ietf.org/html/rfc5054#appendix-A)
     public var generator: Data {
-        return uint_g.serialize()
+        return _g.serialize()
     }
     
     /// A large safe prime per SRP spec.
-    let uint_N: BigUInt
+    let _N: BigUInt
     
     /// A generator modulo N
-    let uint_g: BigUInt
+    let _g: BigUInt
     
     /// Hash function to be used.
     let digest: DigestFunc
@@ -85,10 +36,10 @@ struct SRPConfigurationImpl: SRPConfiguration
     let hmac: HMacFunc
     
     /// Custom function to generate 'a'
-    let aFunc: PrivateValueFunc?
+    let _aFunc: PrivateValueBigIntFunc?
     
     /// Custom function to generate 'b'
-    let bFunc: PrivateValueFunc?
+    let _bFunc: PrivateValueBigIntFunc?
     
     
     /// Create a configuration with the given parameters.
@@ -104,15 +55,15 @@ struct SRPConfigurationImpl: SRPConfiguration
          g: BigUInt,
          digest: @escaping DigestFunc = SRP.sha256DigestFunc,
          hmac: @escaping HMacFunc = SRP.sha256HMacFunc,
-         aFunc: PrivateValueFunc?,
-         bFunc: PrivateValueFunc?)
+         aFunc: PrivateValueBigIntFunc?,
+         bFunc: PrivateValueBigIntFunc?)
     {
-        self.uint_N = N
-        self.uint_g = g
+        _N = N
+        _g = g
         self.digest = digest
         self.hmac = hmac
-        self.aFunc = aFunc
-        self.bFunc = bFunc
+        _aFunc = aFunc
+        _bFunc = bFunc
     }
     
     
@@ -121,8 +72,8 @@ struct SRPConfigurationImpl: SRPConfiguration
     /// - Throws: SRPError if invalid.
     func validate() throws
     {
-        guard N.width >= 256 else { throw SRPError.configurationPrimeTooShort }
-        guard g > 1 else { throw SRPError.configurationGeneratorInvalid }
+        guard _N.width >= 256 else { throw SRPError.configurationPrimeTooShort }
+        guard _g > 1 else { throw SRPError.configurationGeneratorInvalid }
     }
     
     /// Generate a random private value less than the given value N and at least half the bit size of N
@@ -144,11 +95,11 @@ struct SRPConfigurationImpl: SRPConfiguration
     /// Function to calculate parameter a (per SRP spec above)
     func uint_a() -> BigUInt
     {
-        if let aFunc = self.aFunc
+        if let aFunc = _aFunc
         {
             return aFunc()
         }
-        return SRPConfigurationImpl.generatePrivateValue(N: uint_N)
+        return SRPConfigurationBigIntImpl.generatePrivateValue(N: _N)
     }
     
     /// Function to calculate parameter a (per SRP spec above)
@@ -160,11 +111,11 @@ struct SRPConfigurationImpl: SRPConfiguration
     /// Function to calculate parameter b (per SRP spec above)
     func uint_b() -> BigUInt
     {
-        if let bFunc = self.bFunc
+        if let bFunc = _bFunc
         {
             return bFunc()
         }
-        return SRPConfigurationImpl.generatePrivateValue(N: uint_N)
+        return SRPConfigurationBigIntImpl.generatePrivateValue(N: _N)
     }
     
     /// Function to calculate parameter b (per SRP spec above)
