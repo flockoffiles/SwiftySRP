@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
     spec.name         = 'SwiftySRP'
-    spec.version      = '0.0.1'
-    spec.ios.deployment_target = "8.0"
+    spec.version      = '1.1'
+    spec.ios.deployment_target = "9.0"
     spec.license      = { :type => 'MIT', :file => 'LICENSE' }
     spec.summary      = 'Swift implementation of SRP'
     spec.homepage     = 'https://github.com/serieuxchat/SwiftySRP'
@@ -10,7 +10,7 @@ Pod::Spec.new do |spec|
     spec.source_files = 'SwiftySRP/*.swift'
     spec.documentation_url = 'https://github.com/serieuxchat/SwiftySRP/'
     spec.dependency 'BigInt', '~> 2.1'
-    spec.preserve_paths = 'CommonCrypto/module.modulemap', 'README', 'SwiftySRPTests/*.swift'
+    spec.preserve_paths = 'CommonCrypto/module.modulemap', 'imath/**', 'README', 'SwiftySRPTests/*.swift'
     spec.xcconfig = { 'SWIFT_INCLUDE_PATHS' => '$(PODS_ROOT)/SwiftySRP/CommonCrypto $(SRCROOT)/../CommonCrypto' }
     
     
