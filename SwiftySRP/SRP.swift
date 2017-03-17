@@ -62,7 +62,7 @@ public class SRP
     /// - Returns: The resulting SRP protocol implementation.
     public static func srpProtocol(_ configuration: SRPConfiguration) -> SRPProtocol
     {
-        return SRPIMathImpl(configuration: configuration)
+        return SRPBigIntImpl(configuration: configuration)
     }
     
     /// SHA256 hash function

@@ -93,7 +93,7 @@ struct SRPConfigurationBigIntImpl: SRPConfiguration
     }
     
     /// Function to calculate parameter a (per SRP spec above)
-    func uint_a() -> BigUInt
+    func _a() -> BigUInt
     {
         if let aFunc = _aFunc
         {
@@ -109,7 +109,7 @@ struct SRPConfigurationBigIntImpl: SRPConfiguration
     }
     
     /// Function to calculate parameter b (per SRP spec above)
-    func uint_b() -> BigUInt
+    func _b() -> BigUInt
     {
         if let bFunc = _bFunc
         {

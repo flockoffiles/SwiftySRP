@@ -93,7 +93,7 @@ struct SRPConfigurationIMathImpl: SRPConfiguration
     }
     
     /// Function to calculate parameter a (per SRP spec above)
-    func mpz_a() -> SRPMpzT
+    func _a() -> SRPMpzT
     {
         if let aFunc = _aFunc
         {
@@ -109,7 +109,7 @@ struct SRPConfigurationIMathImpl: SRPConfiguration
     }
     
     /// Function to calculate parameter b (per SRP spec above)
-    func mpz_b() -> SRPMpzT
+    func _b() -> SRPMpzT
     {
         if let bFunc = _bFunc
         {

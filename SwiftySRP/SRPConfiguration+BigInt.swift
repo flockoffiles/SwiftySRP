@@ -19,7 +19,7 @@ extension SRPConfiguration
             // Shortcut to avoid converting to Data and back.
             if let impl = self as? SRPConfigurationBigIntImpl
             {
-                return impl.uint_N
+                return impl._N
             }
             return BigUInt(modulus)
         }
@@ -31,7 +31,7 @@ extension SRPConfiguration
             // Shortcut to avoid converting to Data and back.
             if let impl = self as? SRPConfigurationBigIntImpl
             {
-                return impl.uint_g
+                return impl._g
             }
             return BigUInt(generator)
         }
@@ -42,7 +42,7 @@ extension SRPConfiguration
     {
         if let impl = self as? SRPConfigurationBigIntImpl
         {
-            return impl.uint_a()
+            return impl._a()
         }
         return BigUInt(clientPrivateValue())
     }
@@ -52,7 +52,7 @@ extension SRPConfiguration
     {
         if let impl = self as? SRPConfigurationBigIntImpl
         {
-            return impl.uint_b()
+            return impl._b()
         }
         return BigUInt(serverPrivateValue())
     }

@@ -17,7 +17,7 @@ extension SRPConfiguration
             // Shortcut to avoid converting to Data and back.
             if let impl = self as? SRPConfigurationIMathImpl
             {
-                return impl.mpz_N
+                return impl._N
             }
             return SRPMpzT(modulus)
         }
@@ -29,7 +29,7 @@ extension SRPConfiguration
             // Shortcut to avoid converting to Data and back.
             if let impl = self as? SRPConfigurationIMathImpl
             {
-                return impl.mpz_g
+                return impl._g
             }
             return SRPMpzT(generator)
         }
@@ -40,7 +40,7 @@ extension SRPConfiguration
     {
         if let impl = self as? SRPConfigurationIMathImpl
         {
-            return impl.mpz_a()
+            return impl._a()
         }
         return SRPMpzT(clientPrivateValue())
     }
@@ -50,7 +50,7 @@ extension SRPConfiguration
     {
         if let impl = self as? SRPConfigurationIMathImpl
         {
-            return impl.mpz_b()
+            return impl._b()
         }
         return SRPMpzT(serverPrivateValue())
     }
