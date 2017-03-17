@@ -7,7 +7,7 @@ Pod::Spec.new do |spec|
     spec.homepage     = 'https://github.com/serieuxchat/SwiftySRP'
     spec.author       = 'Sergey Novitsky'
     spec.source       = { :git => 'https://github.com/serieuxchat/SwiftySRP.git', :tag => 'v' + String(spec.version) }
-    spec.source_files = 'SwiftySRP/*.swift'
+    spec.source_files = 'SwiftySRP/*.swift', 'imath/*.{h,c}', 
     spec.documentation_url = 'https://github.com/serieuxchat/SwiftySRP/'
     spec.dependency 'BigInt', '~> 2.1'
     spec.preserve_paths = 'CommonCrypto/module.modulemap', 'imath/**', 'README', 'SwiftySRPTests/*.swift'
