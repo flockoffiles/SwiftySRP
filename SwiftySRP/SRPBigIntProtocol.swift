@@ -8,9 +8,11 @@
 
 import Foundation
 
-protocol SRPBigIntProtocol
+public protocol SRPBigIntProtocol: Comparable
 {
     init()
+    
+    init(_ intValue: Int)
     
     init(_ data: Data)
     
@@ -26,5 +28,9 @@ protocol SRPBigIntProtocol
     
     static func +(a: Self, b: Self) -> Self
     
+    static func -(a: Self, b: Self) -> Self
+    
     func power(_ exponent: Self, modulus: Self) -> Self
+    
+    static func randomIntegerLessThan(_ limit: Self) -> Self
 }

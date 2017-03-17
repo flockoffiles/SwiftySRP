@@ -9,7 +9,13 @@
 import Foundation
 import BigInt
 
-typealias PrivateValueBigIntFunc = () -> BigUInt
+extension BigUInt: SRPBigIntProtocol
+{
+    public init(_ other: BigUInt)
+    {
+        self = other
+    }
+}
 
 /// Internal extension. For test purposes only.
 /// Allows to create a configuration with custom (fixed) private ephemeral values 'a' and 'b'
@@ -30,8 +36,8 @@ extension SRP
                               g: Data,
                               digest: @escaping DigestFunc = SRP.sha256DigestFunc,
                               hmac: @escaping HMacFunc = SRP.sha256HMacFunc,
-                              a: @escaping PrivateValueBigIntFunc,
-                              b: @escaping PrivateValueBigIntFunc) throws -> SRPConfiguration
+                              a: @escaping SRPConfigurationBigIntImpl.PrivateValueBigIntFunc,
+                              b: @escaping SRPConfigurationBigIntImpl.PrivateValueBigIntFunc) throws -> SRPConfiguration
     {
         let result = SRPConfigurationBigIntImpl(N: BigUInt(N),
                                           g: BigUInt(g),

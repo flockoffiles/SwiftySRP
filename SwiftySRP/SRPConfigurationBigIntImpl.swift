@@ -13,6 +13,8 @@ import BigInt
 /// Implementation: configuration for SRP algorithms (see the spec. above for more information about the meaning of parameters).
 struct SRPConfigurationBigIntImpl: SRPConfiguration
 {
+    typealias PrivateValueBigIntFunc = () -> BigUInt
+
     /// A large safe prime per SRP spec. (Also see: https://tools.ietf.org/html/rfc5054#appendix-A)
     public var modulus: Data {
         return _N.serialize()
@@ -85,8 +87,9 @@ struct SRPConfigurationBigIntImpl: SRPConfiguration
         // Suppose that N is 8 bits wide
         // Then min bits == 4
         let minBits = N.width / 2
+        guard minBits > 0 else { return BigUInt.randomIntegerLessThan(2) }
         // Smallest number with 4 bits is 2^(4-1) = 8
-        let minBitsNumber = BigUInt(2).power(minBits > 0 ? minBits - 1: 0)
+        let minBitsNumber = BigUInt(pow(2, minBits - 1))
         let random = minBitsNumber + BigUInt.randomIntegerLessThan(N - minBitsNumber)
         
         return random

@@ -36,6 +36,9 @@
 		A5D4B1D41E7BEE4600BC9A9A /* SRPConfiguration+IMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1D31E7BEE4600BC9A9A /* SRPConfiguration+IMath.swift */; };
 		A5D4B1D61E7BEF9E00BC9A9A /* SRPConfigurationIMathImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1D51E7BEF9E00BC9A9A /* SRPConfigurationIMathImpl.swift */; };
 		A5D4B1D81E7BF13700BC9A9A /* SRP+IMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1D71E7BF13700BC9A9A /* SRP+IMath.swift */; };
+		A5D4B1DA1E7C1D2100BC9A9A /* SRPConfigurationGenericImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1D91E7C1D2100BC9A9A /* SRPConfigurationGenericImpl.swift */; };
+		A5D4B1DC1E7C2C0F00BC9A9A /* SRP+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1DB1E7C2C0F00BC9A9A /* SRP+Extensions.swift */; };
+		A5D4B1DE1E7C2D0A00BC9A9A /* SRPConfiguration+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1DD1E7C2D0A00BC9A9A /* SRPConfiguration+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +89,9 @@
 		A5D4B1D31E7BEE4600BC9A9A /* SRPConfiguration+IMath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SRPConfiguration+IMath.swift"; sourceTree = "<group>"; };
 		A5D4B1D51E7BEF9E00BC9A9A /* SRPConfigurationIMathImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPConfigurationIMathImpl.swift; sourceTree = "<group>"; };
 		A5D4B1D71E7BF13700BC9A9A /* SRP+IMath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SRP+IMath.swift"; sourceTree = "<group>"; };
+		A5D4B1D91E7C1D2100BC9A9A /* SRPConfigurationGenericImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPConfigurationGenericImpl.swift; sourceTree = "<group>"; };
+		A5D4B1DB1E7C2C0F00BC9A9A /* SRP+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SRP+Extensions.swift"; sourceTree = "<group>"; };
+		A5D4B1DD1E7C2D0A00BC9A9A /* SRPConfiguration+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SRPConfiguration+Extensions.swift"; sourceTree = "<group>"; };
 		B15B2BD877A371ACD21A17B5 /* Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig"; path = "Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRP/Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig"; sourceTree = "<group>"; };
 		F59A7100C8CBC36C1AB01B41 /* Pods_SwiftySRP_Base_SwiftySRP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SwiftySRP_Base_SwiftySRP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -211,6 +217,7 @@
 				A58ACE901E5D858B00FF2C0D /* SRPData.swift */,
 				A58ACE961E5D8A8500FF2C0D /* SRPError.swift */,
 				A58ACE8C1E5D826400FF2C0D /* SRPUtil.swift */,
+				A5D4B1C81E7BE5C800BC9A9A /* SRPBigIntProtocol.swift */,
 			);
 			name = Common;
 			sourceTree = "<group>";
@@ -222,7 +229,6 @@
 				A58ACE8A1E5D823700FF2C0D /* SRPConfigurationBigIntImpl.swift */,
 				A5D4B1C61E7BE4F800BC9A9A /* SRPConfiguration+BigInt.swift */,
 				A58ACE981E5D8AD700FF2C0D /* SRPBigIntImpl.swift */,
-				A5D4B1C81E7BE5C800BC9A9A /* SRPBigIntProtocol.swift */,
 				A54DFB6B1E7AE6A2003F4DB0 /* SRPData+BigInt.swift */,
 				A58ACE941E5D88AD00FF2C0D /* SRPDataBigIntImpl.swift */,
 			);
@@ -232,6 +238,9 @@
 		A5D4B1D11E7BEB0300BC9A9A /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
+				A5D4B1D91E7C1D2100BC9A9A /* SRPConfigurationGenericImpl.swift */,
+				A5D4B1DB1E7C2C0F00BC9A9A /* SRP+Extensions.swift */,
+				A5D4B1DD1E7C2D0A00BC9A9A /* SRPConfiguration+Extensions.swift */,
 				A5D4B1D21E7BEB5200BC9A9A /* IMath */,
 				A5D4B1D01E7BEAF800BC9A9A /* BigInt */,
 			);
@@ -458,6 +467,7 @@
 				A58ACE8B1E5D823700FF2C0D /* SRPConfigurationBigIntImpl.swift in Sources */,
 				A58ACE971E5D8A8500FF2C0D /* SRPError.swift in Sources */,
 				A5BF31B01E7ABFEE00EC5BCA /* imath+additions.c in Sources */,
+				A5D4B1DC1E7C2C0F00BC9A9A /* SRP+Extensions.swift in Sources */,
 				A58ACE951E5D88AD00FF2C0D /* SRPDataBigIntImpl.swift in Sources */,
 				A54DFB681E7AD094003F4DB0 /* SRPMpzT.swift in Sources */,
 				A5D4B1D81E7BF13700BC9A9A /* SRP+IMath.swift in Sources */,
@@ -471,8 +481,10 @@
 				A5D4B1C91E7BE5C800BC9A9A /* SRPBigIntProtocol.swift in Sources */,
 				A5D4B1CA1E7BE7F600BC9A9A /* SRPData+BigInt.swift in Sources */,
 				A58ACE8D1E5D826400FF2C0D /* SRPUtil.swift in Sources */,
+				A5D4B1DA1E7C1D2100BC9A9A /* SRPConfigurationGenericImpl.swift in Sources */,
 				A5D4B1D41E7BEE4600BC9A9A /* SRPConfiguration+IMath.swift in Sources */,
 				A5D4B1CC1E7BE9C500BC9A9A /* SRPIMathImpl.swift in Sources */,
+				A5D4B1DE1E7C2D0A00BC9A9A /* SRPConfiguration+Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

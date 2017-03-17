@@ -55,6 +55,9 @@ import Foundation
 
 public protocol SRPProtocol
 {
+    /// Configuration for this protocol instance.
+    var configuration: SRPConfiguration { get }
+    
     /// Compute the verifier and client credentials.
     ///
     /// - Parameters:

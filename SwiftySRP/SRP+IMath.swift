@@ -8,7 +8,6 @@
 
 import Foundation
 
-typealias PrivateValueIMathFunc = () -> SRPMpzT
 
 /// Internal extension. For test purposes only.
 /// Allows to create a configuration with custom (fixed) private ephemeral values 'a' and 'b'
@@ -29,8 +28,8 @@ extension SRP
                               g: Data,
                               digest: @escaping DigestFunc = SRP.sha256DigestFunc,
                               hmac: @escaping HMacFunc = SRP.sha256HMacFunc,
-                              a: @escaping PrivateValueIMathFunc,
-                              b: @escaping PrivateValueIMathFunc) throws -> SRPConfiguration
+                              a: @escaping SRPConfigurationIMathImpl.PrivateValueIMathFunc,
+                              b: @escaping SRPConfigurationIMathImpl.PrivateValueIMathFunc) throws -> SRPConfiguration
     {
         let result = SRPConfigurationIMathImpl(N: SRPMpzT(N),
                                                 g: SRPMpzT(g),

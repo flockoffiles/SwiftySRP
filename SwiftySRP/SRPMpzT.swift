@@ -9,28 +9,28 @@
 import Foundation
 import imath
 
-class SRPMpzT
+final class SRPMpzT: SRPBigIntProtocol
 {
     fileprivate var value = mpz_t()
     
-    init()
+    required init()
     {
         mp_int_init(&value)
     }
     
-    init(_ intValue: Int)
+    required init(_ intValue: Int)
     {
         mp_int_init_value(&value, intValue)
     }
     
-    init(_ data: Data)
+    required init(_ data: Data)
     {
         data.withUnsafeBytes { (bytes: UnsafePointer<UInt8>) -> Void in
             mp_int_read_const_unsigned(&value, bytes, Int32(data.count))
         }
     }
     
-    init(_ other: SRPMpzT)
+    required init(_ other: SRPMpzT)
     {
         mp_int_init_const_copy(&value, &other.value)
     }
@@ -105,13 +105,6 @@ class SRPMpzT
         return result
     }
     
-    func power(_ exponent: SRPMpzT) -> SRPMpzT
-    {
-        let result = SRPMpzT()
-        mp_int_expt_full(&value, &exponent.value, &result.value)
-        return result
-    }
-
     static func randomInteger(withMaximumWidth width: Int) -> SRPMpzT
     {
         guard width > 0 else { return SRPMpzT(0) }

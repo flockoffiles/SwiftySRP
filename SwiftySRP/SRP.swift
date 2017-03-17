@@ -28,54 +28,70 @@ import BigInt
 
 /// This class serves as a namespace for SRP related methods. It is not meant to be instantiated.
 /// For a short description of the SRP protocol, see SRPProtocol.swift
-public class SRP
+public enum SRP
 {
+    case bigUInt
+    case iMath
     
-    /// Create an SRP configuration with the given parameters.
-    ///
+    /// Create an instance of SRPProtocol with the given configuration.
     /// - Parameters:
     ///   - N: Safe large prime per SRP spec. You can generate the prime with openssl: openssl dhparam -text 2048
     ///   - g: Group generator per SRP spec.
     ///   - digest: Hash function to be used.
     ///   - hmac: HMAC function to be used.
     /// - Throws: SRPError if configuration parameters are not valid.
-    /// - Returns: The resulting SRP configuration.
-    public static func configuration(N: Data,
-                              g: Data,
-                              digest: @escaping DigestFunc = SRP.sha256DigestFunc,
-                              hmac: @escaping HMacFunc = SRP.sha256HMacFunc) throws -> SRPConfiguration
-    {
-        let result = SRPConfigurationBigIntImpl(N: BigUInt(N),
-                                          g: BigUInt(g),
-                                          digest: digest,
-                                          hmac: hmac,
-                                          aFunc: nil,
-                                          bFunc: nil)
-        try result.validate()
-        return result
-    }
-    
-    
-    /// Create an instance of SRPProtocol with the given configuration.
-    ///
-    /// - Parameter configuration: SRP configuration to use.
     /// - Returns: The resulting SRP protocol implementation.
-    public static func srpProtocol(_ configuration: SRPConfiguration) -> SRPProtocol
+    public func `protocol`(N: Data,
+                           g: Data,
+                           digest: @escaping DigestFunc = SRP.sha256DigestFunc,
+                           hmac: @escaping HMacFunc = SRP.sha256HMacFunc) throws -> SRPProtocol
     {
-        return SRPBigIntImpl(configuration: configuration)
+        switch self
+        {
+        case .bigUInt:
+            let configuration = SRPConfigurationGenericImpl<BigUInt>(N: BigUInt(N),
+                                                                     g: BigUInt(g),
+                                                                     digest: digest,
+                                                                     hmac: hmac,
+                                                                     aFunc: nil,
+                                                                     bFunc: nil)
+            try configuration.validate()
+            return SRPBigIntImpl(configuration: configuration)
+        case .iMath:
+            let configuration = SRPConfigurationGenericImpl<SRPMpzT>(N: SRPMpzT(N),
+                                                                     g: SRPMpzT(g),
+                                                                     digest: digest,
+                                                                     hmac: hmac,
+                                                                     aFunc: nil,
+                                                                     bFunc: nil)
+            try configuration.validate()
+            return SRPIMathImpl(configuration: configuration)
+        }
     }
     
     /// SHA256 hash function
-    public static let sha256DigestFunc: DigestFunc = CryptoAlgorithm.SHA256.digestFunc()
+    public static var sha256DigestFunc: DigestFunc
+    {
+        return CryptoAlgorithm.SHA256.digestFunc()
+    }
     
     /// SHA512 hash function
-    public static let sha512DigestFunc: DigestFunc = CryptoAlgorithm.SHA512.digestFunc()
+    public static var sha512DigestFunc: DigestFunc
+    {
+        return CryptoAlgorithm.SHA512.digestFunc()
+    }
     
     /// SHA256 hash function
-    public static let sha256HMacFunc: HMacFunc = CryptoAlgorithm.SHA256.hmacFunc()
+    public static var sha256HMacFunc: HMacFunc
+    {
+        return CryptoAlgorithm.SHA256.hmacFunc()
+    }
     
     /// SHA512 hash function
-    public static let sha512HMacFunc: HMacFunc = CryptoAlgorithm.SHA512.hmacFunc()
+    public static var sha512HMacFunc: HMacFunc
+    {
+        return CryptoAlgorithm.SHA512.hmacFunc()
+    }
     
 }
 

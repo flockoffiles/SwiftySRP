@@ -1,5 +1,5 @@
 //
-//  SRPConfigurationIMathImpl.swift
+//  SRPConfigurationGenericImpl.swift
 //  SwiftySRP
 //
 //  Created by Sergey A. Novitsky on 17/03/2017.
@@ -9,9 +9,9 @@
 import Foundation
 
 /// Implementation: configuration for SRP algorithms (see the spec. above for more information about the meaning of parameters).
-struct SRPConfigurationIMathImpl: SRPConfiguration
+struct SRPConfigurationGenericImpl<BigIntType: SRPBigIntProtocol>: SRPConfiguration
 {
-    typealias PrivateValueIMathFunc = () -> SRPMpzT
+    typealias PrivateValueFunc = () -> BigIntType
 
     /// A large safe prime per SRP spec. (Also see: https://tools.ietf.org/html/rfc5054#appendix-A)
     public var modulus: Data {
@@ -24,10 +24,10 @@ struct SRPConfigurationIMathImpl: SRPConfiguration
     }
     
     /// A large safe prime per SRP spec.
-    let _N: SRPMpzT
+    let _N: BigIntType
     
     /// A generator modulo N
-    let _g: SRPMpzT
+    let _g: BigIntType
     
     /// Hash function to be used.
     let digest: DigestFunc
@@ -36,10 +36,10 @@ struct SRPConfigurationIMathImpl: SRPConfiguration
     let hmac: HMacFunc
     
     /// Custom function to generate 'a'
-    let _aFunc: PrivateValueIMathFunc?
+    let _aFunc: PrivateValueFunc?
     
     /// Custom function to generate 'b'
-    let _bFunc: PrivateValueIMathFunc?
+    let _bFunc: PrivateValueFunc?
     
     
     /// Create a configuration with the given parameters.
@@ -51,15 +51,15 @@ struct SRPConfigurationIMathImpl: SRPConfiguration
     ///   - hmac: HMAC function to be used when deriving multiple shared keys from a single shared secret.
     ///   - aFunc: (ONLY for testing purposes) Custom function to generate the client private value.
     ///   - bFunc: (ONLY for testing purposes) Custom function to generate the server private value.
-    init(N: SRPMpzT,
-         g: SRPMpzT,
+    init(N: BigIntType,
+         g: BigIntType,
          digest: @escaping DigestFunc = SRP.sha256DigestFunc,
          hmac: @escaping HMacFunc = SRP.sha256HMacFunc,
-         aFunc: PrivateValueIMathFunc?,
-         bFunc: PrivateValueIMathFunc?)
+         aFunc: PrivateValueFunc?,
+         bFunc: PrivateValueFunc?)
     {
-        _N = SRPMpzT(N)
-        _g = SRPMpzT(g)
+        _N = BigIntType(N)
+        _g = BigIntType(g)
         self.digest = digest
         self.hmac = hmac
         _aFunc = aFunc
@@ -73,35 +73,35 @@ struct SRPConfigurationIMathImpl: SRPConfiguration
     func validate() throws
     {
         guard _N.width >= 256 else { throw SRPError.configurationPrimeTooShort }
-        guard _g > SRPMpzT(1) else { throw SRPError.configurationGeneratorInvalid }
+        guard _g > BigIntType(1) else { throw SRPError.configurationGeneratorInvalid }
     }
     
     /// Generate a random private value less than the given value N and at least half the bit size of N
     ///
     /// - Parameter N: The value determining the range of the random value to generate.
     /// - Returns: Randomly generate value.
-    public static func generatePrivateValue(N: SRPMpzT) -> SRPMpzT
+    public static func generatePrivateValue(N: BigIntType) -> BigIntType
     {
         // Suppose that N is 8 bits wide
         // Then min bits == 4
         let minBits = N.width / 2
-        guard minBits > 0 else { return SRPMpzT.randomIntegerLessThan(SRPMpzT(2)) }
-            
+        guard minBits > 0 else { return BigIntType.randomIntegerLessThan(BigIntType(2)) }
+        
         // Smallest number with 4 bits is 2^(4-1) = 8
-        let minBitsNumber = SRPMpzT(pow(2, minBits - 1))
-        let random = minBitsNumber + SRPMpzT.randomIntegerLessThan(N - minBitsNumber)
+        let minBitsNumber = BigIntType(pow(2, minBits - 1))
+        let random = minBitsNumber + BigIntType.randomIntegerLessThan(N - minBitsNumber)
         
         return random
     }
     
     /// Function to calculate parameter a (per SRP spec above)
-    func _a() -> SRPMpzT
+    func _a() -> BigIntType
     {
         if let aFunc = _aFunc
         {
             return aFunc()
         }
-        return SRPConfigurationIMathImpl.generatePrivateValue(N: _N)
+        return type(of: self).generatePrivateValue(N: _N)
     }
     
     /// Function to calculate parameter a (per SRP spec above)
@@ -111,13 +111,13 @@ struct SRPConfigurationIMathImpl: SRPConfiguration
     }
     
     /// Function to calculate parameter b (per SRP spec above)
-    func _b() -> SRPMpzT
+    func _b() -> BigIntType
     {
         if let bFunc = _bFunc
         {
             return bFunc()
         }
-        return SRPConfigurationIMathImpl.generatePrivateValue(N: _N)
+        return type(of: self).generatePrivateValue(N: _N)
     }
     
     /// Function to calculate parameter b (per SRP spec above)
