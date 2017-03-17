@@ -13,12 +13,12 @@ struct SRPConfigurationIMathImpl: SRPConfiguration
 {
     /// A large safe prime per SRP spec. (Also see: https://tools.ietf.org/html/rfc5054#appendix-A)
     public var modulus: Data {
-        return uint_N.serialize()
+        return _N.serialize()
     }
     
     /// A generator modulo N. (Also see: https://tools.ietf.org/html/rfc5054#appendix-A)
     public var generator: Data {
-        return uint_g.serialize()
+        return _g.serialize()
     }
     
     /// A large safe prime per SRP spec.
@@ -105,7 +105,7 @@ struct SRPConfigurationIMathImpl: SRPConfiguration
     /// Function to calculate parameter a (per SRP spec above)
     func clientPrivateValue() -> Data
     {
-        return mpz_a().serialize()
+        return _a().serialize()
     }
     
     /// Function to calculate parameter b (per SRP spec above)
@@ -121,7 +121,7 @@ struct SRPConfigurationIMathImpl: SRPConfiguration
     /// Function to calculate parameter b (per SRP spec above)
     func serverPrivateValue() -> Data
     {
-        return mpz_b().serialize()
+        return _b().serialize()
     }
 }
 

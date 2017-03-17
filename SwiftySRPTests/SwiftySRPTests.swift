@@ -414,6 +414,78 @@ class SwiftySRPTests: XCTestCase
         }
 
     }
+
+    /// This test verifies that the client and server way of calculating the shared secret produce the same shared secret value.
+    /// (This version is for SHA256 hash function)
+    func test07VerificationIMath_SHA256()
+    {
+        let fixed_a_256 = SRPMpzT(Data(hex:fixedString_a_256))
+        let fixed_b_256 = SRPMpzT(Data(hex:fixedString_b_256))
+        
+        let srp256: SRPProtocol
+        do {
+            srp256 = SRPIMathImpl(configuration: try SRP.configuration(N: N, g:g,
+                                                           digest: SRP.sha256DigestFunc,
+                                                           hmac: SRP.sha256HMacFunc,
+                                                           a: { _ in return fixed_a_256 },
+                                                           b: { _ in return fixed_b_256 }))
+            
+            // Client computes the verifier (and sends it to the server)
+            var clientSRPData = try srp256.verifier(s: s, I: I, p: p)
+            
+            // Server generates credentials by using the verifier.
+            var serverSRPData = try srp256.generateServerCredentials(verifier: clientSRPData.uint_v.serialize())
+            
+            XCTAssertEqual(serverSRPData.uint_b.hexString(), fixedString_b_256)
+            XCTAssertEqual(serverSRPData.uint_B.hexString(), expectedString_B_256)
+            
+            // Pretend that the server has communicated its public value
+            clientSRPData.serverPublicValue = serverSRPData.serverPublicValue
+            
+            // Client calculates the secret.
+            clientSRPData = try srp256.calculateClientSecret(srpData: clientSRPData)
+            
+            // Pretend that the client has communicated its public value
+            serverSRPData.clientPublicValue = clientSRPData.clientPublicValue
+            
+            // Server also calculates the secret.
+            serverSRPData = try srp256.calculateServerSecret(srpData: serverSRPData)
+            
+            // Here we make sure the secrets are the same (but in real life the secret is NEVER sent over the wire).
+            XCTAssertEqual(clientSRPData.uint_clientS.hexString(), serverSRPData.uint_serverS.hexString())
+            
+            // Check the client evidence message.
+            clientSRPData = try srp256.clientEvidenceMessage(srpData: clientSRPData)
+            XCTAssertEqual(clientSRPData.uint_clientM.hexString(), expectedString_cM_256)
+            
+            // Pretend that the server has received the client evidence:
+            serverSRPData.uint_clientM = clientSRPData.uint_clientM
+            try srp256.verifyClientEvidenceMessage(srpData: serverSRPData)
+            
+            serverSRPData = try! srp256.serverEvidenceMessage(srpData: serverSRPData)
+            XCTAssertEqual(serverSRPData.uint_serverM.hexString(), expectedString_sM_256)
+            
+            // Pretend that the client has received the server evidence:
+            clientSRPData.uint_serverM = serverSRPData.uint_serverM
+            
+            try srp256.verifyServerEvidenceMessage(srpData: clientSRPData)
+            
+            let clientSharedKey_256 = try! srp256.calculateClientSharedKey(srpData: clientSRPData)
+            XCTAssertEqual(clientSharedKey_256.hexString(), expectedStringSharedKey_256)
+            
+            let clientSharedHMacKey_256 = try! srp256.calculateClientSharedKey(srpData: clientSRPData, salt: hmacSalt256)
+            XCTAssertEqual(clientSharedHMacKey_256.hexString(), expectedStringSharedHMacKey_256)
+            
+            
+        }
+        catch let e {
+            XCTFail("Caught exception: \(e)")
+            return
+        }
+        
+    }
+
+    
     
     /// This test verifies that the client and server way of calculating the shared secret produce the same shared secret value.
     /// (This version is for SHA512 hash function)

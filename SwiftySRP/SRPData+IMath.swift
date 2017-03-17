@@ -21,7 +21,7 @@ extension SRPData
             // Short-circuit conversions between Data and SRPMpzT if possible
             if let impl = self as? SRPDataIMathImpl
             {
-                return impl.mpz_x
+                return impl._x
             }
             return SRPMpzT(passwordHash)
         }
@@ -33,7 +33,7 @@ extension SRPData
             // Short-circuit conversions between Data and SRPMpzT if possible
             if let impl = self as? SRPDataIMathImpl
             {
-                return impl.mpz_a
+                return impl._a
             }
             return SRPMpzT(clientPrivateValue)
         }
@@ -45,7 +45,7 @@ extension SRPData
             // Short-circuit conversions between Data and SRPMpzT if possible
             if let impl = self as? SRPDataIMathImpl
             {
-                return impl.mpz_A
+                return impl._A
             }
             
             return SRPMpzT(clientPublicValue)
@@ -58,7 +58,7 @@ extension SRPData
             // Short-circuit conversions between Data and SRPMpzT if possible
             if let impl = self as? SRPDataIMathImpl
             {
-                return impl.mpz_clientM
+                return impl._clientM
             }
             
             return SRPMpzT(clientEvidenceMessage)
@@ -67,7 +67,7 @@ extension SRPData
             // Short-circuit conversions between Data and SRPMpzT if possible
             if var impl = self as? SRPDataIMathImpl
             {
-                impl.mpz_clientM = newValue
+                impl._clientM = newValue
                 self = impl as! Self
             }
             else
@@ -83,7 +83,7 @@ extension SRPData
             // Short-circuit conversions between Data and SRPMpzT if possible
             if let impl = self as? SRPDataIMathImpl
             {
-                return impl.mpz_serverM
+                return impl._serverM
             }
             return SRPMpzT(serverEvidenceMessage)
         }
@@ -91,7 +91,7 @@ extension SRPData
             // Short-circuit conversions between Data and SRPMpzT if possible
             if var impl = self as? SRPDataIMathImpl
             {
-                impl.mpz_serverM = newValue
+                impl._serverM = newValue
                 self = impl as! Self
             }
             else
@@ -109,7 +109,7 @@ extension SRPData
             // Short-circuit conversions between Data and SRPMpzT if possible
             if let impl = self as? SRPDataIMathImpl
             {
-                return impl.mpz_v
+                return impl._v
             }
             return SRPMpzT(verifier)
         }
@@ -117,7 +117,7 @@ extension SRPData
             // Short-circuit conversions between Data and SRPMpzT if possible
             if var impl = self as? SRPDataIMathImpl
             {
-                impl.mpz_v = newValue
+                impl._v = newValue
                 self = impl as! Self
             }
             else
@@ -133,7 +133,7 @@ extension SRPData
             // Short-circuit conversions between Data and SRPMpzT if possible
             if let impl = self as? SRPDataIMathImpl
             {
-                return impl.mpz_u
+                return impl._u
             }
             return SRPMpzT(scrambler)
         }
@@ -141,7 +141,7 @@ extension SRPData
             // Short-circuit conversions between Data and SRPMpzT if possible
             if var impl = self as? SRPDataIMathImpl
             {
-                impl.mpz_u = newValue
+                impl._u = newValue
                 self = impl as! Self
             }
             else
@@ -157,7 +157,7 @@ extension SRPData
             // Short-circuit conversions between Data and SRPMpzT if possible
             if let impl = self as? SRPDataIMathImpl
             {
-                return impl.mpz_clientS
+                return impl._clientS
             }
             return SRPMpzT(clientSecret)
         }
@@ -165,7 +165,7 @@ extension SRPData
             // Short-circuit conversions between Data and SRPMpzT if possible
             if var impl = self as? SRPDataIMathImpl
             {
-                impl.mpz_clientS = newValue
+                impl._clientS = newValue
                 self = impl as! Self
             }
             else
@@ -181,7 +181,7 @@ extension SRPData
             // Short-circuit conversions between Data and SRPMpzT if possible
             if let impl = self as? SRPDataIMathImpl
             {
-                return impl.mpz_serverS
+                return impl._serverS
             }
             return SRPMpzT(serverSecret)
         }
@@ -189,7 +189,7 @@ extension SRPData
             // Short-circuit conversions between Data and SRPMpzT if possible
             if var impl = self as? SRPDataIMathImpl
             {
-                impl.mpz_serverS = newValue
+                impl._serverS = newValue
                 self = impl as! Self
             }
             else
@@ -208,7 +208,7 @@ extension SRPData
             // Short-circuit conversions between Data and SRPMpzT if possible
             if let impl = self as? SRPDataIMathImpl
             {
-                return impl.mpz_k
+                return impl._k
             }
             return SRPMpzT(multiplier)
         }
@@ -216,7 +216,7 @@ extension SRPData
             // Short-circuit conversions between Data and SRPMpzT if possible
             if var impl = self as? SRPDataIMathImpl
             {
-                impl.mpz_k = newValue
+                impl._k = newValue
                 self = impl as! Self
             }
             else
@@ -233,7 +233,7 @@ extension SRPData
             // Short-circuit conversions between Data and SRPMpzT if possible
             if let impl = self as? SRPDataIMathImpl
             {
-                return impl.mpz_b
+                return impl._b
             }
             return SRPMpzT(serverPrivateValue)
         }
@@ -246,7 +246,7 @@ extension SRPData
             // Short-circuit conversions between Data and SRPMpzT if possible
             if let impl = self as? SRPDataIMathImpl
             {
-                return impl.mpz_B
+                return impl._B
             }
             return SRPMpzT(serverPublicValue)
         }

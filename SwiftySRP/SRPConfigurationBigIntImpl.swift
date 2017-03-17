@@ -105,7 +105,7 @@ struct SRPConfigurationBigIntImpl: SRPConfiguration
     /// Function to calculate parameter a (per SRP spec above)
     func clientPrivateValue() -> Data
     {
-        return uint_a().serialize()
+        return _a().serialize()
     }
     
     /// Function to calculate parameter b (per SRP spec above)
@@ -121,7 +121,7 @@ struct SRPConfigurationBigIntImpl: SRPConfiguration
     /// Function to calculate parameter b (per SRP spec above)
     func serverPrivateValue() -> Data
     {
-        return uint_b().serialize()
+        return _b().serialize()
     }
 }
 
