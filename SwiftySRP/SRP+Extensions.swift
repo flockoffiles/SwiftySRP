@@ -9,6 +9,15 @@
 import Foundation
 import BigInt
 
+extension BigUInt: SRPBigIntProtocol
+{
+    public init(_ other: BigUInt)
+    {
+        self = other
+    }
+}
+
+
 /// Internal extension. For test purposes only.
 /// Allows to create a configuration with custom (fixed) private ephemeral values 'a' and 'b'
 extension SRP
@@ -40,7 +49,7 @@ extension SRP
                                                                      hmac: hmac,
                                                                      aFunc: { _ in return BigUInt(a()) },
                                                                      bFunc: { _ in return BigUInt(b()) })
-            return SRPBigIntImpl(configuration: configuration)
+            return SRPGenericImpl<BigUInt>(configuration: configuration)
         case .iMath:
             let configuration = SRPConfigurationGenericImpl<SRPMpzT>(N: SRPMpzT(N),
                                                                      g: SRPMpzT(g),
@@ -48,7 +57,7 @@ extension SRP
                                                                      hmac: hmac,
                                                                      aFunc: { _ in return SRPMpzT(a()) },
                                                                      bFunc: { _ in return SRPMpzT(b()) })
-            return SRPIMathImpl(configuration: configuration)
+            return SRPGenericImpl<SRPMpzT>(configuration: configuration)
         }
     }
 }

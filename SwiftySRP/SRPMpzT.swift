@@ -111,7 +111,7 @@ final class SRPMpzT: SRPBigIntProtocol
         mp_int_expt(&value, exponent, &result.value)
         return result
     }
-    
+
     static func randomInteger(withMaximumWidth width: Int) -> SRPMpzT
     {
         guard width > 0 else { return SRPMpzT(0) }

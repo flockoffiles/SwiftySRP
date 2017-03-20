@@ -56,7 +56,7 @@ public enum SRP
                                                                      aFunc: nil,
                                                                      bFunc: nil)
             try configuration.validate()
-            return SRPBigIntImpl(configuration: configuration)
+            return SRPGenericImpl<BigUInt>(configuration: configuration)
         case .iMath:
             let configuration = SRPConfigurationGenericImpl<SRPMpzT>(N: SRPMpzT(N),
                                                                      g: SRPMpzT(g),
@@ -65,7 +65,7 @@ public enum SRP
                                                                      aFunc: nil,
                                                                      bFunc: nil)
             try configuration.validate()
-            return SRPIMathImpl(configuration: configuration)
+            return SRPGenericImpl<SRPMpzT>(configuration: configuration)
         }
     }
     

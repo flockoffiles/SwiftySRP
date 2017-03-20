@@ -170,7 +170,7 @@ class SwiftySRPTests: XCTestCase
             let srp256 = try SRP.bigUInt.protocol(N: N,
                                                   g:g,
                                                   digest: SRP.sha256DigestFunc,
-                                                  hmac: SRP.sha256HMacFunc) as! SRPBigIntImpl
+                                                  hmac: SRP.sha256HMacFunc) as! SRPGenericImpl<BigUInt>
             let x_256 = srp256.x(s: s, I: I, p: p)
             let string_x_256 = String(x_256, radix: 16, uppercase: true)
             XCTAssertEqual(string_x_256, expected_x_256)
@@ -189,7 +189,7 @@ class SwiftySRPTests: XCTestCase
             let srp512 = try SRP.bigUInt.protocol(N: N,
                                                   g:g,
                                                   digest: SRP.sha512DigestFunc,
-                                                  hmac:SRP.sha512HMacFunc) as! SRPBigIntImpl
+                                                  hmac:SRP.sha512HMacFunc) as! SRPGenericImpl<BigUInt>
             let x_512 = srp512.x(s: s, I: I, p: p)
             let string_x_512 = String(x_512, radix: 16, uppercase: true)
             XCTAssertEqual(string_x_512, expected_x_512)
@@ -205,7 +205,7 @@ class SwiftySRPTests: XCTestCase
     /// This test is for SRP using SHA256 as the hashing function.
     func test05GenerateClientCredentials_SHA256()
     {
-        let srp256: SRPBigIntImpl
+        let srp256: SRPGenericImpl<BigUInt>
         do {
             // a is fixed in this test (not generated randomly)
             let fixed_a_256 = Data(hex:fixedString_a_256)
@@ -214,14 +214,14 @@ class SwiftySRPTests: XCTestCase
             srp256 = try SRP.bigUInt.protocol(N: N, g:g, digest: SRP.sha256DigestFunc,
                                                hmac: SRP.sha256HMacFunc,
                                                a: { _ in return fixed_a_256 },
-                                               b: { _ in return fixed_b_256 }) as! SRPBigIntImpl
+                                               b: { _ in return fixed_b_256 }) as! SRPGenericImpl<BigUInt>
 
             
             let clientSRPData = (try srp256.generateClientCredentials(s: s, I: I, p: p))
             
-            let string_x_256 = String(clientSRPData.uint_x, radix: 16, uppercase: true)
-            let string_A_256 = String(clientSRPData.uint_A, radix: 16, uppercase: true)
-            let string_a_256 = String(clientSRPData.uint_a, radix: 16, uppercase: true)
+            let string_x_256 = clientSRPData.passwordHash.hexString()
+            let string_A_256 = clientSRPData.clientPublicValue.hexString()
+            let string_a_256 = clientSRPData.clientPrivateValue.hexString()
             
             XCTAssertEqual(string_x_256, expectedString_x_256)
             XCTAssertEqual(string_a_256, fixedString_a_256)
@@ -278,17 +278,19 @@ class SwiftySRPTests: XCTestCase
     {
         let fixed_a_512 = Data(hex:fixedString_a_512)
         let fixed_b_512 = Data(hex:fixedString_b_512)
-        let srp_512: SRPBigIntImpl
+        let srp_512: SRPGenericImpl<BigUInt>
         
         do {
-            srp_512 = try SRP.bigUInt.protocol(N: N, g:g, digest: SRP.sha512DigestFunc, hmac:SRP.sha512HMacFunc,
+            srp_512 = try SRP.bigUInt.protocol(N: N, g:g,
+                                               digest: SRP.sha512DigestFunc,
+                                               hmac:SRP.sha512HMacFunc,
                                                             a: { _ in return fixed_a_512 },
-                                                            b: { _ in return fixed_b_512 }) as! SRPBigIntImpl
+                                                            b: { _ in return fixed_b_512 }) as! SRPGenericImpl<BigUInt>
             
             let clientSRPData = try srp_512.generateClientCredentials(s: s, I: I, p: p)
-            let string_x_512 = String(clientSRPData.uint_x, radix: 16, uppercase: true)
-            let string_A_512 = String(clientSRPData.uint_A, radix: 16, uppercase: true)
-            let string_a_512 = String(clientSRPData.uint_a, radix: 16, uppercase: true)
+            let string_x_512 = clientSRPData.passwordHash.hexString()
+            let string_A_512 = clientSRPData.clientPublicValue.hexString()
+            let string_a_512 = clientSRPData.clientPrivateValue.hexString()
             
             XCTAssertEqual(string_x_512, expectedString_x_512)
             XCTAssertEqual(string_a_512, fixedString_a_512)
@@ -307,15 +309,15 @@ class SwiftySRPTests: XCTestCase
         let fixed_a_256 = Data(hex:fixedString_a_256)
         let fixed_b_256 = Data(hex:fixedString_b_256)
         
-        let srp256: SRPBigIntImpl
+        let srp256: SRPGenericImpl<BigUInt>
         do {
             srp256 = try SRP.bigUInt.protocol(N: N, g:g, digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc,
                                                            a: { _ in return fixed_a_256 },
-                                                           b: { _ in return fixed_b_256 }) as! SRPBigIntImpl
+                                                           b: { _ in return fixed_b_256 }) as! SRPGenericImpl<BigUInt>
             
             let clientSRPData = try srp256.verifier(s: s, I: I, p: p)
 
-            let string_v_256 = String(clientSRPData.uint_v, radix: 16, uppercase: true)
+            let string_v_256 = clientSRPData.verifier.hexString()
             
             XCTAssertEqual(string_v_256, expectedStringVerifier_256)
         }
@@ -332,16 +334,16 @@ class SwiftySRPTests: XCTestCase
         // a is fixed in this test (not generated randomly)
         let fixed_a_512 = Data(hex:fixedString_a_512)
         let fixed_b_512 = Data(hex:fixedString_b_512)
-        let srp512: SRPBigIntImpl
+        let srp512: SRPGenericImpl<BigUInt>
         
         do {
             srp512 = try SRP.bigUInt.protocol(N: N, g:g, digest: SRP.sha512DigestFunc, hmac:SRP.sha512HMacFunc,
                                                              a: { _ in return fixed_a_512 },
-                                                             b: { _ in return fixed_b_512 }) as! SRPBigIntImpl
+                                                             b: { _ in return fixed_b_512 }) as! SRPGenericImpl<BigUInt>
             
             let clientSRPData = try srp512.verifier(s: s, I: I, p: p)
             
-            let string_v_512 = String(clientSRPData.uint_v, radix: 16, uppercase: true)
+            let string_v_512 = clientSRPData.verifier.hexString()
             
             XCTAssertEqual(string_v_512, expectedStringVerifier_512)
         }
@@ -369,10 +371,10 @@ class SwiftySRPTests: XCTestCase
             var clientSRPData = try srp256.verifier(s: s, I: I, p: p)
 
             // Server generates credentials by using the verifier.
-            var serverSRPData = try srp256.generateServerCredentials(verifier: clientSRPData.uint_v.serialize())
+            var serverSRPData = try srp256.generateServerCredentials(verifier: clientSRPData.verifier)
             
-            XCTAssertEqual(serverSRPData.uint_b.hexString(), fixedString_b_256)
-            XCTAssertEqual(serverSRPData.uint_B.hexString(), expectedString_B_256)
+            XCTAssertEqual(serverSRPData.serverPrivateValue.hexString(), fixedString_b_256)
+            XCTAssertEqual(serverSRPData.serverPublicValue.hexString(), expectedString_B_256)
             
             // Pretend that the server has communicated its public value
             clientSRPData.serverPublicValue = serverSRPData.serverPublicValue
@@ -387,21 +389,21 @@ class SwiftySRPTests: XCTestCase
             serverSRPData = try srp256.calculateServerSecret(srpData: serverSRPData)
             
             // Here we make sure the secrets are the same (but in real life the secret is NEVER sent over the wire).
-            XCTAssertEqual(clientSRPData.uint_clientS.hexString(), serverSRPData.uint_serverS.hexString())
+            XCTAssertEqual(clientSRPData.clientSecret.hexString(), serverSRPData.serverSecret.hexString())
             
             // Check the client evidence message.
             clientSRPData = try srp256.clientEvidenceMessage(srpData: clientSRPData)
-            XCTAssertEqual(clientSRPData.uint_clientM.hexString(), expectedString_cM_256)
+            XCTAssertEqual(clientSRPData.clientEvidenceMessage.hexString(), expectedString_cM_256)
             
             // Pretend that the server has received the client evidence:
-            serverSRPData.uint_clientM = clientSRPData.uint_clientM
+            serverSRPData.clientEvidenceMessage = clientSRPData.clientEvidenceMessage
             try srp256.verifyClientEvidenceMessage(srpData: serverSRPData)
             
             serverSRPData = try! srp256.serverEvidenceMessage(srpData: serverSRPData)
-            XCTAssertEqual(serverSRPData.uint_serverM.hexString(), expectedString_sM_256)
+            XCTAssertEqual(serverSRPData.serverEvidenceMessage.hexString(), expectedString_sM_256)
             
             // Pretend that the client has received the server evidence:
-            clientSRPData.uint_serverM = serverSRPData.uint_serverM
+            clientSRPData.serverEvidenceMessage = serverSRPData.serverEvidenceMessage
             
             try srp256.verifyServerEvidenceMessage(srpData: clientSRPData)
             
@@ -439,10 +441,10 @@ class SwiftySRPTests: XCTestCase
             var clientSRPData = try srp256.verifier(s: s, I: I, p: p)
             
             // Server generates credentials by using the verifier.
-            var serverSRPData = try srp256.generateServerCredentials(verifier: clientSRPData.uint_v.serialize())
+            var serverSRPData = try srp256.generateServerCredentials(verifier: clientSRPData.verifier)
             
-            XCTAssertEqual(serverSRPData.uint_b.hexString(), fixedString_b_256)
-            XCTAssertEqual(serverSRPData.uint_B.hexString(), expectedString_B_256)
+            XCTAssertEqual(serverSRPData.serverPrivateValue.hexString(), fixedString_b_256)
+            XCTAssertEqual(serverSRPData.serverPublicValue.hexString(), expectedString_B_256)
             
             // Pretend that the server has communicated its public value
             clientSRPData.serverPublicValue = serverSRPData.serverPublicValue
@@ -457,21 +459,21 @@ class SwiftySRPTests: XCTestCase
             serverSRPData = try srp256.calculateServerSecret(srpData: serverSRPData)
             
             // Here we make sure the secrets are the same (but in real life the secret is NEVER sent over the wire).
-            XCTAssertEqual(clientSRPData.uint_clientS.hexString(), serverSRPData.uint_serverS.hexString())
+            XCTAssertEqual(clientSRPData.clientSecret.hexString(), serverSRPData.serverSecret.hexString())
             
             // Check the client evidence message.
             clientSRPData = try srp256.clientEvidenceMessage(srpData: clientSRPData)
-            XCTAssertEqual(clientSRPData.uint_clientM.hexString(), expectedString_cM_256)
+            XCTAssertEqual(clientSRPData.clientEvidenceMessage.hexString(), expectedString_cM_256)
             
             // Pretend that the server has received the client evidence:
-            serverSRPData.uint_clientM = clientSRPData.uint_clientM
+            serverSRPData.clientEvidenceMessage = clientSRPData.clientEvidenceMessage
             try srp256.verifyClientEvidenceMessage(srpData: serverSRPData)
             
             serverSRPData = try! srp256.serverEvidenceMessage(srpData: serverSRPData)
-            XCTAssertEqual(serverSRPData.uint_serverM.hexString(), expectedString_sM_256)
+            XCTAssertEqual(serverSRPData.serverEvidenceMessage.hexString(), expectedString_sM_256)
             
             // Pretend that the client has received the server evidence:
-            clientSRPData.uint_serverM = serverSRPData.uint_serverM
+            clientSRPData.serverEvidenceMessage = serverSRPData.serverEvidenceMessage
             
             try srp256.verifyServerEvidenceMessage(srpData: clientSRPData)
             
@@ -510,10 +512,10 @@ class SwiftySRPTests: XCTestCase
             
             var clientSRPData = try srp512.verifier(s: s, I: I, p: p)
             
-            var serverSRPData = try srp512.generateServerCredentials(verifier: clientSRPData.uint_v.serialize())
+            var serverSRPData = try srp512.generateServerCredentials(verifier: clientSRPData.verifier)
             
-            XCTAssertEqual(serverSRPData.uint_b.hexString(), fixedString_b_512)
-            XCTAssertEqual(serverSRPData.uint_B.hexString(), expectedString_B_512)
+            XCTAssertEqual(serverSRPData.serverPrivateValue.hexString(), fixedString_b_512)
+            XCTAssertEqual(serverSRPData.serverPublicValue.hexString(), expectedString_B_512)
 
             // Pretend that the server has communicated its public value
             clientSRPData.serverPublicValue = serverSRPData.serverPublicValue
@@ -526,21 +528,21 @@ class SwiftySRPTests: XCTestCase
             serverSRPData = try srp512.calculateServerSecret(srpData: serverSRPData)
             
             // Here we make sure the secrets are the same (but in real life the secret is NEVER sent over the wire).
-            XCTAssertEqual(clientSRPData.uint_clientS.hexString(), serverSRPData.uint_serverS.hexString())
+            XCTAssertEqual(clientSRPData.clientSecret.hexString(), serverSRPData.serverSecret.hexString())
             
             // Check the client evidence message.
             clientSRPData = try srp512.clientEvidenceMessage(srpData: clientSRPData)
-            XCTAssertEqual(clientSRPData.uint_clientM.hexString(), expectedStringM_512)
+            XCTAssertEqual(clientSRPData.clientEvidenceMessage.hexString(), expectedStringM_512)
             
             // Pretend that the server has received the client evidence:
-            serverSRPData.uint_clientM = clientSRPData.uint_clientM
+            serverSRPData.clientEvidenceMessage = clientSRPData.clientEvidenceMessage
             try srp512.verifyClientEvidenceMessage(srpData: serverSRPData)
 
             serverSRPData = try srp512.serverEvidenceMessage(srpData: serverSRPData)
-            XCTAssertEqual(serverSRPData.uint_serverM.hexString(), expectedString_sM_512)
+            XCTAssertEqual(serverSRPData.serverEvidenceMessage.hexString(), expectedString_sM_512)
             
             // Pretend that the client has received the server evidence:
-            clientSRPData.uint_serverM = serverSRPData.uint_serverM
+            clientSRPData.serverEvidenceMessage = serverSRPData.serverEvidenceMessage
             
             try srp512.verifyServerEvidenceMessage(srpData: clientSRPData)
 

@@ -1,17 +1,16 @@
 //
-//  SRPIMathImpl.swift
+//  SRPGenericImpl.swift
 //  SwiftySRP
 //
-//  Created by Sergey A. Novitsky on 16/03/2017.
+//  Created by Sergey A. Novitsky on 20/03/2017.
 //  Copyright © 2017 Flock of Files. All rights reserved.
 //
 
 import Foundation
-import imath
 
 /// Implementation of the SRP protocol. Although it's primarily intended to be used on the client side, it includes the server side methods
 /// as well (for testing purposes).
-public struct SRPIMathImpl: SRPProtocol
+public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
 {
     /// SRP configuration. Defines the prime N and generator g to be used, and also the relevant hashing functions.
     public var configuration: SRPConfiguration
@@ -32,13 +31,13 @@ public struct SRPIMathImpl: SRPProtocol
         guard !I.isEmpty else { throw SRPError.invalidUserName }
         guard !p.isEmpty else { throw SRPError.invalidPassword }
         
-        let value_x: SRPMpzT = x(s: s, I: I, p: p)
-        let value_a: SRPMpzT = SRPMpzT(configuration.clientPrivateValue())
+        let value_x: BigIntType = x(s: s, I: I, p: p)
+        let value_a: BigIntType = BigIntType(configuration.clientPrivateValue())
         
         // A = g^a
-        let value_A = SRPMpzT(configuration.generator).power(value_a, modulus: SRPMpzT(configuration.modulus))
+        let value_A = BigIntType(configuration.generator).power(value_a, modulus: BigIntType(configuration.modulus))
         
-        return SRPDataIMathImpl(x: value_x, a: value_a, A: value_A)
+        return SRPDataGenericImpl<BigIntType>(x: value_x, a: value_a, A: value_A)
     }
     
     
@@ -51,16 +50,16 @@ public struct SRPIMathImpl: SRPProtocol
     {
         guard !verifier.isEmpty else { throw SRPError.invalidVerifier }
         try configuration.validate()
-        let N = SRPMpzT(configuration.modulus)
-        let g = SRPMpzT(configuration.generator)
-        let v:SRPMpzT = SRPMpzT(verifier)
-        let k:SRPMpzT = hashPaddedPair(digest: configuration.digest, N: N, n1: N, n2: SRPMpzT(configuration.generator))
-        let b:SRPMpzT = SRPMpzT(configuration.serverPrivateValue())
+        let N = BigIntType(configuration.modulus)
+        let g = BigIntType(configuration.generator)
+        let v:BigIntType = BigIntType(verifier)
+        let k:BigIntType = hashPaddedPair(digest: configuration.digest, N: N, n1: N, n2: BigIntType(configuration.generator))
+        let b:BigIntType = BigIntType(configuration.serverPrivateValue())
         
         // B = kv + g^b
         let B = (((k * v) % N) + g.power(b, modulus: N)) % N
         
-        return SRPDataIMathImpl(v:v, k:k, b:b, B:B)
+        return SRPDataGenericImpl<BigIntType>(v:v, k:k, b:b, B:B)
     }
     
     
@@ -76,9 +75,9 @@ public struct SRPIMathImpl: SRPProtocol
     {
         // let valueX = x(s:s, I:I, p:p)
         var srpData = try generateClientCredentials(s: s, I: I, p: p)
-        let g = SRPMpzT(configuration.generator)
-        let N = SRPMpzT(configuration.modulus)
-        srpData.mpz_v = g.power(srpData.mpz_x, modulus:N)
+        let g = BigIntType(configuration.generator)
+        let N = BigIntType(configuration.modulus)
+        srpData.setBigInt_v(g.power(srpData.bigInt_x(), modulus:N))
         
         return srpData
     }
@@ -93,23 +92,24 @@ public struct SRPIMathImpl: SRPProtocol
     public func calculateClientSecret(srpData: SRPData) throws -> SRPData
     {
         try configuration.validate()
-        let N = configuration.mpz_N
-        let g = configuration.mpz_g
+        let N: BigIntType = configuration.bigInt_N()
+        let g: BigIntType = configuration.bigInt_g()
         var resultData = srpData
-        guard (resultData.mpz_A % N) > SRPMpzT(0) else { throw SRPError.invalidClientPublicValue }
-        guard (resultData.mpz_B % N) > SRPMpzT(0) else { throw SRPError.invalidServerPublicValue }
-        guard resultData.mpz_a > SRPMpzT(0) else { throw SRPError.invalidClientPrivateValue }
-        guard resultData.mpz_x > SRPMpzT(0) else { throw SRPError.invalidPasswordHash }
+        guard (resultData.bigInt_A() % N) > BigIntType(0) else { throw SRPError.invalidClientPublicValue }
+        guard (resultData.bigInt_B() % N) > BigIntType(0) else { throw SRPError.invalidServerPublicValue }
+        guard resultData.bigInt_a() > BigIntType(0) else { throw SRPError.invalidClientPrivateValue }
+        guard resultData.bigInt_x() > BigIntType(0) else { throw SRPError.invalidPasswordHash }
         
-        resultData.mpz_u = hashPaddedPair(digest: configuration.digest, N: N, n1: resultData.mpz_A, n2: resultData.mpz_B)
-        resultData.mpz_k = hashPaddedPair(digest: configuration.digest, N: N, n1: N, n2: g)
+        resultData.setBigInt_u(hashPaddedPair(digest: configuration.digest, N: N, n1: resultData.bigInt_A(), n2: resultData.bigInt_B()))
+        resultData.setBigInt_k(hashPaddedPair(digest: configuration.digest, N: N, n1: N, n2: g))
         
-        let exp = ((resultData.mpz_u * resultData.mpz_x) + resultData.mpz_a)
+        let exp: BigIntType = ((resultData.bigInt_u() * resultData.bigInt_x()) + resultData.bigInt_a())
         
-        let tmp = (g.power(resultData.mpz_x, modulus: N) * resultData.mpz_k) % N
-        
+        let tmp1: BigIntType = (g.power(resultData.bigInt_x(), modulus: N) * resultData.bigInt_k()) % N
+        let tmp2: BigIntType = (resultData.bigInt_B() + N - tmp1) % N
         // Add N to avoid the possible negative number.
-        resultData.mpz_clientS = ((resultData.mpz_B + N - tmp) % N).power(exp, modulus: N)
+        let tmp3: BigIntType = tmp2.power(exp, modulus: N)
+        resultData.setBigInt_clientS(tmp3)
         
         return resultData
     }
@@ -123,18 +123,19 @@ public struct SRPIMathImpl: SRPProtocol
     public func calculateServerSecret(srpData: SRPData) throws -> SRPData
     {
         try configuration.validate()
-        let N = configuration.mpz_N
+        let N: BigIntType = configuration.bigInt_N()
         
         var resultData = srpData
-        guard (resultData.mpz_A % N) > SRPMpzT(0) else { throw SRPError.invalidClientPublicValue }
-        guard (resultData.mpz_B % N) > SRPMpzT(0) else { throw SRPError.invalidServerPublicValue }
-        guard resultData.mpz_b > SRPMpzT(0) else { throw SRPError.invalidServerPrivateValue }
-        guard resultData.mpz_v > SRPMpzT(0) else { throw SRPError.invalidVerifier }
+        guard (resultData.bigInt_A() % N) > BigIntType(0) else { throw SRPError.invalidClientPublicValue }
+        guard (resultData.bigInt_B() % N) > BigIntType(0) else { throw SRPError.invalidServerPublicValue }
+        guard resultData.bigInt_b() > BigIntType(0) else { throw SRPError.invalidServerPrivateValue }
+        guard resultData.bigInt_v() > BigIntType(0) else { throw SRPError.invalidVerifier }
         
-        resultData.mpz_u = hashPaddedPair(digest: configuration.digest, N: N, n1: resultData.mpz_A, n2: resultData.mpz_B)
+        resultData.setBigInt_u(hashPaddedPair(digest: configuration.digest, N: N, n1: resultData.bigInt_A(), n2: resultData.bigInt_B()))
         
         // S = (Av^u) ^ b
-        resultData.mpz_serverS = ((resultData.mpz_A * resultData.mpz_v.power(resultData.mpz_u, modulus: N)) % N).power(resultData.mpz_b, modulus: N)
+        let tmp: BigIntType = resultData.bigInt_A() * (resultData.bigInt_v() as BigIntType).power(resultData.bigInt_u(), modulus: N)
+        resultData.setBigInt_serverS((tmp % N).power(resultData.bigInt_b(), modulus: N))
         
         return resultData
     }
@@ -153,19 +154,22 @@ public struct SRPIMathImpl: SRPProtocol
     public func clientEvidenceMessage(srpData: SRPData) throws -> SRPData
     {
         try configuration.validate()
-        let N = configuration.mpz_N
+        let N: BigIntType = configuration.bigInt_N()
         
         var resultData = srpData
         
-        guard (resultData.mpz_A % N) > SRPMpzT(0) else { throw SRPError.invalidClientPublicValue }
-        guard (resultData.mpz_B % N) > SRPMpzT(0) else { throw SRPError.invalidServerPublicValue }
+        guard (resultData.bigInt_A() % N) > BigIntType(0) else { throw SRPError.invalidClientPublicValue }
+        guard (resultData.bigInt_B() % N) > BigIntType(0) else { throw SRPError.invalidServerPublicValue }
         
-        if resultData.mpz_clientS == SRPMpzT(0)
+        if resultData.bigInt_clientS() == BigIntType(0)
         {
             resultData = try calculateClientSecret(srpData: resultData)
         }
         
-        resultData.mpz_clientM = hashPaddedTriplet(digest: configuration.digest, N: N, n1: resultData.mpz_A, n2: resultData.mpz_B, n3: resultData.mpz_clientS)
+        resultData.setBigInt_clientM(hashPaddedTriplet(digest: configuration.digest,
+                                                      N: N, n1: resultData.bigInt_A(),
+                                                      n2: resultData.bigInt_B(),
+                                                      n3: resultData.bigInt_clientS()))
         return resultData
     }
     
@@ -184,21 +188,21 @@ public struct SRPIMathImpl: SRPProtocol
     public func serverEvidenceMessage(srpData: SRPData) throws -> SRPData
     {
         try configuration.validate()
-        let N = SRPMpzT(configuration.modulus)
+        let N: BigIntType = BigIntType(configuration.modulus)
         
         var resultData = srpData
-        guard (resultData.mpz_A % N) > SRPMpzT(0) else { throw SRPError.invalidClientPublicValue }
-        guard (resultData.mpz_B % N) > SRPMpzT(0) else { throw SRPError.invalidServerPublicValue }
-        if resultData.mpz_serverS == SRPMpzT(0)
+        guard (resultData.bigInt_A() % N) > BigIntType(0) else { throw SRPError.invalidClientPublicValue }
+        guard (resultData.bigInt_B() % N) > BigIntType(0) else { throw SRPError.invalidServerPublicValue }
+        if resultData.bigInt_serverS() == BigIntType(0)
         {
             resultData = try calculateServerSecret(srpData: resultData)
         }
         
-        resultData.mpz_serverM = hashPaddedTriplet(digest: configuration.digest,
-                                               N: N,
-                                               n1: resultData.mpz_A,
-                                               n2: resultData.mpz_clientM,
-                                               n3: resultData.mpz_serverS)
+        resultData.setBigInt_serverM(hashPaddedTriplet(digest: configuration.digest,
+                                                   N: N,
+                                                   n1: resultData.bigInt_A(),
+                                                   n2: resultData.bigInt_clientM(),
+                                                   n3: resultData.bigInt_serverS()))
         
         return resultData
     }
@@ -211,15 +215,19 @@ public struct SRPIMathImpl: SRPProtocol
     public func verifyClientEvidenceMessage(srpData: SRPData) throws
     {
         try configuration.validate()
-        let N = configuration.mpz_N
+        let N: BigIntType = configuration.bigInt_N()
         let resultData = srpData
-        guard resultData.mpz_clientM > SRPMpzT(0) else { throw SRPError.invalidClientEvidenceMessage }
-        guard (resultData.mpz_A % N) > SRPMpzT(0) else { throw SRPError.invalidClientPublicValue }
-        guard (resultData.mpz_B % N) > SRPMpzT(0) else { throw SRPError.invalidServerPublicValue }
-        guard resultData.mpz_serverS > SRPMpzT(0) else { throw SRPError.invalidServerSharedSecret }
+        guard resultData.bigInt_clientM() > BigIntType(0) else { throw SRPError.invalidClientEvidenceMessage }
+        guard (resultData.bigInt_A() % N) > BigIntType(0) else { throw SRPError.invalidClientPublicValue }
+        guard (resultData.bigInt_B() % N) > BigIntType(0) else { throw SRPError.invalidServerPublicValue }
+        guard resultData.bigInt_serverS() > BigIntType(0) else { throw SRPError.invalidServerSharedSecret }
         
-        let M = hashPaddedTriplet(digest: configuration.digest, N: N, n1: resultData.mpz_A, n2: resultData.mpz_B, n3: resultData.mpz_serverS)
-        guard (M == resultData.mpz_clientM) else { throw SRPError.invalidClientEvidenceMessage }
+        let M = hashPaddedTriplet(digest: configuration.digest,
+                                  N: N,
+                                  n1: resultData.bigInt_A(),
+                                  n2: resultData.bigInt_B(),
+                                  n3: resultData.bigInt_serverS())
+        guard (M == resultData.bigInt_clientM()) else { throw SRPError.invalidClientEvidenceMessage }
     }
     
     
@@ -230,19 +238,19 @@ public struct SRPIMathImpl: SRPProtocol
     public func verifyServerEvidenceMessage(srpData: SRPData) throws
     {
         try configuration.validate()
-        let N = configuration.mpz_N
+        let N: BigIntType = configuration.bigInt_N()
         let resultData = srpData
-        guard resultData.mpz_serverM > SRPMpzT(0) else { throw SRPError.invalidServerEvidenceMessage }
-        guard resultData.mpz_clientM > SRPMpzT(0) else { throw SRPError.invalidClientEvidenceMessage }
-        guard (resultData.mpz_A % N) > SRPMpzT(0) else { throw SRPError.invalidClientPublicValue }
-        guard resultData.mpz_clientS > SRPMpzT(0) else { throw SRPError.invalidClientSharedSecret }
+        guard resultData.bigInt_serverM() > BigIntType(0) else { throw SRPError.invalidServerEvidenceMessage }
+        guard resultData.bigInt_clientM() > BigIntType(0) else { throw SRPError.invalidClientEvidenceMessage }
+        guard (resultData.bigInt_A() % N) > BigIntType(0) else { throw SRPError.invalidClientPublicValue }
+        guard resultData.bigInt_clientS() > BigIntType(0) else { throw SRPError.invalidClientSharedSecret }
         
         let M = hashPaddedTriplet(digest: configuration.digest,
                                   N: N,
-                                  n1: resultData.mpz_A,
-                                  n2: resultData.mpz_clientM,
-                                  n3: resultData.mpz_clientS)
-        guard (M == resultData.mpz_serverM) else { throw SRPError.invalidServerEvidenceMessage }
+                                  n1: resultData.bigInt_A(),
+                                  n2: resultData.bigInt_clientM(),
+                                  n3: resultData.bigInt_clientS())
+        guard (M == resultData.bigInt_serverM()) else { throw SRPError.invalidServerEvidenceMessage }
     }
     
     
@@ -255,9 +263,10 @@ public struct SRPIMathImpl: SRPProtocol
     {
         try configuration.validate()
         let resultData = srpData
-        guard resultData.mpz_clientS > SRPMpzT(0) else { throw SRPError.invalidClientSharedSecret }
-        let padLength = (configuration.mpz_N.width + 7) / 8
-        let paddedS = pad(resultData.mpz_clientS.serialize(), to: padLength)
+        let N: BigIntType = configuration.bigInt_N()
+        guard resultData.bigInt_clientS() > BigIntType(0) else { throw SRPError.invalidClientSharedSecret }
+        let padLength = (N.width + 7) / 8
+        let paddedS = pad((resultData.bigInt_clientS() as BigIntType).serialize(), to: padLength)
         let hash = configuration.digest(paddedS)
         
         return hash
@@ -272,9 +281,10 @@ public struct SRPIMathImpl: SRPProtocol
     {
         try configuration.validate()
         let resultData = srpData
-        guard resultData.mpz_serverS > SRPMpzT(0) else { throw SRPError.invalidServerSharedSecret }
-        let padLength = (configuration.mpz_N.width + 7) / 8
-        let paddedS = pad(resultData.mpz_clientS.serialize(), to: padLength)
+        guard resultData.bigInt_serverS() > BigIntType(0) else { throw SRPError.invalidServerSharedSecret }
+        let N: BigIntType = configuration.bigInt_N()
+        let padLength: Int = (N.width + 7) / 8
+        let paddedS = pad((resultData.bigInt_clientS() as BigIntType).serialize(), to: padLength)
         let hash = configuration.digest(paddedS)
         
         return hash
@@ -289,7 +299,7 @@ public struct SRPIMathImpl: SRPProtocol
     {
         try configuration.validate()
         let resultData = srpData
-        return configuration.hmac(salt, resultData.mpz_clientS.serialize())
+        return configuration.hmac(salt, (resultData.bigInt_clientS() as BigIntType).serialize())
     }
     
     /// Calculate the shared key (server side) by using HMAC: sharedKey = HMAC(salt, clientS)
@@ -301,7 +311,7 @@ public struct SRPIMathImpl: SRPProtocol
     {
         try configuration.validate()
         let resultData = srpData
-        return configuration.hmac(salt, resultData.mpz_serverS.serialize())
+        return configuration.hmac(salt, (resultData.bigInt_serverS() as BigIntType).serialize())
     }
     
     
@@ -313,7 +323,7 @@ public struct SRPIMathImpl: SRPProtocol
     ///   - n1: First value
     ///   - n2: Second value
     /// - Returns: Result of hashing.
-    internal func hashPaddedPair(digest: DigestFunc, N: SRPMpzT, n1: SRPMpzT, n2: SRPMpzT) -> SRPMpzT
+    internal func hashPaddedPair(digest: DigestFunc, N: BigIntType, n1: BigIntType, n2: BigIntType) -> BigIntType
     {
         let padLength = (N.width + 7) / 8
         
@@ -325,7 +335,7 @@ public struct SRPIMathImpl: SRPProtocol
         
         let hash = digest(dataToHash)
         
-        return SRPMpzT(hash) % N
+        return BigIntType(hash) % N
     }
     
     
@@ -338,7 +348,7 @@ public struct SRPIMathImpl: SRPProtocol
     ///   - n2: Second value
     ///   - n3: Third value
     /// - Returns: Result of hashing.
-    internal func hashPaddedTriplet(digest: DigestFunc, N: SRPMpzT, n1: SRPMpzT, n2: SRPMpzT, n3: SRPMpzT) -> SRPMpzT
+    internal func hashPaddedTriplet(digest: DigestFunc, N: BigIntType, n1: BigIntType, n2: BigIntType, n3: BigIntType) -> BigIntType
     {
         let padLength = (N.width + 7) / 8
         
@@ -351,7 +361,7 @@ public struct SRPIMathImpl: SRPProtocol
         dataToHash.append(paddedN3)
         let hash = digest(dataToHash)
         
-        return SRPMpzT(hash) % N
+        return BigIntType(hash) % N
     }
     
     
@@ -381,7 +391,7 @@ public struct SRPIMathImpl: SRPProtocol
     ///   - I: User name
     ///   - p: password
     /// - Returns: SRP value x calculated as x = H(s | H(I | ":" | p)) (where H is the configured hash function)
-    internal func x(s: Data, I: Data,  p: Data) -> SRPMpzT
+    internal func x(s: Data, I: Data,  p: Data) -> BigIntType
     {
         var identityData = Data(capacity: I.count + 1 + p.count)
         
@@ -397,7 +407,7 @@ public struct SRPIMathImpl: SRPProtocol
         xData.append(identityHash)
         
         let xHash = configuration.digest(xData)
-        return SRPMpzT(xHash) % SRPMpzT(configuration.modulus)
+        return BigIntType(xHash) % BigIntType(configuration.modulus)
     }
 }
 
