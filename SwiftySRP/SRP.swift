@@ -69,6 +69,31 @@ public enum SRP
         }
     }
     
+    /// Create an instance of SRPProtocol with the given configuration.
+    /// - Parameters:
+    ///   - N: Safe large prime per SRP spec. You can generate the prime with openssl: openssl dhparam -text 2048
+    ///   - g: Group generator per SRP spec.
+    ///   - bigIntType: Dummy parameter is only used to satisfy the compiler.
+    ///   - digest: Hash function to be used.
+    ///   - hmac: HMAC function to be used.
+    /// - Throws: SRPError if configuration parameters are not valid.
+    /// - Returns: The resulting SRP protocol implementation.
+    public static func `protocol`<BigIntType: SRPBigIntProtocol>(N: Data,
+                                    g: Data,
+                                    bigIntType: BigIntType = BigIntType(),
+                                    digest: @escaping DigestFunc = SRP.sha256DigestFunc,
+                                    hmac: @escaping HMacFunc = SRP.sha256HMacFunc) throws -> SRPProtocol
+    {
+        let configuration = SRPConfigurationGenericImpl<BigIntType>(N: BigIntType(N),
+                                                                g: BigIntType(g),
+                                                                digest: digest,
+                                                                hmac: hmac,
+                                                                aFunc: nil,
+                                                                bFunc: nil)
+        try configuration.validate()
+        return SRPGenericImpl<BigIntType>(configuration: configuration)
+    }
+    
     /// SHA256 hash function
     public static var sha256DigestFunc: DigestFunc
     {

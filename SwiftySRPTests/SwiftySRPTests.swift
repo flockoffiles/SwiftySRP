@@ -107,8 +107,7 @@ class SwiftySRPTests: XCTestCase
         super.tearDown()
     }
     
-    
-    func testExpPerformance()
+    func testBigUIntExponentiationPerformance()
     {
         let g: BigUInt = BigUInt("02", radix: 16)!
         
@@ -124,14 +123,14 @@ class SwiftySRPTests: XCTestCase
     }
     
     /// Simple test to verify that hex strings representations are the same and can be used for comparison in other tests.
-    func test01StringConversion()
+    func testStringConversion()
     {
         XCTAssertEqual(N_asString, N.hexString())
         XCTAssertEqual(g_asString, g.hexString())
     }
     
     /// Simple test to verify that conversion of BigUInt to Data gives correct representation in terms of the order of bytes.
-    func test02DataConversion()
+    func testBigUIntDataConversion()
     {
         let N: BigUInt = BigUInt(N_asString, radix: 16)!
         let N_data = N.serialize()
@@ -142,14 +141,24 @@ class SwiftySRPTests: XCTestCase
         XCTAssertEqual(N_asString, recoveredString)
     }
     
-    func test03CreateConfigurationErrors()
+    func testCreateConfigurationErrorsBigUInt()
+    {
+        genTestCreateConfigurationErrors(forBigInt: BigUInt())
+    }
+
+    func testCreateConfigurationErrorsIMath()
+    {
+        genTestCreateConfigurationErrors(forBigInt: BigUInt())
+    }
+
+    func genTestCreateConfigurationErrors<BigIntType: SRPBigIntProtocol>(forBigInt bigIntType: BigIntType)
     {
         var caughtException = false
         
         // Create an SRP configuration with an empty generator.
         do
         {
-            let _ = try SRP.bigUInt.protocol(N: N, g:Data(), digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc)
+            let _ = try SRP.protocol(N: N, g:Data(), bigIntType: BigIntType(), digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc)
         }
         catch let e {
             if let srpError = e as? SRPError
@@ -159,46 +168,52 @@ class SwiftySRPTests: XCTestCase
             }
         }
         XCTAssertTrue(caughtException, "Expecting an exception to be caught")
-
     }
     
     /// This test verifies calculation of the parameter x. Please note that we use the same formula for x as BouncyCastle does:
     /// x = H(s | H(I | ":" | p))  (| means concatenation and H is a hash function; SHA256 in this case)
-    func test04Generate_x_SHA256()
+    func genTestGenerate_x<BigIntType: SRPBigIntProtocol>(forBigInt bigIntType: BigIntType,
+                                                          expected_x: String,
+                                                          digest: @escaping DigestFunc,
+                                                          hmac: @escaping HMacFunc)
     {
         do {
-            let srp256 = try SRP.bigUInt.protocol(N: N,
-                                                  g:g,
-                                                  digest: SRP.sha256DigestFunc,
-                                                  hmac: SRP.sha256HMacFunc) as! SRPGenericImpl<BigUInt>
-            let x_256 = srp256.x(s: s, I: I, p: p)
-            let string_x_256 = String(x_256, radix: 16, uppercase: true)
-            XCTAssertEqual(string_x_256, expected_x_256)
+            let srp = try SRP.protocol(N: N,
+                                          g:g,
+                                          bigIntType: bigIntType,
+                                          digest: digest,
+                                          hmac: hmac) as! SRPGenericImpl<BigIntType>
+            
+            let x = srp.x(s: s, I: I, p: p)
+            let string_x = x.serialize().hexString()
+            XCTAssertEqual(string_x, expected_x)
         }
         catch let e {
             XCTFail("Caught exception: \(e)")
         }
-
-    }
-
-    /// This test verifies calculation of the parameter x. Please note that we use the same formula for x as BouncyCastle does:
-    /// x = H(s | H(I | ":" | p))  (| means concatenation and H is a hash function; SHA512 in this case)
-    func test04Generate_x_SHA512()
-    {
-        do {
-            let srp512 = try SRP.bigUInt.protocol(N: N,
-                                                  g:g,
-                                                  digest: SRP.sha512DigestFunc,
-                                                  hmac:SRP.sha512HMacFunc) as! SRPGenericImpl<BigUInt>
-            let x_512 = srp512.x(s: s, I: I, p: p)
-            let string_x_512 = String(x_512, radix: 16, uppercase: true)
-            XCTAssertEqual(string_x_512, expected_x_512)
-        }
-        catch let e {
-            XCTFail("Caught exception: \(e)")
-        }
+        
     }
     
+    func test04Generate_x_SHA256_BigUInt()
+    {
+        genTestGenerate_x(forBigInt: BigUInt(), expected_x: expected_x_256, digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc)
+    }
+
+    func test04Generate_x_SHA256_IMath()
+    {
+        genTestGenerate_x(forBigInt: SRPMpzT(), expected_x: expected_x_256, digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc)
+    }
+
+    func test04Generate_x_SHA512_BigUInt()
+    {
+        genTestGenerate_x(forBigInt: BigUInt(), expected_x: expected_x_512, digest: SRP.sha512DigestFunc, hmac: SRP.sha512HMacFunc)
+    }
+    
+    func test04Generate_x_SHA512_IMath()
+    {
+        genTestGenerate_x(forBigInt: SRPMpzT(), expected_x: expected_x_512, digest: SRP.sha512DigestFunc, hmac: SRP.sha512HMacFunc)
+    }
+
     /// This test verifies correct computation of the client credentials by SRP.
     /// In this test we use a fixed parameter a (instead of generating a random one).
     /// Expected values (for the given fixed salt) were generated by BouncyCastle.
