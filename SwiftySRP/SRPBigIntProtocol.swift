@@ -32,5 +32,7 @@ public protocol SRPBigIntProtocol: Comparable
     
     func power(_ exponent: Self, modulus: Self) -> Self
     
+    func power(_ exponent: Int) -> Self
+    
     static func randomIntegerLessThan(_ limit: Self) -> Self
 }

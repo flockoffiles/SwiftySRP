@@ -89,7 +89,7 @@ struct SRPConfigurationBigIntImpl: SRPConfiguration
         let minBits = N.width / 2
         guard minBits > 0 else { return BigUInt.randomIntegerLessThan(2) }
         // Smallest number with 4 bits is 2^(4-1) = 8
-        let minBitsNumber = BigUInt(pow(2, minBits - 1))
+        let minBitsNumber = BigUInt(2).power(minBits - 1)
         let random = minBitsNumber + BigUInt.randomIntegerLessThan(N - minBitsNumber)
         
         return random

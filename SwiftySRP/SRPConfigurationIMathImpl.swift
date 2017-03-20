@@ -88,7 +88,7 @@ struct SRPConfigurationIMathImpl: SRPConfiguration
         guard minBits > 0 else { return SRPMpzT.randomIntegerLessThan(SRPMpzT(2)) }
             
         // Smallest number with 4 bits is 2^(4-1) = 8
-        let minBitsNumber = SRPMpzT(pow(2, minBits - 1))
+        let minBitsNumber = SRPMpzT(2).power(minBits - 1)
         let random = minBitsNumber + SRPMpzT.randomIntegerLessThan(N - minBitsNumber)
         
         return random

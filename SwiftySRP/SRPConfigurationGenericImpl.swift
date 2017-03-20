@@ -88,7 +88,7 @@ struct SRPConfigurationGenericImpl<BigIntType: SRPBigIntProtocol>: SRPConfigurat
         guard minBits > 0 else { return BigIntType.randomIntegerLessThan(BigIntType(2)) }
         
         // Smallest number with 4 bits is 2^(4-1) = 8
-        let minBitsNumber = BigIntType(pow(2, minBits - 1))
+        let minBitsNumber = BigIntType(2).power(minBits - 1)
         let random = minBitsNumber + BigIntType.randomIntegerLessThan(N - minBitsNumber)
         
         return random
