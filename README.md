@@ -20,8 +20,8 @@ pod 'SwiftySRP', :git => 'https://github.com/serieuxchat/SwiftySRP', :branch => 
 Currently the implementation is Swift-only and supports iOS9.0 and higher.
 (Objective-C wrappers may be added in a future release).
 
-To use the SRP on the client side you need to create a configuration object first, <br/> where you specify a **large safe prime number** (see below on how to generate one), a **generator**, a **hashing function**, and an **HMAC function** <br/>
-(HMAC function is used as an alternative way to generate a shared session key from the shared secret; this way we can generate multiple session keys from the same shared secret by utilizing different HMAC keys).
+To use the SRP on the client side you need to create an SRP protocol instance, <br/> where you specify a **large safe prime number** (see below on how to generate one), a **generator**, a **hashing function**, and an **HMAC function** <br/>
+(HMAC function is used as an alternative way to generate a shared session key from the shared secret; this way we can generate multiple session keys from the same shared secret by utilizing different HMAC keys). The SRP implementation can use two different big integer implementations: BigInt (written in pure Swift) and imath (written in C). At the moment the C implementation is a lot (about 50 times) faster than the pure Swift one.
 
 ```swift
 
@@ -36,14 +36,8 @@ let N = Data(hex: "EEAF0AB9ADB38DD69C33F80AFA8FC5E86072618775FF3C0B9EA2314C"
 let g = Data(hex: "02")
 
 // Use SHA256 as the hashing function, and HMAC-SHA256 as the HMAC function.
-let configuration = try SRP.configuration(N: N, g:g, digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc)
+let srp256 = try SRP.iMath.protocol(N: N, g:g, digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc)
 
-```
-
-Once you have a configuration object, create an SRPProtocol instance:
-
-```swift
-let srp = try SRP.srpProtocol(configuration)
 ```
 
 Afterwards, you should generate the verifier and send it over to the server.
@@ -56,8 +50,8 @@ let userName = "alice".data(using: .utf8)!
 // Normally you would get this from the user:
 let userPassword = "password123".data(using: .utf8)!
 
-// Just a way to generate the salt...
-let salt = BigUInt.randomInteger(withExactWidth: 128).serialize()
+// Just a way to generate the salt... (implemented in a separate category)
+let salt = Data.generateRandomBytes(count: 128)
 
 // Generate the verifier
 let srpData = try srp256.verifier(s: salt, I: userName, p: password)
@@ -70,7 +64,7 @@ At the time of login you must first receive the salt and the public value 'B' pa
 Then you can obtain the userName and password from the user and generate the client side evidence message:
 
 ```swift
-let srp = try SRP.srpProtocol(configuration)
+let srp = try SRP.iMath.protocol(N: N, g:g, digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc)
 
 // TODO: Obtain the salt and parameter 'B' from the server.
 // Also, the server can send a number of HMAC keys to generate shared session keys.

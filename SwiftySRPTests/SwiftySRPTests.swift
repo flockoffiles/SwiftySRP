@@ -72,7 +72,7 @@ class SwiftySRPTests: XCTestCase
     let expectedString_cM_256 = "795532FF6473671A589F05180E26AC39FEC22C290ADD5C7BEBF6609442129FEA"
     let expectedString_sM_256 = "EC17DCA98343326653D6E5865178B7058D1757F5FA1D8341DFFD9C43CDF59F73"
 
-    let expectedStringM_512 = "79C9D1689A5D9721CD8AF63BE1C01D3F728FED2AD1D0DCFD5051CF729720BE6CF5C4DA7F7C135EFEBF7B2B45F2ADE4AB56B527231A2EAD0C8F23639BA578B92B"
+    let expectedString_cM_512 = "79C9D1689A5D9721CD8AF63BE1C01D3F728FED2AD1D0DCFD5051CF729720BE6CF5C4DA7F7C135EFEBF7B2B45F2ADE4AB56B527231A2EAD0C8F23639BA578B92B"
     let expectedString_sM_512 = "B93808BAC1465E4145E2593F672469DC1CC9EE7FEF2A766CED750B5A835B2AF8CCF4E59F50091F5C72100870207F97EEB8B77D082A0CFB47852D53C5BA807712"
 
     
@@ -193,22 +193,22 @@ class SwiftySRPTests: XCTestCase
         
     }
     
-    func test04Generate_x_SHA256_BigUInt()
+    func testGenerate_x_SHA256_BigUInt()
     {
         genTestGenerate_x(forBigInt: BigUInt(), expected_x: expected_x_256, digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc)
     }
 
-    func test04Generate_x_SHA256_IMath()
+    func testGenerate_x_SHA256_IMath()
     {
         genTestGenerate_x(forBigInt: SRPMpzT(), expected_x: expected_x_256, digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc)
     }
 
-    func test04Generate_x_SHA512_BigUInt()
+    func testGenerate_x_SHA512_BigUInt()
     {
         genTestGenerate_x(forBigInt: BigUInt(), expected_x: expected_x_512, digest: SRP.sha512DigestFunc, hmac: SRP.sha512HMacFunc)
     }
     
-    func test04Generate_x_SHA512_IMath()
+    func testGenerate_x_SHA512_IMath()
     {
         genTestGenerate_x(forBigInt: SRPMpzT(), expected_x: expected_x_512, digest: SRP.sha512DigestFunc, hmac: SRP.sha512HMacFunc)
     }
@@ -350,186 +350,149 @@ class SwiftySRPTests: XCTestCase
                                          expectedString_A: expectedString_A_512)
     }
 
+    func genTestVerifier<BigIntType: SRPBigIntProtocol>(forBigInt bigIntType: BigIntType,
+                         digest: @escaping DigestFunc,
+                         hmac: @escaping HMacFunc,
+                         fixedString_a: String,
+                         fixedString_b: String,
+                         expectedStringVerifier: String)
+    {
+        // a is fixed in this test (not generated randomly)
+        let fixed_a = Data(hex:fixedString_a)
+        let fixed_b = Data(hex:fixedString_b)
+        
+        let srp: SRPGenericImpl<BigIntType>
+        do {
+            srp = try SRP.protocol(N: BigIntType(N),
+                                   g: BigIntType(g),
+                                   digest: digest,
+                                   hmac: hmac,
+                                   a: { _ in return fixed_a },
+                                   b: { _ in return fixed_b }) as! SRPGenericImpl<BigIntType>
+            
+            let clientSRPData = try srp.verifier(s: s, I: I, p: p)
+            
+            let string_v = clientSRPData.verifier.hexString()
+            
+            XCTAssertEqual(string_v, expectedStringVerifier)
+        }
+        catch let e {
+            XCTFail("Caught exception: \(e)")
+            return
+        }
+        
+    }
+    
     /// Test to verify that the SRP verifier is calculated correctly (this version is for SHA256 hash function).
-    func test06Verifier_SHA256()
+    func testVerifier_SHA256_BigUInt()
     {
-        // a is fixed in this test (not generated randomly)
-        let fixed_a_256 = Data(hex:fixedString_a_256)
-        let fixed_b_256 = Data(hex:fixedString_b_256)
-        
-        let srp256: SRPGenericImpl<BigUInt>
-        do {
-            srp256 = try SRP.bigUInt.protocol(N: N, g:g, digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc,
-                                                           a: { _ in return fixed_a_256 },
-                                                           b: { _ in return fixed_b_256 }) as! SRPGenericImpl<BigUInt>
-            
-            let clientSRPData = try srp256.verifier(s: s, I: I, p: p)
+        genTestVerifier(forBigInt: BigUInt(),
+                        digest: SRP.sha256DigestFunc,
+                        hmac: SRP.sha256HMacFunc,
+                        fixedString_a: fixedString_a_256,
+                        fixedString_b: fixedString_b_256,
+                        expectedStringVerifier: expectedStringVerifier_256)
+    }
 
-            let string_v_256 = clientSRPData.verifier.hexString()
-            
-            XCTAssertEqual(string_v_256, expectedStringVerifier_256)
-        }
-        catch let e {
-            XCTFail("Caught exception: \(e)")
-            return
-        }
+    func testVerifier_SHA256_IMath()
+    {
+        genTestVerifier(forBigInt: SRPMpzT(),
+                        digest: SRP.sha256DigestFunc,
+                        hmac: SRP.sha256HMacFunc,
+                        fixedString_a: fixedString_a_256,
+                        fixedString_b: fixedString_b_256,
+                        expectedStringVerifier: expectedStringVerifier_256)
+    }
 
+    func testVerifier_SHA512_BigUInt()
+    {
+        genTestVerifier(forBigInt: BigUInt(),
+                        digest: SRP.sha512DigestFunc,
+                        hmac: SRP.sha512HMacFunc,
+                        fixedString_a: fixedString_a_512,
+                        fixedString_b: fixedString_b_512,
+                        expectedStringVerifier: expectedStringVerifier_512)
     }
     
-    /// Test to verify that the SRP verifier is calculated correctly (this version is for SHA512 hash function).
-    func test06Verifier_SHA512()
+    func testVerifier_SHA512_IMath()
     {
-        // a is fixed in this test (not generated randomly)
-        let fixed_a_512 = Data(hex:fixedString_a_512)
-        let fixed_b_512 = Data(hex:fixedString_b_512)
-        let srp512: SRPGenericImpl<BigUInt>
-        
-        do {
-            srp512 = try SRP.bigUInt.protocol(N: N, g:g, digest: SRP.sha512DigestFunc, hmac:SRP.sha512HMacFunc,
-                                                             a: { _ in return fixed_a_512 },
-                                                             b: { _ in return fixed_b_512 }) as! SRPGenericImpl<BigUInt>
-            
-            let clientSRPData = try srp512.verifier(s: s, I: I, p: p)
-            
-            let string_v_512 = clientSRPData.verifier.hexString()
-            
-            XCTAssertEqual(string_v_512, expectedStringVerifier_512)
-        }
-        catch let e {
-            XCTFail("Caught exception: \(e)")
-            return
-        }
-
+        genTestVerifier(forBigInt: SRPMpzT(),
+                        digest: SRP.sha512DigestFunc,
+                        hmac: SRP.sha512HMacFunc,
+                        fixedString_a: fixedString_a_512,
+                        fixedString_b: fixedString_b_512,
+                        expectedStringVerifier: expectedStringVerifier_512)
     }
     
-    /// This test verifies that the client and server way of calculating the shared secret produce the same shared secret value.
-    /// (This version is for SHA256 hash function)
-    func test07Verification_SHA256()
+    func genTestVerification<BigIntType: SRPBigIntProtocol>(forBigInt bigIntType: BigIntType,
+                             digest: @escaping DigestFunc,
+                             hmac: @escaping HMacFunc,
+                             hmacSalt: Data,
+                             fixedString_a: String,
+                             fixedString_b: String,
+                             expectedString_B: String,
+                             expectedString_cM: String,
+                             expectedString_sM: String,
+                             expectedStringSharedKey: String,
+                             expectedStringSharedHMacKey: String)
     {
-        let fixed_a_256 = Data(hex:fixedString_a_256)
-        let fixed_b_256 = Data(hex:fixedString_b_256)
+        let fixed_a = Data(hex:fixedString_a)
+        let fixed_b = Data(hex:fixedString_b)
         
-        let srp256: SRPProtocol
+        let srp: SRPProtocol
         do {
-            srp256 = try SRP.bigUInt.protocol(N: N, g:g, digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc,
-                                                             a: { _ in return fixed_a_256 },
-                                                             b: { _ in return fixed_b_256 })
+            srp = try SRP.bigUInt.protocol(N: N,
+                                              g:g,
+                                              digest: digest,
+                                              hmac: hmac,
+                                              a: { _ in return fixed_a },
+                                              b: { _ in return fixed_b })
             
             // Client computes the verifier (and sends it to the server)
-            var clientSRPData = try srp256.verifier(s: s, I: I, p: p)
-
-            // Server generates credentials by using the verifier.
-            var serverSRPData = try srp256.generateServerCredentials(verifier: clientSRPData.verifier)
-            
-            XCTAssertEqual(serverSRPData.serverPrivateValue.hexString(), fixedString_b_256)
-            XCTAssertEqual(serverSRPData.serverPublicValue.hexString(), expectedString_B_256)
-            
-            // Pretend that the server has communicated its public value
-            clientSRPData.serverPublicValue = serverSRPData.serverPublicValue
-
-            // Client calculates the secret.
-            clientSRPData = try srp256.calculateClientSecret(srpData: clientSRPData)
-            
-            // Pretend that the client has communicated its public value
-            serverSRPData.clientPublicValue = clientSRPData.clientPublicValue
-            
-            // Server also calculates the secret.
-            serverSRPData = try srp256.calculateServerSecret(srpData: serverSRPData)
-            
-            // Here we make sure the secrets are the same (but in real life the secret is NEVER sent over the wire).
-            XCTAssertEqual(clientSRPData.clientSecret.hexString(), serverSRPData.serverSecret.hexString())
-            
-            // Check the client evidence message.
-            clientSRPData = try srp256.clientEvidenceMessage(srpData: clientSRPData)
-            XCTAssertEqual(clientSRPData.clientEvidenceMessage.hexString(), expectedString_cM_256)
-            
-            // Pretend that the server has received the client evidence:
-            serverSRPData.clientEvidenceMessage = clientSRPData.clientEvidenceMessage
-            try srp256.verifyClientEvidenceMessage(srpData: serverSRPData)
-            
-            serverSRPData = try! srp256.serverEvidenceMessage(srpData: serverSRPData)
-            XCTAssertEqual(serverSRPData.serverEvidenceMessage.hexString(), expectedString_sM_256)
-            
-            // Pretend that the client has received the server evidence:
-            clientSRPData.serverEvidenceMessage = serverSRPData.serverEvidenceMessage
-            
-            try srp256.verifyServerEvidenceMessage(srpData: clientSRPData)
-            
-            let clientSharedKey_256 = try! srp256.calculateClientSharedKey(srpData: clientSRPData)
-            XCTAssertEqual(clientSharedKey_256.hexString(), expectedStringSharedKey_256)
-
-            let clientSharedHMacKey_256 = try! srp256.calculateClientSharedKey(srpData: clientSRPData, salt: hmacSalt256)
-            XCTAssertEqual(clientSharedHMacKey_256.hexString(), expectedStringSharedHMacKey_256)
-            
-            
-        }
-        catch let e {
-            XCTFail("Caught exception: \(e)")
-            return
-        }
-
-    }
-
-    /// This test verifies that the client and server way of calculating the shared secret produce the same shared secret value.
-    /// (This version is for SHA256 hash function)
-    func test07VerificationIMath_SHA256()
-    {
-        let fixed_a_256 = Data(hex:fixedString_a_256)
-        let fixed_b_256 = Data(hex:fixedString_b_256)
-        
-        let srp256: SRPProtocol
-        do {
-            srp256 = try SRP.iMath.protocol(N: N, g:g,
-                                           digest: SRP.sha256DigestFunc,
-                                           hmac: SRP.sha256HMacFunc,
-                                           a: { _ in return fixed_a_256 },
-                                           b: { _ in return fixed_b_256 })
-            
-            // Client computes the verifier (and sends it to the server)
-            var clientSRPData = try srp256.verifier(s: s, I: I, p: p)
+            var clientSRPData = try srp.verifier(s: s, I: I, p: p)
             
             // Server generates credentials by using the verifier.
-            var serverSRPData = try srp256.generateServerCredentials(verifier: clientSRPData.verifier)
+            var serverSRPData = try srp.generateServerCredentials(verifier: clientSRPData.verifier)
             
-            XCTAssertEqual(serverSRPData.serverPrivateValue.hexString(), fixedString_b_256)
-            XCTAssertEqual(serverSRPData.serverPublicValue.hexString(), expectedString_B_256)
+            XCTAssertEqual(serverSRPData.serverPrivateValue.hexString(), fixedString_b)
+            XCTAssertEqual(serverSRPData.serverPublicValue.hexString(), expectedString_B)
             
             // Pretend that the server has communicated its public value
             clientSRPData.serverPublicValue = serverSRPData.serverPublicValue
             
             // Client calculates the secret.
-            clientSRPData = try srp256.calculateClientSecret(srpData: clientSRPData)
+            clientSRPData = try srp.calculateClientSecret(srpData: clientSRPData)
             
             // Pretend that the client has communicated its public value
             serverSRPData.clientPublicValue = clientSRPData.clientPublicValue
             
             // Server also calculates the secret.
-            serverSRPData = try srp256.calculateServerSecret(srpData: serverSRPData)
+            serverSRPData = try srp.calculateServerSecret(srpData: serverSRPData)
             
             // Here we make sure the secrets are the same (but in real life the secret is NEVER sent over the wire).
             XCTAssertEqual(clientSRPData.clientSecret.hexString(), serverSRPData.serverSecret.hexString())
             
             // Check the client evidence message.
-            clientSRPData = try srp256.clientEvidenceMessage(srpData: clientSRPData)
-            XCTAssertEqual(clientSRPData.clientEvidenceMessage.hexString(), expectedString_cM_256)
+            clientSRPData = try srp.clientEvidenceMessage(srpData: clientSRPData)
+            XCTAssertEqual(clientSRPData.clientEvidenceMessage.hexString(), expectedString_cM)
             
             // Pretend that the server has received the client evidence:
             serverSRPData.clientEvidenceMessage = clientSRPData.clientEvidenceMessage
-            try srp256.verifyClientEvidenceMessage(srpData: serverSRPData)
+            try srp.verifyClientEvidenceMessage(srpData: serverSRPData)
             
-            serverSRPData = try! srp256.serverEvidenceMessage(srpData: serverSRPData)
-            XCTAssertEqual(serverSRPData.serverEvidenceMessage.hexString(), expectedString_sM_256)
+            serverSRPData = try! srp.serverEvidenceMessage(srpData: serverSRPData)
+            XCTAssertEqual(serverSRPData.serverEvidenceMessage.hexString(), expectedString_sM)
             
             // Pretend that the client has received the server evidence:
             clientSRPData.serverEvidenceMessage = serverSRPData.serverEvidenceMessage
             
-            try srp256.verifyServerEvidenceMessage(srpData: clientSRPData)
+            try srp.verifyServerEvidenceMessage(srpData: clientSRPData)
             
-            let clientSharedKey_256 = try! srp256.calculateClientSharedKey(srpData: clientSRPData)
-            XCTAssertEqual(clientSharedKey_256.hexString(), expectedStringSharedKey_256)
+            let clientSharedKey = try! srp.calculateClientSharedKey(srpData: clientSRPData)
+            XCTAssertEqual(clientSharedKey.hexString(), expectedStringSharedKey)
             
-            let clientSharedHMacKey_256 = try! srp256.calculateClientSharedKey(srpData: clientSRPData, salt: hmacSalt256)
-            XCTAssertEqual(clientSharedHMacKey_256.hexString(), expectedStringSharedHMacKey_256)
+            let clientSharedHMacKey = try! srp.calculateClientSharedKey(srpData: clientSRPData, salt: hmacSalt)
+            XCTAssertEqual(clientSharedHMacKey.hexString(), expectedStringSharedHMacKey)
             
             
         }
@@ -539,78 +502,75 @@ class SwiftySRPTests: XCTestCase
         }
         
     }
+    
+    /// This test verifies that the client and server way of calculating the shared secret produce the same shared secret value.
+    /// (This version is for SHA256 hash function)
+    func testVerification_SHA256_BigUInt()
+    {
+        genTestVerification(forBigInt: BigUInt(),
+                            digest: SRP.sha256DigestFunc,
+                            hmac: SRP.sha256HMacFunc,
+                            hmacSalt: hmacSalt256,
+                            fixedString_a: fixedString_a_256,
+                            fixedString_b: fixedString_b_256,
+                            expectedString_B: expectedString_B_256,
+                            expectedString_cM: expectedString_cM_256,
+                            expectedString_sM: expectedString_sM_256,
+                            expectedStringSharedKey: expectedStringSharedKey_256,
+                            expectedStringSharedHMacKey: expectedStringSharedHMacKey_256)
+    }
 
+    /// This test verifies that the client and server way of calculating the shared secret produce the same shared secret value.
+    /// (This version is for SHA256 hash function)
+    func testVerification_SHA256_IMath()
+    {
+        genTestVerification(forBigInt: SRPMpzT(),
+                            digest: SRP.sha256DigestFunc,
+                            hmac: SRP.sha256HMacFunc,
+                            hmacSalt: hmacSalt256,
+                            fixedString_a: fixedString_a_256,
+                            fixedString_b: fixedString_b_256,
+                            expectedString_B: expectedString_B_256,
+                            expectedString_cM: expectedString_cM_256,
+                            expectedString_sM: expectedString_sM_256,
+                            expectedStringSharedKey: expectedStringSharedKey_256,
+                            expectedStringSharedHMacKey: expectedStringSharedHMacKey_256)
+    }
+
+    
     
     
     /// This test verifies that the client and server way of calculating the shared secret produce the same shared secret value.
     /// (This version is for SHA512 hash function)
-    func test07Verification_SHA512()
+    func testVerification_SHA512_BigUInt()
     {
-        
-        let fixed_a_512 = Data(hex:fixedString_a_512)
-        let fixed_b_512 = Data(hex:fixedString_b_512)
-        let srp512: SRPProtocol
-        
-        do {
-            srp512 = try SRP.bigUInt.protocol(N: N, g:g,
-                                               digest: SRP.sha512DigestFunc,
-                                               hmac:SRP.sha512HMacFunc,
-                                                 a: { _ in return fixed_a_512 },
-                                                 b: { _ in return fixed_b_512 })
-            
-            var clientSRPData = try srp512.verifier(s: s, I: I, p: p)
-            
-            var serverSRPData = try srp512.generateServerCredentials(verifier: clientSRPData.verifier)
-            
-            XCTAssertEqual(serverSRPData.serverPrivateValue.hexString(), fixedString_b_512)
-            XCTAssertEqual(serverSRPData.serverPublicValue.hexString(), expectedString_B_512)
-
-            // Pretend that the server has communicated its public value
-            clientSRPData.serverPublicValue = serverSRPData.serverPublicValue
-            
-            clientSRPData = try srp512.calculateClientSecret(srpData: clientSRPData)
-            
-            // Pretend that the client has communicated its public value
-            serverSRPData.clientPublicValue = clientSRPData.clientPublicValue
-            
-            serverSRPData = try srp512.calculateServerSecret(srpData: serverSRPData)
-            
-            // Here we make sure the secrets are the same (but in real life the secret is NEVER sent over the wire).
-            XCTAssertEqual(clientSRPData.clientSecret.hexString(), serverSRPData.serverSecret.hexString())
-            
-            // Check the client evidence message.
-            clientSRPData = try srp512.clientEvidenceMessage(srpData: clientSRPData)
-            XCTAssertEqual(clientSRPData.clientEvidenceMessage.hexString(), expectedStringM_512)
-            
-            // Pretend that the server has received the client evidence:
-            serverSRPData.clientEvidenceMessage = clientSRPData.clientEvidenceMessage
-            try srp512.verifyClientEvidenceMessage(srpData: serverSRPData)
-
-            serverSRPData = try srp512.serverEvidenceMessage(srpData: serverSRPData)
-            XCTAssertEqual(serverSRPData.serverEvidenceMessage.hexString(), expectedString_sM_512)
-            
-            // Pretend that the client has received the server evidence:
-            clientSRPData.serverEvidenceMessage = serverSRPData.serverEvidenceMessage
-            
-            try srp512.verifyServerEvidenceMessage(srpData: clientSRPData)
-
-            let clientSharedKey_512 = try! srp512.calculateClientSharedKey(srpData: clientSRPData)
-            
-            XCTAssertEqual(clientSharedKey_512.hexString(), expectedStringSharedKey_512)
-
-            
-            let sharedHMacKey_512 = try! srp512.calculateClientSharedKey(srpData: clientSRPData, salt: hmacSalt512)
-            let stringSharedHMacKey_512 = sharedHMacKey_512.hexString()
-            XCTAssertEqual(stringSharedHMacKey_512, expectedStringSharedHMacKey_512)
-        }
-        catch let e {
-            XCTFail("Caught exception: \(e)")
-            return
-        }
-
+        genTestVerification(forBigInt: BigUInt(),
+                            digest: SRP.sha512DigestFunc,
+                            hmac: SRP.sha512HMacFunc,
+                            hmacSalt: hmacSalt512,
+                            fixedString_a: fixedString_a_512,
+                            fixedString_b: fixedString_b_512,
+                            expectedString_B: expectedString_B_512,
+                            expectedString_cM: expectedString_cM_512,
+                            expectedString_sM: expectedString_sM_512,
+                            expectedStringSharedKey: expectedStringSharedKey_512,
+                            expectedStringSharedHMacKey: expectedStringSharedHMacKey_512)
     }
     
-    
+    func testVerification_SHA512_IMath()
+    {
+        genTestVerification(forBigInt: SRPMpzT(),
+                            digest: SRP.sha512DigestFunc,
+                            hmac: SRP.sha512HMacFunc,
+                            hmacSalt: hmacSalt512,
+                            fixedString_a: fixedString_a_512,
+                            fixedString_b: fixedString_b_512,
+                            expectedString_B: expectedString_B_512,
+                            expectedString_cM: expectedString_cM_512,
+                            expectedString_sM: expectedString_sM_512,
+                            expectedStringSharedKey: expectedStringSharedKey_512,
+                            expectedStringSharedHMacKey: expectedStringSharedHMacKey_512)
+    }
     
     
 }
