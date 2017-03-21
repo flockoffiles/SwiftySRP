@@ -158,7 +158,7 @@ class SwiftySRPTests: XCTestCase
         // Create an SRP configuration with an empty generator.
         do
         {
-            let _ = try SRP.protocol(N: BigIntType(N), g:BigIntType(Data()), digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc)
+            let _ = try SRP.protocol(N: BigIntType(N), g:BigIntType(Data()), digest: CryptoAlgorithm.SHA256.digestFunc(), hmac: CryptoAlgorithm.SHA256.hmacFunc())
         }
         catch let e {
             if let srpError = e as? SRPError
@@ -195,22 +195,22 @@ class SwiftySRPTests: XCTestCase
     
     func testGenerate_x_SHA256_BigUInt()
     {
-        genTestGenerate_x(forBigInt: BigUInt(), expected_x: expected_x_256, digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc)
+        genTestGenerate_x(forBigInt: BigUInt(), expected_x: expected_x_256, digest: CryptoAlgorithm.SHA256.digestFunc(), hmac: CryptoAlgorithm.SHA256.hmacFunc())
     }
 
     func testGenerate_x_SHA256_IMath()
     {
-        genTestGenerate_x(forBigInt: SRPMpzT(), expected_x: expected_x_256, digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc)
+        genTestGenerate_x(forBigInt: SRPMpzT(), expected_x: expected_x_256, digest: CryptoAlgorithm.SHA256.digestFunc(), hmac: CryptoAlgorithm.SHA256.hmacFunc())
     }
 
     func testGenerate_x_SHA512_BigUInt()
     {
-        genTestGenerate_x(forBigInt: BigUInt(), expected_x: expected_x_512, digest: SRP.sha512DigestFunc, hmac: SRP.sha512HMacFunc)
+        genTestGenerate_x(forBigInt: BigUInt(), expected_x: expected_x_512, digest: CryptoAlgorithm.SHA512.digestFunc(), hmac: CryptoAlgorithm.SHA512.hmacFunc())
     }
     
     func testGenerate_x_SHA512_IMath()
     {
-        genTestGenerate_x(forBigInt: SRPMpzT(), expected_x: expected_x_512, digest: SRP.sha512DigestFunc, hmac: SRP.sha512HMacFunc)
+        genTestGenerate_x(forBigInt: SRPMpzT(), expected_x: expected_x_512, digest: CryptoAlgorithm.SHA512.digestFunc(), hmac: CryptoAlgorithm.SHA512.hmacFunc())
     }
 
     /// This test verifies correct computation of the client credentials by SRP.
@@ -300,8 +300,8 @@ class SwiftySRPTests: XCTestCase
     func testGenerateClientCredentials_SHA256_BigUInt()
     {
         genTestGenerateClientCredentials(forBigInt: BigUInt(),
-                                         digest: SRP.sha256DigestFunc,
-                                         hmac: SRP.sha256HMacFunc,
+                                         digest: CryptoAlgorithm.SHA256.digestFunc(),
+                                         hmac: CryptoAlgorithm.SHA256.hmacFunc(),
                                          fixedString_a: fixedString_a_256,
                                          fixedString_b: fixedString_b_256,
                                          expectedString_x: expectedString_x_256,
@@ -311,8 +311,8 @@ class SwiftySRPTests: XCTestCase
     func testGenerateClientCredentials_SHA256_IMath()
     {
         genTestGenerateClientCredentials(forBigInt: SRPMpzT(),
-                                         digest: SRP.sha256DigestFunc,
-                                         hmac: SRP.sha256HMacFunc,
+                                         digest: CryptoAlgorithm.SHA256.digestFunc(),
+                                         hmac: CryptoAlgorithm.SHA256.hmacFunc(),
                                          fixedString_a: fixedString_a_256,
                                          fixedString_b: fixedString_b_256,
                                          expectedString_x: expectedString_x_256,
@@ -326,8 +326,8 @@ class SwiftySRPTests: XCTestCase
     func testGenerateClientCredentials_SHA512_BigUInt()
     {
         genTestGenerateClientCredentials(forBigInt: BigUInt(),
-                                         digest: SRP.sha512DigestFunc,
-                                         hmac: SRP.sha512HMacFunc,
+                                         digest: CryptoAlgorithm.SHA512.digestFunc(),
+                                         hmac: CryptoAlgorithm.SHA512.hmacFunc(),
                                          fixedString_a: fixedString_a_512,
                                          fixedString_b: fixedString_b_512,
                                          expectedString_x: expectedString_x_512,
@@ -342,8 +342,8 @@ class SwiftySRPTests: XCTestCase
     func testGenerateClientCredentials_SHA512_IMath()
     {
         genTestGenerateClientCredentials(forBigInt: SRPMpzT(),
-                                         digest: SRP.sha512DigestFunc,
-                                         hmac: SRP.sha512HMacFunc,
+                                         digest: CryptoAlgorithm.SHA512.digestFunc(),
+                                         hmac: CryptoAlgorithm.SHA512.hmacFunc(),
                                          fixedString_a: fixedString_a_512,
                                          fixedString_b: fixedString_b_512,
                                          expectedString_x: expectedString_x_512,
@@ -387,8 +387,8 @@ class SwiftySRPTests: XCTestCase
     func testVerifier_SHA256_BigUInt()
     {
         genTestVerifier(forBigInt: BigUInt(),
-                        digest: SRP.sha256DigestFunc,
-                        hmac: SRP.sha256HMacFunc,
+                        digest: CryptoAlgorithm.SHA256.digestFunc(),
+                        hmac: CryptoAlgorithm.SHA256.hmacFunc(),
                         fixedString_a: fixedString_a_256,
                         fixedString_b: fixedString_b_256,
                         expectedStringVerifier: expectedStringVerifier_256)
@@ -397,8 +397,8 @@ class SwiftySRPTests: XCTestCase
     func testVerifier_SHA256_IMath()
     {
         genTestVerifier(forBigInt: SRPMpzT(),
-                        digest: SRP.sha256DigestFunc,
-                        hmac: SRP.sha256HMacFunc,
+                        digest: CryptoAlgorithm.SHA256.digestFunc(),
+                        hmac: CryptoAlgorithm.SHA256.hmacFunc(),
                         fixedString_a: fixedString_a_256,
                         fixedString_b: fixedString_b_256,
                         expectedStringVerifier: expectedStringVerifier_256)
@@ -407,8 +407,8 @@ class SwiftySRPTests: XCTestCase
     func testVerifier_SHA512_BigUInt()
     {
         genTestVerifier(forBigInt: BigUInt(),
-                        digest: SRP.sha512DigestFunc,
-                        hmac: SRP.sha512HMacFunc,
+                        digest: CryptoAlgorithm.SHA512.digestFunc(),
+                        hmac: CryptoAlgorithm.SHA512.hmacFunc(),
                         fixedString_a: fixedString_a_512,
                         fixedString_b: fixedString_b_512,
                         expectedStringVerifier: expectedStringVerifier_512)
@@ -417,8 +417,8 @@ class SwiftySRPTests: XCTestCase
     func testVerifier_SHA512_IMath()
     {
         genTestVerifier(forBigInt: SRPMpzT(),
-                        digest: SRP.sha512DigestFunc,
-                        hmac: SRP.sha512HMacFunc,
+                        digest: CryptoAlgorithm.SHA512.digestFunc(),
+                        hmac: CryptoAlgorithm.SHA512.hmacFunc(),
                         fixedString_a: fixedString_a_512,
                         fixedString_b: fixedString_b_512,
                         expectedStringVerifier: expectedStringVerifier_512)
@@ -508,8 +508,8 @@ class SwiftySRPTests: XCTestCase
     func testVerification_SHA256_BigUInt()
     {
         genTestVerification(forBigInt: BigUInt(),
-                            digest: SRP.sha256DigestFunc,
-                            hmac: SRP.sha256HMacFunc,
+                            digest: CryptoAlgorithm.SHA256.digestFunc(),
+                            hmac: CryptoAlgorithm.SHA256.hmacFunc(),
                             hmacSalt: hmacSalt256,
                             fixedString_a: fixedString_a_256,
                             fixedString_b: fixedString_b_256,
@@ -525,8 +525,8 @@ class SwiftySRPTests: XCTestCase
     func testVerification_SHA256_IMath()
     {
         genTestVerification(forBigInt: SRPMpzT(),
-                            digest: SRP.sha256DigestFunc,
-                            hmac: SRP.sha256HMacFunc,
+                            digest: CryptoAlgorithm.SHA256.digestFunc(),
+                            hmac: CryptoAlgorithm.SHA256.hmacFunc(),
                             hmacSalt: hmacSalt256,
                             fixedString_a: fixedString_a_256,
                             fixedString_b: fixedString_b_256,
@@ -545,8 +545,8 @@ class SwiftySRPTests: XCTestCase
     func testVerification_SHA512_BigUInt()
     {
         genTestVerification(forBigInt: BigUInt(),
-                            digest: SRP.sha512DigestFunc,
-                            hmac: SRP.sha512HMacFunc,
+                            digest: CryptoAlgorithm.SHA512.digestFunc(),
+                            hmac: CryptoAlgorithm.SHA512.hmacFunc(),
                             hmacSalt: hmacSalt512,
                             fixedString_a: fixedString_a_512,
                             fixedString_b: fixedString_b_512,
@@ -560,8 +560,8 @@ class SwiftySRPTests: XCTestCase
     func testVerification_SHA512_IMath()
     {
         genTestVerification(forBigInt: SRPMpzT(),
-                            digest: SRP.sha512DigestFunc,
-                            hmac: SRP.sha512HMacFunc,
+                            digest: CryptoAlgorithm.SHA512.digestFunc(),
+                            hmac: CryptoAlgorithm.SHA512.hmacFunc(),
                             hmacSalt: hmacSalt512,
                             fixedString_a: fixedString_a_512,
                             fixedString_b: fixedString_b_512,

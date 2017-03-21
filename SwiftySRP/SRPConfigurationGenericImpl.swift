@@ -70,8 +70,8 @@ struct SRPConfigurationGenericImpl<BigIntType: SRPBigIntProtocol>: SRPConfigurat
     ///   - bFunc: (ONLY for testing purposes) Custom function to generate the server private value.
     init(N: BigIntType,
          g: BigIntType,
-         digest: @escaping DigestFunc = SRP.sha256DigestFunc,
-         hmac: @escaping HMacFunc = SRP.sha256HMacFunc,
+         digest: @escaping DigestFunc = CryptoAlgorithm.SHA256.digestFunc(),
+         hmac: @escaping HMacFunc = CryptoAlgorithm.SHA256.hmacFunc(),
          aFunc: PrivateValueFunc?,
          bFunc: PrivateValueFunc?)
     {

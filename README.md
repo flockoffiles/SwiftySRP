@@ -36,7 +36,7 @@ let N = Data(hex: "EEAF0AB9ADB38DD69C33F80AFA8FC5E86072618775FF3C0B9EA2314C"
 let g = Data(hex: "02")
 
 // Use SHA256 as the hashing function, and HMAC-SHA256 as the HMAC function.
-let srp256 = try SRP.iMath.protocol(N: N, g:g, digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc)
+let srp256 = try SRP.iMath.protocol(N: N, g:g, digest: CryptoAlgorithm.SHA256.digestFunc(), hmac: CryptoAlgorithm.SHA256.hmacFunc())
 
 ```
 
@@ -64,7 +64,7 @@ At the time of login you must first receive the salt and the public value 'B' pa
 Then you can obtain the userName and password from the user and generate the client side evidence message:
 
 ```swift
-let srp = try SRP.iMath.protocol(N: N, g:g, digest: SRP.sha256DigestFunc, hmac: SRP.sha256HMacFunc)
+let srp = try SRP.iMath.protocol(N: N, g:g, digest: CryptoAlgorithm.SHA256.digestFunc(), hmac: CryptoAlgorithm.SHA256.hmacFunc())
 
 // TODO: Obtain the salt and parameter 'B' from the server.
 // Also, the server can send a number of HMAC keys to generate shared session keys.

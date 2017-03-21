@@ -53,8 +53,8 @@ extension SRP
     /// - Returns: The resulting SRP protocol implementation.
     public func `protocol`(N: Data,
                            g: Data,
-                           digest: @escaping DigestFunc = SRP.sha256DigestFunc,
-                           hmac: @escaping HMacFunc = SRP.sha256HMacFunc,
+                           digest: @escaping DigestFunc = CryptoAlgorithm.SHA256.digestFunc(),
+                           hmac: @escaping HMacFunc = CryptoAlgorithm.SHA256.hmacFunc(),
                            a: @escaping () -> Data,
                            b: @escaping () -> Data) throws -> SRPProtocol
     {
@@ -92,8 +92,8 @@ extension SRP
     /// - Returns: The resulting SRP protocol implementation.
     public static func `protocol`<BigIntType: SRPBigIntProtocol>(N: BigIntType,
                                                                  g: BigIntType,
-                                                                 digest: @escaping DigestFunc = SRP.sha256DigestFunc,
-                                                                 hmac: @escaping HMacFunc = SRP.sha256HMacFunc,
+                                                                 digest: @escaping DigestFunc = CryptoAlgorithm.SHA256.digestFunc(),
+                                                                 hmac: @escaping HMacFunc = CryptoAlgorithm.SHA256.hmacFunc(),
                                                                  a: @escaping () -> Data,
                                                                  b: @escaping () -> Data) throws -> SRPProtocol
     {

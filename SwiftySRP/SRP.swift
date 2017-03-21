@@ -43,8 +43,8 @@ public enum SRP
     /// - Returns: The resulting SRP protocol implementation.
     public func `protocol`(N: Data,
                            g: Data,
-                           digest: @escaping DigestFunc = SRP.sha256DigestFunc,
-                           hmac: @escaping HMacFunc = SRP.sha256HMacFunc) throws -> SRPProtocol
+                           digest: @escaping DigestFunc = CryptoAlgorithm.SHA256.digestFunc(),
+                           hmac: @escaping HMacFunc = CryptoAlgorithm.SHA256.hmacFunc()) throws -> SRPProtocol
     {
         switch self
         {
@@ -79,8 +79,8 @@ public enum SRP
     /// - Returns: The resulting SRP protocol implementation.
     public static func `protocol`<BigIntType: SRPBigIntProtocol>(N: BigIntType,
                                                                 g: BigIntType,
-                                                                digest: @escaping DigestFunc = SRP.sha256DigestFunc,
-                                                                hmac: @escaping HMacFunc = SRP.sha256HMacFunc) throws -> SRPProtocol
+                                                                digest: @escaping DigestFunc = CryptoAlgorithm.SHA256.digestFunc(),
+                                                                hmac: @escaping HMacFunc = CryptoAlgorithm.SHA256.hmacFunc()) throws -> SRPProtocol
     {
         let configuration = SRPConfigurationGenericImpl<BigIntType>(N: N,
                                                                 g: g,
@@ -91,31 +91,6 @@ public enum SRP
         try configuration.validate()
         return SRPGenericImpl<BigIntType>(configuration: configuration)
     }
-    
-    /// SHA256 hash function
-    public static var sha256DigestFunc: DigestFunc
-    {
-        return CryptoAlgorithm.SHA256.digestFunc()
-    }
-    
-    /// SHA512 hash function
-    public static var sha512DigestFunc: DigestFunc
-    {
-        return CryptoAlgorithm.SHA512.digestFunc()
-    }
-    
-    /// SHA256 hash function
-    public static var sha256HMacFunc: HMacFunc
-    {
-        return CryptoAlgorithm.SHA256.hmacFunc()
-    }
-    
-    /// SHA512 hash function
-    public static var sha512HMacFunc: HMacFunc
-    {
-        return CryptoAlgorithm.SHA512.hmacFunc()
-    }
-    
 }
 
 
