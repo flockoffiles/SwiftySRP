@@ -60,5 +60,33 @@ extension SRP
             return SRPGenericImpl<SRPMpzT>(configuration: configuration)
         }
     }
+    
+    /// Only for use in testing! Create an SRP configuration and provide custom closures to generate private ephemeral values 'a' and 'b'
+    /// This is done to be able to use fixed values for 'a' and 'b' and make generated values predictable (and compare them with expected values).
+    /// - Parameters:
+    ///   - N: Safe large prime per SRP spec.
+    ///   - g: Group generator per SRP spec.
+    ///   - digest: Hash function to be used.
+    ///   - hmac: HMAC function to be used.
+    ///   - a: Custom closure to generate the private ephemeral value 'a'
+    ///   - b: Custom closure to generate the private ephemeral value 'b'
+    /// - Throws: SRPError if configuration parameters are not valid.
+    /// - Returns: The resulting SRP protocol implementation.
+    public static func `protocol`<BigIntType: SRPBigIntProtocol>(N: BigIntType,
+                                                                 g: BigIntType,
+                                                                 digest: @escaping DigestFunc = SRP.sha256DigestFunc,
+                                                                 hmac: @escaping HMacFunc = SRP.sha256HMacFunc,
+                                                                 a: @escaping () -> Data,
+                                                                 b: @escaping () -> Data) throws -> SRPProtocol
+    {
+        let configuration = SRPConfigurationGenericImpl<BigIntType>(N: N,
+                                                                    g: g,
+                                                                    digest: digest,
+                                                                    hmac: hmac,
+                                                                    aFunc: { _ in return BigIntType(a()) },
+                                                                    bFunc: { _ in return BigIntType(b()) })
+        return SRPGenericImpl<BigIntType>(configuration: configuration)
+
+    }
 }
 
