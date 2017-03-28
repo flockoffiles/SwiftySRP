@@ -1,5 +1,5 @@
 # TODO: Bump this up to iOS9
-platform :ios, '8.1'
+platform :ios, '9.0'
 workspace 'SwiftySRP'
 
 abstract_target 'SwiftySRP_Base' do
