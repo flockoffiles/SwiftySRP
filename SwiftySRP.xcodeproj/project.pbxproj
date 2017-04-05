@@ -23,9 +23,7 @@
 		A58ACE911E5D858B00FF2C0D /* SRPData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE901E5D858B00FF2C0D /* SRPData.swift */; };
 		A58ACE971E5D8A8500FF2C0D /* SRPError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE961E5D8A8500FF2C0D /* SRPError.swift */; };
 		A5BF31AA1E7A9AA400EC5BCA /* imath.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF31A71E7A9AA400EC5BCA /* imath.c */; };
-		A5BF31AB1E7A9AA400EC5BCA /* imath.h in Headers */ = {isa = PBXBuildFile; fileRef = A5BF31A81E7A9AA400EC5BCA /* imath.h */; };
 		A5BF31B01E7ABFEE00EC5BCA /* imath+additions.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF31AE1E7ABFEE00EC5BCA /* imath+additions.c */; };
-		A5BF31B11E7ABFEE00EC5BCA /* imath+additions.h in Headers */ = {isa = PBXBuildFile; fileRef = A5BF31AF1E7ABFEE00EC5BCA /* imath+additions.h */; };
 		A5D4B1C91E7BE5C800BC9A9A /* SRPBigIntProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1C81E7BE5C800BC9A9A /* SRPBigIntProtocol.swift */; };
 		A5D4B1DA1E7C1D2100BC9A9A /* SRPConfigurationGenericImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1D91E7C1D2100BC9A9A /* SRPConfigurationGenericImpl.swift */; };
 		A5D4B1DC1E7C2C0F00BC9A9A /* SRP+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1DB1E7C2C0F00BC9A9A /* SRP+Extensions.swift */; };
@@ -225,8 +223,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5BF31AB1E7A9AA400EC5BCA /* imath.h in Headers */,
-				A5BF31B11E7ABFEE00EC5BCA /* imath+additions.h in Headers */,
 				A50090C61E4C74BD00238562 /* SwiftySRP.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
