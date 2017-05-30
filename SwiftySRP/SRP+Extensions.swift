@@ -38,7 +38,7 @@ extension BigUInt: SRPBigIntProtocol
 
 /// Internal extension. For test purposes only.
 /// Allows to create a configuration with custom (fixed) private ephemeral values 'a' and 'b'
-extension SRP
+public extension SRP
 {
     /// Only for use in testing! Create an SRP configuration and provide custom closures to generate private ephemeral values 'a' and 'b'
     /// This is done to be able to use fixed values for 'a' and 'b' and make generated values predictable (and compare them with expected values).
