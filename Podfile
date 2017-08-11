@@ -5,7 +5,7 @@ workspace 'SwiftySRP'
 abstract_target 'SwiftySRP_Base' do
     use_frameworks!
     
-    pod 'BigInt', '~> 2.1'
+	pod 'BigInt', :git => 'https://github.com/lorentey/BigInt.git', :branch => 'swift4'
     
     target 'SwiftySRP' do
       project 'SwiftySRP'
