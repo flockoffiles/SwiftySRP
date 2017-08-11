@@ -52,7 +52,7 @@ public protocol SRPBigIntProtocol: Comparable
     func serialize() -> Data
     
     /// Number of bits needed to represent the value.
-    var width: Int { get }
+    var bitWidth: Int { get }
     
     /// Compute the remainder of division of x by y
     ///
@@ -104,5 +104,5 @@ public protocol SRPBigIntProtocol: Comparable
     ///
     /// - Parameter width: The desired maximum number of bits to represent the integer.
     /// - Returns: Random integer.
-    static func randomIntegerLessThan(_ limit: Self) -> Self
+    static func randomInteger(lessThan limit: Self) -> Self
 }

@@ -282,7 +282,7 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         let resultData = srpData
         let N: BigIntType = configuration.bigInt_N()
         guard resultData.bigInt_clientS() > BigIntType(0) else { throw SRPError.invalidClientSharedSecret }
-        let padLength = (N.width + 7) / 8
+        let padLength = (N.bitWidth + 7) / 8
         let paddedS = pad((resultData.bigInt_clientS() as BigIntType).serialize(), to: padLength)
         let hash = configuration.digest(paddedS)
         
@@ -300,7 +300,7 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         let resultData = srpData
         guard resultData.bigInt_serverS() > BigIntType(0) else { throw SRPError.invalidServerSharedSecret }
         let N: BigIntType = configuration.bigInt_N()
-        let padLength: Int = (N.width + 7) / 8
+        let padLength: Int = (N.bitWidth + 7) / 8
         let paddedS = pad((resultData.bigInt_clientS() as BigIntType).serialize(), to: padLength)
         let hash = configuration.digest(paddedS)
         
@@ -342,7 +342,7 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
     /// - Returns: Result of hashing.
     internal func hashPaddedPair(digest: DigestFunc, N: BigIntType, n1: BigIntType, n2: BigIntType) -> BigIntType
     {
-        let padLength = (N.width + 7) / 8
+        let padLength = (N.bitWidth + 7) / 8
         
         let paddedN1 = pad(n1.serialize(), to: padLength)
         let paddedN2 = pad(n2.serialize(), to: padLength)
@@ -367,7 +367,7 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
     /// - Returns: Result of hashing.
     internal func hashPaddedTriplet(digest: DigestFunc, N: BigIntType, n1: BigIntType, n2: BigIntType, n3: BigIntType) -> BigIntType
     {
-        let padLength = (N.width + 7) / 8
+        let padLength = (N.bitWidth + 7) / 8
         
         let paddedN1 = pad(n1.serialize(), to: padLength)
         let paddedN2 = pad(n2.serialize(), to: padLength)
