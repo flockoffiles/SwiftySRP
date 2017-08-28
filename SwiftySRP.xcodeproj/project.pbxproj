@@ -17,6 +17,8 @@
 		A52B24CA1E7FFB9C0024707F /* SRPData+BigIntType.swift in Sources */ = {isa = PBXBuildFile; fileRef = A52B24C91E7FFB9C0024707F /* SRPData+BigIntType.swift */; };
 		A52B24CC1E800ED40024707F /* SRPGenericImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A52B24CB1E800ED40024707F /* SRPGenericImpl.swift */; };
 		A54DFB681E7AD094003F4DB0 /* SRPMpzT.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54DFB671E7AD094003F4DB0 /* SRPMpzT.swift */; };
+		A56827421F545DD300C4A80D /* BigInt.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56827411F545DD300C4A80D /* BigInt.framework */; };
+		A56827441F545DDD00C4A80D /* SipHash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56827431F545DDD00C4A80D /* SipHash.framework */; };
 		A58ACE871E5D818000FF2C0D /* SRPConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE861E5D818000FF2C0D /* SRPConfiguration.swift */; };
 		A58ACE8D1E5D826400FF2C0D /* SRPUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE8C1E5D826400FF2C0D /* SRPUtil.swift */; };
 		A58ACE8F1E5D82B400FF2C0D /* SRPProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE8E1E5D82B400FF2C0D /* SRPProtocol.swift */; };
@@ -24,6 +26,23 @@
 		A58ACE971E5D8A8500FF2C0D /* SRPError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE961E5D8A8500FF2C0D /* SRPError.swift */; };
 		A5BF31AA1E7A9AA400EC5BCA /* imath.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF31A71E7A9AA400EC5BCA /* imath.c */; };
 		A5BF31B01E7ABFEE00EC5BCA /* imath+additions.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF31AE1E7ABFEE00EC5BCA /* imath+additions.c */; };
+		A5D057561F5454A1004BC5D6 /* SRPData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE901E5D858B00FF2C0D /* SRPData.swift */; };
+		A5D057571F5454A1004BC5D6 /* SRP.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50091041E4C961100238562 /* SRP.swift */; };
+		A5D057581F5454A1004BC5D6 /* SRPError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE961E5D8A8500FF2C0D /* SRPError.swift */; };
+		A5D057591F5454A1004BC5D6 /* imath+additions.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF31AE1E7ABFEE00EC5BCA /* imath+additions.c */; };
+		A5D0575A1F5454A1004BC5D6 /* SRP+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1DB1E7C2C0F00BC9A9A /* SRP+Extensions.swift */; };
+		A5D0575B1F5454A1004BC5D6 /* SRPMpzT.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54DFB671E7AD094003F4DB0 /* SRPMpzT.swift */; };
+		A5D0575C1F5454A1004BC5D6 /* SRPGenericImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A52B24CB1E800ED40024707F /* SRPGenericImpl.swift */; };
+		A5D0575D1F5454A1004BC5D6 /* SRPProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE8E1E5D82B400FF2C0D /* SRPProtocol.swift */; };
+		A5D0575E1F5454A1004BC5D6 /* SRPConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE861E5D818000FF2C0D /* SRPConfiguration.swift */; };
+		A5D0575F1F5454A1004BC5D6 /* imath.c in Sources */ = {isa = PBXBuildFile; fileRef = A5BF31A71E7A9AA400EC5BCA /* imath.c */; };
+		A5D057601F5454A1004BC5D6 /* SRPBigIntProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1C81E7BE5C800BC9A9A /* SRPBigIntProtocol.swift */; };
+		A5D057611F5454A1004BC5D6 /* SRPDataGenericImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A52B24C71E7FF54B0024707F /* SRPDataGenericImpl.swift */; };
+		A5D057621F5454A1004BC5D6 /* SRPData+BigIntType.swift in Sources */ = {isa = PBXBuildFile; fileRef = A52B24C91E7FFB9C0024707F /* SRPData+BigIntType.swift */; };
+		A5D057631F5454A1004BC5D6 /* SRPUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE8C1E5D826400FF2C0D /* SRPUtil.swift */; };
+		A5D057641F5454A1004BC5D6 /* SRPConfigurationGenericImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1D91E7C1D2100BC9A9A /* SRPConfigurationGenericImpl.swift */; };
+		A5D057651F5454A1004BC5D6 /* SRPConfiguration+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1DD1E7C2D0A00BC9A9A /* SRPConfiguration+Extensions.swift */; };
+		A5D057691F5454A1004BC5D6 /* SwiftySRP.h in Headers */ = {isa = PBXBuildFile; fileRef = A50090B81E4C74BD00238562 /* SwiftySRP.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5D4B1C91E7BE5C800BC9A9A /* SRPBigIntProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1C81E7BE5C800BC9A9A /* SRPBigIntProtocol.swift */; };
 		A5D4B1DA1E7C1D2100BC9A9A /* SRPConfigurationGenericImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1D91E7C1D2100BC9A9A /* SRPConfigurationGenericImpl.swift */; };
 		A5D4B1DC1E7C2C0F00BC9A9A /* SRP+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1DB1E7C2C0F00BC9A9A /* SRP+Extensions.swift */; };
@@ -57,6 +76,8 @@
 		A52B24CB1E800ED40024707F /* SRPGenericImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPGenericImpl.swift; sourceTree = "<group>"; };
 		A53E4F1F1E5B522000C7DDEA /* SwiftySRPTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SwiftySRPTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		A54DFB671E7AD094003F4DB0 /* SRPMpzT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPMpzT.swift; sourceTree = "<group>"; };
+		A56827411F545DD300C4A80D /* BigInt.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BigInt.framework; path = Carthage/Build/iOS/BigInt.framework; sourceTree = "<group>"; };
+		A56827431F545DDD00C4A80D /* SipHash.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SipHash.framework; path = Carthage/Build/iOS/SipHash.framework; sourceTree = "<group>"; };
 		A58ACE861E5D818000FF2C0D /* SRPConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPConfiguration.swift; sourceTree = "<group>"; };
 		A58ACE8C1E5D826400FF2C0D /* SRPUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPUtil.swift; sourceTree = "<group>"; };
 		A58ACE8E1E5D82B400FF2C0D /* SRPProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPProtocol.swift; sourceTree = "<group>"; };
@@ -68,6 +89,8 @@
 		A5BF31A91E7A9AA400EC5BCA /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		A5BF31AE1E7ABFEE00EC5BCA /* imath+additions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "imath+additions.c"; sourceTree = "<group>"; };
 		A5BF31AF1E7ABFEE00EC5BCA /* imath+additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "imath+additions.h"; sourceTree = "<group>"; };
+		A5D0576F1F5454A1004BC5D6 /* SwiftySRP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftySRP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A5D057701F5454A1004BC5D6 /* SwiftySRP copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SwiftySRP copy-Info.plist"; path = "/Users/sergey/Projects/SwiftySRP/SwiftySRP copy-Info.plist"; sourceTree = "<absolute>"; };
 		A5D4B1C81E7BE5C800BC9A9A /* SRPBigIntProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPBigIntProtocol.swift; sourceTree = "<group>"; };
 		A5D4B1D91E7C1D2100BC9A9A /* SRPConfigurationGenericImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPConfigurationGenericImpl.swift; sourceTree = "<group>"; };
 		A5D4B1DB1E7C2C0F00BC9A9A /* SRP+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SRP+Extensions.swift"; sourceTree = "<group>"; };
@@ -94,6 +117,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A5D057661F5454A1004BC5D6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A56827421F545DD300C4A80D /* BigInt.framework in Frameworks */,
+				A56827441F545DDD00C4A80D /* SipHash.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -111,6 +143,8 @@
 		7DFD5AD894CA7CC238161CAA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A56827431F545DDD00C4A80D /* SipHash.framework */,
+				A56827411F545DD300C4A80D /* BigInt.framework */,
 				F59A7100C8CBC36C1AB01B41 /* Pods_SwiftySRP_Base_SwiftySRP.framework */,
 				0922B69B065556E86D599A64 /* Pods_SwiftySRP_Base_SwiftySRP_SwiftySRPTests.framework */,
 			);
@@ -127,6 +161,7 @@
 				A50090B61E4C74BD00238562 /* Products */,
 				1F81678CD039CA044C2F09CC /* Pods */,
 				7DFD5AD894CA7CC238161CAA /* Frameworks */,
+				A5D057701F5454A1004BC5D6 /* SwiftySRP copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -135,6 +170,7 @@
 			children = (
 				A50090B51E4C74BD00238562 /* SwiftySRP.framework */,
 				A50090BE1E4C74BD00238562 /* SwiftySRPTests.xctest */,
+				A5D0576F1F5454A1004BC5D6 /* SwiftySRP.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -227,6 +263,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A5D057681F5454A1004BC5D6 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A5D057691F5454A1004BC5D6 /* SwiftySRP.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -271,6 +315,24 @@
 			productReference = A50090BE1E4C74BD00238562 /* SwiftySRPTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		A5D057531F5454A1004BC5D6 /* SwiftySRP-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A5D0576C1F5454A1004BC5D6 /* Build configuration list for PBXNativeTarget "SwiftySRP-iOS" */;
+			buildPhases = (
+				A5D057551F5454A1004BC5D6 /* Sources */,
+				A5D057661F5454A1004BC5D6 /* Frameworks */,
+				A5D057681F5454A1004BC5D6 /* Headers */,
+				A5D0576A1F5454A1004BC5D6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "SwiftySRP-iOS";
+			productName = SwiftySRP;
+			productReference = A5D0576F1F5454A1004BC5D6 /* SwiftySRP.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -293,6 +355,9 @@
 						LastSwiftMigration = 0820;
 						ProvisioningStyle = Automatic;
 					};
+					A5D057531F5454A1004BC5D6 = {
+						DevelopmentTeam = U3842W8E3U;
+					};
 				};
 			};
 			buildConfigurationList = A50090AF1E4C74BD00238562 /* Build configuration list for PBXProject "SwiftySRP" */;
@@ -309,6 +374,7 @@
 			targets = (
 				A50090B41E4C74BD00238562 /* SwiftySRP */,
 				A50090BD1E4C74BD00238562 /* SwiftySRPTests */,
+				A5D057531F5454A1004BC5D6 /* SwiftySRP-iOS */,
 			);
 		};
 /* End PBXProject section */
@@ -322,6 +388,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A50090BC1E4C74BD00238562 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A5D0576A1F5454A1004BC5D6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -437,6 +510,29 @@
 			buildActionMask = 2147483647;
 			files = (
 				A50090C41E4C74BD00238562 /* SwiftySRPTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A5D057551F5454A1004BC5D6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A5D057561F5454A1004BC5D6 /* SRPData.swift in Sources */,
+				A5D057571F5454A1004BC5D6 /* SRP.swift in Sources */,
+				A5D057581F5454A1004BC5D6 /* SRPError.swift in Sources */,
+				A5D057591F5454A1004BC5D6 /* imath+additions.c in Sources */,
+				A5D0575A1F5454A1004BC5D6 /* SRP+Extensions.swift in Sources */,
+				A5D0575B1F5454A1004BC5D6 /* SRPMpzT.swift in Sources */,
+				A5D0575C1F5454A1004BC5D6 /* SRPGenericImpl.swift in Sources */,
+				A5D0575D1F5454A1004BC5D6 /* SRPProtocol.swift in Sources */,
+				A5D0575E1F5454A1004BC5D6 /* SRPConfiguration.swift in Sources */,
+				A5D0575F1F5454A1004BC5D6 /* imath.c in Sources */,
+				A5D057601F5454A1004BC5D6 /* SRPBigIntProtocol.swift in Sources */,
+				A5D057611F5454A1004BC5D6 /* SRPDataGenericImpl.swift in Sources */,
+				A5D057621F5454A1004BC5D6 /* SRPData+BigIntType.swift in Sources */,
+				A5D057631F5454A1004BC5D6 /* SRPUtil.swift in Sources */,
+				A5D057641F5454A1004BC5D6 /* SRPConfigurationGenericImpl.swift in Sources */,
+				A5D057651F5454A1004BC5D6 /* SRPConfiguration+Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -628,6 +724,59 @@
 			};
 			name = Release;
 		};
+		A5D0576D1F5454A1004BC5D6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01347E97292452B709D3AE36 /* Pods-SwiftySRP_Base-SwiftySRP.debug.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = U3842W8E3U;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				INFOPLIST_FILE = SwiftySRP/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.flockoffiles.SwiftySRP;
+				PRODUCT_NAME = SwiftySRP;
+				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/CommonCrypto $(SRCROOT)/imath";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		A5D0576E1F5454A1004BC5D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B15B2BD877A371ACD21A17B5 /* Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = U3842W8E3U;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				INFOPLIST_FILE = SwiftySRP/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.flockoffiles.SwiftySRP;
+				PRODUCT_NAME = SwiftySRP;
+				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/CommonCrypto $(SRCROOT)/imath";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -654,6 +803,15 @@
 			buildConfigurations = (
 				A50090CD1E4C74BD00238562 /* Debug */,
 				A50090CE1E4C74BD00238562 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A5D0576C1F5454A1004BC5D6 /* Build configuration list for PBXNativeTarget "SwiftySRP-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A5D0576D1F5454A1004BC5D6 /* Debug */,
+				A5D0576E1F5454A1004BC5D6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
