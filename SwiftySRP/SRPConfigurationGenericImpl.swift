@@ -89,7 +89,7 @@ struct SRPConfigurationGenericImpl<BigIntType: SRPBigIntProtocol>: SRPConfigurat
     /// - Throws: SRPError if invalid.
     func validate() throws
     {
-        guard _N.width >= 256 else { throw SRPError.configurationPrimeTooShort }
+        guard _N.bitWidth >= 256 else { throw SRPError.configurationPrimeTooShort }
         guard _g > BigIntType(1) else { throw SRPError.configurationGeneratorInvalid }
     }
     
@@ -101,12 +101,12 @@ struct SRPConfigurationGenericImpl<BigIntType: SRPBigIntProtocol>: SRPConfigurat
     {
         // Suppose that N is 8 bits wide
         // Then min bits == 4
-        let minBits = N.width / 2
-        guard minBits > 0 else { return BigIntType.randomIntegerLessThan(BigIntType(2)) }
+        let minBits = N.bitWidth / 2
+        guard minBits > 0 else { return BigIntType.randomInteger(lessThan: BigIntType(2)) }
         
         // Smallest number with 4 bits is 2^(4-1) = 8
         let minBitsNumber = BigIntType(2).power(minBits - 1)
-        let random = minBitsNumber + BigIntType.randomIntegerLessThan(N - minBitsNumber)
+        let random = minBitsNumber + BigIntType.randomInteger(lessThan: N - minBitsNumber)
         
         return random
     }

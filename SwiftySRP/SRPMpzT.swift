@@ -93,7 +93,7 @@ final class SRPMpzT: SRPBigIntProtocol
     }
     
     /// Number of bits needed to represent the value.
-    var width: Int {
+    var bitWidth: Int {
         return Int(mp_int_count_bits(&self.value))
     }
 
@@ -212,9 +212,9 @@ final class SRPMpzT: SRPBigIntProtocol
     ///
     /// - Parameter limit: The upper bound (non inclusive) for the desired random integer.
     /// - Returns: positive random integer which is less than the specified upper bound.
-    static func randomIntegerLessThan(_ limit: SRPMpzT) -> SRPMpzT
+    static func randomInteger(lessThan limit: SRPMpzT) -> SRPMpzT
     {
-        let width = limit.width
+        let width = limit.bitWidth
         var random = randomInteger(withMaximumWidth: width)
         while random >= limit
         {

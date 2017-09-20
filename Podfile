@@ -5,7 +5,7 @@ workspace 'SwiftySRP'
 abstract_target 'SwiftySRP_Base' do
     use_frameworks!
     
-    pod 'BigInt', '~> 2.1'
+	pod 'BigInt', '~> 3.0.0'
     
     target 'SwiftySRP' do
       project 'SwiftySRP'
@@ -33,6 +33,11 @@ end
 # This part is essential for playgrounds to work properly with frameworks installed with cocoapods.
 post_install do |installer|
     installer.pods_project.targets.each do |target|
+        if target.name == 'BigInt'
+            target.build_configurations.each do |config|
+                config.build_settings['SWIFT_VERSION'] = '4.0'
+            end
+        end
         target.build_configurations.each do |config|
             config.build_settings['CONFIGURATION_BUILD_DIR'] = '$PODS_CONFIGURATION_BUILD_DIR'
             if config.name == 'Debug'
