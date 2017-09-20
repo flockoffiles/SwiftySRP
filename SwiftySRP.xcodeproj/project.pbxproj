@@ -60,10 +60,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		01347E97292452B709D3AE36 /* Pods-SwiftySRP_Base-SwiftySRP.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftySRP_Base-SwiftySRP.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRP/Pods-SwiftySRP_Base-SwiftySRP.debug.xcconfig"; sourceTree = "<group>"; };
+		03CEC297138466C580FA298C /* Pods-SwiftySRP_Base-SwiftySRP.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftySRP_Base-SwiftySRP.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRP/Pods-SwiftySRP_Base-SwiftySRP.debug.xcconfig"; sourceTree = "<group>"; };
 		0922B69B065556E86D599A64 /* Pods_SwiftySRP_Base_SwiftySRP_SwiftySRPTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SwiftySRP_Base_SwiftySRP_SwiftySRPTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		10ED35AB66D3B09F03A8CAC1 /* Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests/Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.debug.xcconfig"; sourceTree = "<group>"; };
 		2FB021FC76E81CB3156016E2 /* Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests/Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.release.xcconfig"; sourceTree = "<group>"; };
+		8489902F0C68A50F44D97659 /* Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig"; path = "Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRP/Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig"; sourceTree = "<group>"; };
 		A50090B51E4C74BD00238562 /* SwiftySRP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftySRP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A50090B81E4C74BD00238562 /* SwiftySRP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftySRP.h; sourceTree = "<group>"; };
 		A50090B91E4C74BD00238562 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -95,7 +96,6 @@
 		A5D4B1D91E7C1D2100BC9A9A /* SRPConfigurationGenericImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPConfigurationGenericImpl.swift; sourceTree = "<group>"; };
 		A5D4B1DB1E7C2C0F00BC9A9A /* SRP+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SRP+Extensions.swift"; sourceTree = "<group>"; };
 		A5D4B1DD1E7C2D0A00BC9A9A /* SRPConfiguration+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SRPConfiguration+Extensions.swift"; sourceTree = "<group>"; };
-		B15B2BD877A371ACD21A17B5 /* Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig"; path = "Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRP/Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig"; sourceTree = "<group>"; };
 		F59A7100C8CBC36C1AB01B41 /* Pods_SwiftySRP_Base_SwiftySRP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SwiftySRP_Base_SwiftySRP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -132,10 +132,10 @@
 		1F81678CD039CA044C2F09CC /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				01347E97292452B709D3AE36 /* Pods-SwiftySRP_Base-SwiftySRP.debug.xcconfig */,
-				B15B2BD877A371ACD21A17B5 /* Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig */,
 				10ED35AB66D3B09F03A8CAC1 /* Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.debug.xcconfig */,
 				2FB021FC76E81CB3156016E2 /* Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.release.xcconfig */,
+				03CEC297138466C580FA298C /* Pods-SwiftySRP_Base-SwiftySRP.debug.xcconfig */,
+				8489902F0C68A50F44D97659 /* Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -648,7 +648,7 @@
 		};
 		A50090CA1E4C74BD00238562 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 01347E97292452B709D3AE36 /* Pods-SwiftySRP_Base-SwiftySRP.debug.xcconfig */;
+			baseConfigurationReference = 03CEC297138466C580FA298C /* Pods-SwiftySRP_Base-SwiftySRP.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -671,7 +671,7 @@
 		};
 		A50090CB1E4C74BD00238562 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B15B2BD877A371ACD21A17B5 /* Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig */;
+			baseConfigurationReference = 8489902F0C68A50F44D97659 /* Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -726,7 +726,6 @@
 		};
 		A5D0576D1F5454A1004BC5D6 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 01347E97292452B709D3AE36 /* Pods-SwiftySRP_Base-SwiftySRP.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -753,7 +752,6 @@
 		};
 		A5D0576E1F5454A1004BC5D6 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B15B2BD877A371ACD21A17B5 /* Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";

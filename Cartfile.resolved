@@ -1,2 +1,2 @@
-github "lorentey/BigInt" "v2.2.0"
-github "lorentey/SipHash" "v1.1.2"
+github "attaswift/SipHash" "v1.2.0"
+github "lorentey/BigInt" "v3.0.0"
