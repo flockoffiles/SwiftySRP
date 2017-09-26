@@ -65,16 +65,17 @@ public extension SRP
                                                                      g: BigUInt(g),
                                                                      digest: digest,
                                                                      hmac: hmac,
-                                                                     aFunc: { _ in return BigUInt(a()) },
-                                                                     bFunc: { _ in return BigUInt(b()) })
+                                                                     aFunc: { BigUInt(a()) },
+                                                                     bFunc: { BigUInt(b()) })
+            
             return SRPGenericImpl<BigUInt>(configuration: configuration)
         case .iMath:
             let configuration = SRPConfigurationGenericImpl<SRPMpzT>(N: SRPMpzT(N),
                                                                      g: SRPMpzT(g),
                                                                      digest: digest,
                                                                      hmac: hmac,
-                                                                     aFunc: { _ in return SRPMpzT(a()) },
-                                                                     bFunc: { _ in return SRPMpzT(b()) })
+                                                                     aFunc: { SRPMpzT(a()) },
+                                                                     bFunc: { SRPMpzT(b()) })
             return SRPGenericImpl<SRPMpzT>(configuration: configuration)
         }
     }
@@ -101,8 +102,8 @@ public extension SRP
                                                                     g: g,
                                                                     digest: digest,
                                                                     hmac: hmac,
-                                                                    aFunc: { _ in return BigIntType(a()) },
-                                                                    bFunc: { _ in return BigIntType(b()) })
+                                                                    aFunc: { BigIntType(a()) },
+                                                                    bFunc: { BigIntType(b()) })
         return SRPGenericImpl<BigIntType>(configuration: configuration)
 
     }

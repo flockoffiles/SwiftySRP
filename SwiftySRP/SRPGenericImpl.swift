@@ -94,7 +94,8 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         var srpData = try generateClientCredentials(s: s, I: I, p: p)
         let g = BigIntType(configuration.generator)
         let N = BigIntType(configuration.modulus)
-        srpData.setBigInt_v(g.power(srpData.bigInt_x(), modulus:N))
+        let bigIntV = g.power(srpData.bigInt_x(), modulus:N)
+        srpData.setBigInt_v(bigIntV)
         
         return srpData
     }
@@ -117,7 +118,8 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         guard resultData.bigInt_a() > BigIntType(0) else { throw SRPError.invalidClientPrivateValue }
         guard resultData.bigInt_x() > BigIntType(0) else { throw SRPError.invalidPasswordHash }
         
-        resultData.setBigInt_u(hashPaddedPair(digest: configuration.digest, N: N, n1: resultData.bigInt_A(), n2: resultData.bigInt_B()))
+        let bigIntU = hashPaddedPair(digest: configuration.digest, N: N, n1: resultData.bigInt_A(), n2: resultData.bigInt_B())
+        resultData.setBigInt_u(bigIntU)
         resultData.setBigInt_k(hashPaddedPair(digest: configuration.digest, N: N, n1: N, n2: g))
         
         let exp: BigIntType = ((resultData.bigInt_u() * resultData.bigInt_x()) + resultData.bigInt_a())
@@ -148,11 +150,13 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         guard resultData.bigInt_b() > BigIntType(0) else { throw SRPError.invalidServerPrivateValue }
         guard resultData.bigInt_v() > BigIntType(0) else { throw SRPError.invalidVerifier }
         
-        resultData.setBigInt_u(hashPaddedPair(digest: configuration.digest, N: N, n1: resultData.bigInt_A(), n2: resultData.bigInt_B()))
+        let bigIntU = hashPaddedPair(digest: configuration.digest, N: N, n1: resultData.bigInt_A(), n2: resultData.bigInt_B())
+        resultData.setBigInt_u(bigIntU)
         
         // S = (Av^u) ^ b
         let tmp: BigIntType = resultData.bigInt_A() * (resultData.bigInt_v() as BigIntType).power(resultData.bigInt_u(), modulus: N)
-        resultData.setBigInt_serverS((tmp % N).power(resultData.bigInt_b(), modulus: N))
+        let bigIntServerS = (tmp % N).power(resultData.bigInt_b(), modulus: N)
+        resultData.setBigInt_serverS(bigIntServerS)
         
         return resultData
     }
@@ -183,10 +187,11 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
             resultData = try calculateClientSecret(srpData: resultData)
         }
         
-        resultData.setBigInt_clientM(hashPaddedTriplet(digest: configuration.digest,
-                                                      N: N, n1: resultData.bigInt_A(),
-                                                      n2: resultData.bigInt_B(),
-                                                      n3: resultData.bigInt_clientS()))
+        let bigIntClientM = hashPaddedTriplet(digest: configuration.digest,
+                                              N: N, n1: resultData.bigInt_A(),
+                                              n2: resultData.bigInt_B(),
+                                              n3: resultData.bigInt_clientS())
+        resultData.setBigInt_clientM(bigIntClientM)
         return resultData
     }
     
@@ -215,11 +220,12 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
             resultData = try calculateServerSecret(srpData: resultData)
         }
         
-        resultData.setBigInt_serverM(hashPaddedTriplet(digest: configuration.digest,
-                                                   N: N,
-                                                   n1: resultData.bigInt_A(),
-                                                   n2: resultData.bigInt_clientM(),
-                                                   n3: resultData.bigInt_serverS()))
+        let bigIntServerM = hashPaddedTriplet(digest: configuration.digest,
+                                              N: N,
+                                              n1: resultData.bigInt_A(),
+                                              n2: resultData.bigInt_clientM(),
+                                              n3: resultData.bigInt_serverS())
+        resultData.setBigInt_serverM(bigIntServerM)
         
         return resultData
     }
