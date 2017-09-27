@@ -25,6 +25,7 @@
 
 import Foundation
 import BigInt
+import FFDataWrapper
 
 /// Custom extension to make third party BigUInt type conform to SRPBigIntProtocol
 extension BigUInt: SRPBigIntProtocol
@@ -32,6 +33,27 @@ extension BigUInt: SRPBigIntProtocol
     public init(_ other: BigUInt)
     {
         self = other
+    }
+    
+    /// Initialize with an unsigned value stored in a big endian data buffer.
+    ///
+    /// - Parameter data: Wrapped data buffer holding the value.
+    public init(_ wrappedData: FFDataWrapper)
+    {
+        // Here we rely on the fact that Swift structs are copy-on-write.
+        var decodedData = wrappedData.withDecodedData { $0 }
+        defer { decodedData.wipe() }
+        self.init(decodedData)
+    }
+    
+    /// Store the data in a wrapped big endian data buffer (more secure)
+    ///
+    /// - Returns: The big endian data buffer which contains the value.
+    public func wrappedSerialize() -> FFDataWrapper
+    {
+        var serialized = serialize()
+        defer { serialized.wipe() }
+        return FFDataWrapper(serialized)
     }
 }
 

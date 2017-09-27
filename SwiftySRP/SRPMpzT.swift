@@ -25,6 +25,7 @@
 
 import Foundation
 import imath
+import FFDataWrapper
 
 /// This class wraps an mpz_t value from imath and provides methods to conform to SRPBigIntProtocol
 final class SRPMpzT: SRPBigIntProtocol
@@ -58,6 +59,18 @@ final class SRPMpzT: SRPBigIntProtocol
         }
     }
     
+    /// Initialize with an unsigned value stored in a big endian data buffer.
+    ///
+    /// - Parameter data: Wrapped data buffer holding the value.
+    required init(_ wrappedData: FFDataWrapper)
+    {
+        wrappedData.withDecodedData { decodedData in
+            decodedData.withUnsafeBytes { (bytes: UnsafePointer<UInt8>) -> Void in
+                mp_int_read_const_unsigned(&value, bytes, Int32(decodedData.count))
+            }
+        }
+    }
+    
     /// Initialize with another wrapped value.
     ///
     /// - Parameter other: The wrapped value to initialize with.
@@ -79,8 +92,7 @@ final class SRPMpzT: SRPBigIntProtocol
     func serialize() -> Data
     {
         let byteCount = mp_int_unsigned_len(&value)
-        if (byteCount == mp_result(0))
-        {
+        guard byteCount != mp_result(0) else {
             return Data()
         }
         
@@ -90,6 +102,25 @@ final class SRPMpzT: SRPBigIntProtocol
         })
         
         return data
+    }
+    
+    /// Store the data in a wrapped big endian data buffer (more secure)
+    ///
+    /// - Returns: The big endian data buffer which contains the value.
+    func wrappedSerialize() -> FFDataWrapper
+    {
+        let byteCount = mp_int_unsigned_len(&value)
+        guard byteCount != mp_result(0) else {
+            return FFDataWrapper()
+        }
+        
+        var data = Data(count: Int(byteCount))
+        defer { data.wipe() }
+        data.withUnsafeMutableBytes({ (bytes: UnsafeMutablePointer<UInt8>) -> Void in
+            mp_int_to_unsigned(&value, bytes, byteCount)
+        })
+
+        return FFDataWrapper(data)
     }
     
     /// Number of bits needed to represent the value.

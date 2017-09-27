@@ -24,6 +24,7 @@
 //  SOFTWARE.
 
 import Foundation
+import FFDataWrapper
 
 // SPR Design spec: http://srp.stanford.edu/design.html
 // SRP RFC: https://tools.ietf.org/html/rfc5054
@@ -94,7 +95,16 @@ public protocol SRPProtocol
     /// - Returns: SRP data with parameters x, a, and A populated.
     /// - Throws: SRPError if input parameters or configuration are not valid.
     func generateClientCredentials(s: Data, I: Data, p: Data) throws -> SRPData
-
+    
+    /// Generate client credentials (parameters x, a, and A) from the SRP salt, user name (I), and password (p)
+    ///
+    /// - Parameters:
+    ///   - s: SRP salt
+    ///   - I: User name
+    ///   - p: Password
+    /// - Returns: SRP data with parameters x, a, and A populated.
+    /// - Throws: SRPError if input parameters or configuration are not valid.
+    func generateClientCredentials(s: FFDataWrapper, I: FFDataWrapper, p: FFDataWrapper) throws -> SRPData
     
     /// Calculate the shared secret on the client side: S = (B - kg^x) ^ (a + ux)
     ///
@@ -129,7 +139,14 @@ public protocol SRPProtocol
     /// - Returns: Shared key
     /// - Throws: SRPError if some of the required parameters is invalid.
     func calculateClientSharedKey(srpData: SRPData) throws -> Data
-    
+
+    /// Calculate the shared key (client side) in the standard way: sharedKey = H(clientS)
+    /// This version returns a wrapped version (more secure).
+    /// - Parameter srpData: SRPData with clientS populated.
+    /// - Returns: Shared key
+    /// - Throws: SRPError if some of the required parameters is invalid.
+    func calculateClientSharedKey(srpData: SRPData) throws -> FFDataWrapper
+
     /// Calculate the shared key (client side) by using HMAC: sharedKey = HMAC(salt, clientS)
     /// This version can be used to derive multiple shared keys from the same shared secret (by using different salts)
     /// - Parameter srpData: SRPData with clientS populated.
@@ -137,7 +154,14 @@ public protocol SRPProtocol
     /// - Throws: SRPError if some of the required parameters is invalid.
     func calculateClientSharedKey(srpData: SRPData, salt: Data) throws -> Data
     
-    
+    /// Calculate the shared key (client side) by using HMAC: sharedKey = HMAC(salt, clientS)
+    /// This version can be used to derive multiple shared keys from the same shared secret (by using different salts)
+    /// This version returns a wrapped version (more secure).
+    /// - Parameter srpData: SRPData with clientS populated.
+    /// - Returns: Shared key
+    /// - Throws: SRPError if some of the required parameters is invalid.
+    func calculateClientSharedKey(srpData: SRPData, salt: FFDataWrapper) throws -> FFDataWrapper
+
     /// Generate the server side SRP parameters. This method normally will NOT be used by the client.
     /// It's included here for testing purposes.
     /// - Parameter verifier: SRP verifier received from the client.
@@ -177,14 +201,30 @@ public protocol SRPProtocol
     /// - Returns: Shared key
     /// - Throws: SRPError if some of the required parameters is invalid.
     func calculateServerSharedKey(srpData: SRPData) throws -> Data
-    
+
+    /// Calculate the shared key (server side) in the standard way: sharedKey = H(serverS)
+    /// This version returns a wrapped version (more secure).
+    ///
+    /// - Parameter srpData: SRPData with serverS populated.
+    /// - Returns: Shared key
+    /// - Throws: SRPError if some of the required parameters is invalid.
+    func calculateServerSharedKey(srpData: SRPData) throws -> FFDataWrapper
+
     /// Calculate the shared key (server side) by using HMAC: sharedKey = HMAC(salt, clientS)
     /// This version can be used to derive multiple shared keys from the same shared secret (by using different salts)
     /// - Parameter srpData: SRPData with clientS populated.
     /// - Returns: Shared key
     /// - Throws: SRPError if some of the required parameters is invalid.
     func calculateServerSharedKey(srpData: SRPData, salt: Data) throws -> Data
-    
+
+    /// Calculate the shared key (server side) by using HMAC: sharedKey = HMAC(salt, clientS)
+    /// This version can be used to derive multiple shared keys from the same shared secret (by using different salts)
+    /// This version returns a wrapped version (more secure).
+    /// - Parameter srpData: SRPData with clientS populated.
+    /// - Returns: Shared key
+    /// - Throws: SRPError if some of the required parameters is invalid.
+    func calculateServerSharedKey(srpData: SRPData, salt: FFDataWrapper) throws -> FFDataWrapper
+
 }
 
 

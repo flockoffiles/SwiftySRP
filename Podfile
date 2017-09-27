@@ -6,6 +6,7 @@ abstract_target 'SwiftySRP_Base' do
     use_frameworks!
     
 	pod 'BigInt', :git => 'https://github.com/lorentey/BigInt.git', :tag => 'v3.0.0'
+    pod 'FFDataWrapper', :git => 'https://github.com/flockoffiles/FFDataWrapper.git', :branch => 'master'
     
     target 'SwiftySRP' do
       project 'SwiftySRP'

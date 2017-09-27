@@ -24,6 +24,7 @@
 //  SOFTWARE.
 
 import Foundation
+import FFDataWrapper
 
 /// Implementation of the SRP protocol. Although it's primarily intended to be used on the client side, it includes the server side methods
 /// as well (for testing purposes).
@@ -57,6 +58,37 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         return SRPDataGenericImpl<BigIntType>(x: value_x, a: value_a, A: value_A)
     }
     
+    /// Generate client credentials (parameters x, a, and A) from the SRP salt, user name (I), and password (p)
+    /// This version accepts wrapped parameters (more secure).
+    /// - Parameters:
+    ///   - s: SRP salt
+    ///   - I: User name
+    ///   - p: Password
+    /// - Returns: SRP data with parameters x, a, and A populated.
+    /// - Throws: SRPError if input parameters or configuration are not valid.
+    public func generateClientCredentials(s: FFDataWrapper, I: FFDataWrapper, p: FFDataWrapper) throws -> SRPData
+    {
+        // TODO: There may be more stringent requirements about salt.
+        try configuration.validate()
+        guard !s.isEmpty else { throw SRPError.invalidSalt }
+        guard !I.isEmpty else { throw SRPError.invalidUserName }
+        guard !p.isEmpty else { throw SRPError.invalidPassword }
+
+        let c = self.configuration
+        
+        var decoded_s = s.withDecodedData { $0 }
+        defer { decoded_s.wipe() }
+        var decoded_I = I.withDecodedData { $0 }
+        defer { decoded_I.wipe() }
+        var decoded_p = p.withDecodedData { $0 }
+        defer { decoded_p.wipe() }
+        
+        let value_x: BigIntType = x(s: decoded_s, I: decoded_I, p: decoded_p)
+        let value_a: BigIntType = BigIntType()
+        // A = g^a
+        let value_A = BigIntType(c.generator).power(value_a, modulus: BigIntType(c.modulus))
+        return SRPDataGenericImpl<BigIntType>(x: value_x, a: value_a, A: value_A)
+    }
     
     /// Generate the server side SRP parameters. This method normally will NOT be used by the client.
     /// It's included here for testing purposes.
@@ -78,7 +110,29 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         
         return SRPDataGenericImpl<BigIntType>(v:v, k:k, b:b, B:B)
     }
-    
+
+    /// Generate the server side SRP parameters. This method normally will NOT be used by the client.
+    /// It's included here for testing purposes.
+    /// This version uses a wrapped verifier (more secure).
+    /// - Parameter verifier: SRP verifier received from the client.
+    /// - Returns: SRP data with parameters v, k, b, and B populated.
+    /// - Throws: SRPError if the verifier or configuration is invalid.
+    public func generateServerCredentials(verifier: FFDataWrapper) throws -> SRPData
+    {
+        guard !verifier.isEmpty else { throw SRPError.invalidVerifier }
+        try configuration.validate()
+        let N = BigIntType(configuration.modulus)
+        let g = BigIntType(configuration.generator)
+        let v:BigIntType = BigIntType(verifier)
+        let k:BigIntType = hashPaddedPair(digest: configuration.digest, N: N, n1: N, n2: BigIntType(configuration.generator))
+        let b:BigIntType = BigIntType(configuration.serverPrivateValue())
+        
+        // B = kv + g^b
+        let B = (((k * v) % N) + g.power(b, modulus: N)) % N
+        
+        return SRPDataGenericImpl<BigIntType>(v:v, k:k, b:b, B:B)
+    }
+
     
     /// Compute the verifier and client credentials.
     ///
@@ -99,7 +153,27 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         
         return srpData
     }
-    
+
+    /// Compute the verifier and client credentials.
+    ///
+    /// - Parameters:
+    ///   - s: SRP salt
+    ///   - I: User name
+    ///   - p: Password
+    /// - Returns: SRPData with parameters v, x, a, and A populated.
+    /// - Throws: SRPError if input parameters or configuration are not valid.
+    public func verifier(s: FFDataWrapper, I: FFDataWrapper,  p: FFDataWrapper) throws -> SRPData
+    {
+        // let valueX = x(s:s, I:I, p:p)
+        var srpData = try generateClientCredentials(s: s, I: I, p: p)
+        let g = BigIntType(configuration.generator)
+        let N = BigIntType(configuration.modulus)
+        let bigIntV = g.power(srpData.bigInt_x(), modulus:N)
+        srpData.setBigInt_v(bigIntV)
+        
+        return srpData
+    }
+
     
     /// Calculate the shared secret on the client side: S = (B - kg^x) ^ (a + ux)
     ///
@@ -294,7 +368,25 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         
         return hash
     }
-    
+
+    /// Calculate the shared key (client side) in the standard way: sharedKey = H(clientS)
+    ///
+    /// - Parameter srpData: SRPData with clientS populated.
+    /// - Returns: Shared key
+    /// - Throws: SRPError if some of the required parameters is invalid.
+    public func calculateClientSharedKey(srpData: SRPData) throws -> FFDataWrapper
+    {
+        try configuration.validate()
+        let resultData = srpData
+        let N: BigIntType = configuration.bigInt_N()
+        guard resultData.bigInt_clientS() > BigIntType(0) else { throw SRPError.invalidClientSharedSecret }
+        let padLength = (N.bitWidth + 7) / 8
+        let paddedS = pad((resultData.bigInt_clientS() as BigIntType).serialize(), to: padLength)
+        var hash = configuration.digest(paddedS)
+        defer { hash.wipe() }
+        return FFDataWrapper(hash)
+    }
+
     /// Calculate the shared key (server side) in the standard way: sharedKey = H(serverS)
     ///
     /// - Parameter srpData: SRPData with serverS populated.
@@ -313,6 +405,27 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         return hash
     }
     
+    /// Calculate the shared key (server side) in the standard way: sharedKey = H(serverS)
+    /// This version returns a wrapped version (more secure).
+    ///
+    /// - Parameter srpData: SRPData with serverS populated.
+    /// - Returns: Shared key
+    /// - Throws: SRPError if some of the required parameters is invalid.
+    public func calculateServerSharedKey(srpData: SRPData) throws -> FFDataWrapper
+    {
+        try configuration.validate()
+        let resultData = srpData
+        guard resultData.bigInt_serverS() > BigIntType(0) else { throw SRPError.invalidServerSharedSecret }
+        let N: BigIntType = configuration.bigInt_N()
+        let padLength: Int = (N.bitWidth + 7) / 8
+        var paddedS: Data = pad((resultData.bigInt_clientS() as BigIntType).serialize(), to: padLength)
+        defer { paddedS.wipe() }
+        var hash: Data = configuration.digest(paddedS)
+        defer { hash.wipe() }
+        
+        return FFDataWrapper(hash)
+    }
+    
     /// Calculate the shared key (client side) by using HMAC: sharedKey = HMAC(salt, clientS)
     /// This version can be used to derive multiple shared keys from the same shared secret (by using different salts)
     /// - Parameter srpData: SRPData with clientS populated.
@@ -323,6 +436,23 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         try configuration.validate()
         let resultData = srpData
         return configuration.hmac(salt, (resultData.bigInt_clientS() as BigIntType).serialize())
+    }
+    
+    /// Calculate the shared key (client side) by using HMAC: sharedKey = HMAC(salt, clientS)
+    /// This version can be used to derive multiple shared keys from the same shared secret (by using different salts)
+    /// This version returns a wrapped version (more secure).
+    /// - Parameter srpData: SRPData with clientS populated.
+    /// - Returns: Shared key
+    /// - Throws: SRPError if some of the required parameters is invalid.
+    public func calculateClientSharedKey(srpData: SRPData, salt: FFDataWrapper) throws -> FFDataWrapper
+    {
+        try configuration.validate()
+        let resultData = srpData
+        var decodedSalt = salt.withDecodedData { $0 }
+        defer { decodedSalt.wipe() }
+        var sharedKeyData = configuration.hmac(decodedSalt, (resultData.bigInt_clientS() as BigIntType).serialize())
+        defer { sharedKeyData.wipe() }
+        return FFDataWrapper(sharedKeyData)
     }
     
     /// Calculate the shared key (server side) by using HMAC: sharedKey = HMAC(salt, clientS)
@@ -337,6 +467,23 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         return configuration.hmac(salt, (resultData.bigInt_serverS() as BigIntType).serialize())
     }
     
+    /// Calculate the shared key (server side) by using HMAC: sharedKey = HMAC(salt, clientS)
+    /// This version can be used to derive multiple shared keys from the same shared secret (by using different salts)
+    /// This version returns a wrapped version (more secure).
+    /// - Parameter srpData: SRPData with clientS populated.
+    /// - Returns: Shared key
+    /// - Throws: SRPError if some of the required parameters is invalid.
+    public func calculateServerSharedKey(srpData: SRPData, salt: FFDataWrapper) throws -> FFDataWrapper
+    {
+        try configuration.validate()
+        let resultData = srpData
+        var decodedSalt = salt.withDecodedData { $0 }
+        defer { decodedSalt.wipe() }
+
+        var sharedKeyData = configuration.hmac(decodedSalt, (resultData.bigInt_serverS() as BigIntType).serialize())
+        defer { sharedKeyData.wipe() }
+        return FFDataWrapper(sharedKeyData)
+    }
     
     /// Helper method to concatenate, pad, and hash two values.
     ///

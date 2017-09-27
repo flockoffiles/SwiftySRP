@@ -26,6 +26,7 @@
 import Foundation
 import BigInt
 import CommonCrypto
+import FFDataWrapper
 
 /// Convenience enum to specify a hashing algorithm
 public enum CryptoAlgorithm
@@ -125,7 +126,6 @@ public extension UnicodeScalar
 /// Helper category to perform conversion of hex strings to data
 public extension Data
 {
-    
     /// Create an instance of Data from a hex string representation.
     ///
     /// - Parameter hex: hex string from which to create the data
@@ -157,12 +157,17 @@ public extension Data
         }
         return result
     }
+    
+    /// Wipe the contents of mutable data
+    mutating func wipe()
+    {
+        resetBytes(in: 0 ..< count)
+    }
 }
 
 /// Helper extension to provide a simple method for conversion to hex string.
 public extension BigUInt
 {
-    
     /// Convert to hex string. Uses a String initializer from BigUInt
     ///
     /// - Returns: Hex string representation (uppercase, without 0x) of the current BigUInt

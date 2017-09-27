@@ -24,6 +24,7 @@
 //  SOFTWARE.
 
 import Foundation
+import FFDataWrapper
 
 /// Protocol definition for big integer types used in SRP implementation.
 public protocol SRPBigIntProtocol: Comparable
@@ -46,10 +47,20 @@ public protocol SRPBigIntProtocol: Comparable
     /// - Parameter other: The wrapped value to initialize with.
     init(_ other: Self)
     
+    /// Initialize with an unsigned value stored in a big endian data buffer.
+    ///
+    /// - Parameter data: Wrapped data buffer holding the value.
+    init(_ wrappedData: FFDataWrapper)
+    
     /// Store the data in a big endian data buffer
     ///
     /// - Returns: The big endian data buffer which contains the value.
     func serialize() -> Data
+    
+    /// Store the data in a wrapped big endian data buffer (more secure)
+    ///
+    /// - Returns: The big endian data buffer which contains the value.
+    func wrappedSerialize() -> FFDataWrapper
     
     /// Number of bits needed to represent the value.
     var bitWidth: Int { get }

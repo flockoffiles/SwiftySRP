@@ -24,6 +24,7 @@
 //  SOFTWARE.
 
 import Foundation
+import FFDataWrapper
 
 /// Specific implementation of SRP data for supported big integer types (they must conform to SRPBigIntProtocol)
 struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
@@ -107,6 +108,17 @@ struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
         }
     }
     
+    /// Client public value 'A' (see SRP spec. in SRPProtocol.swift). This version returns a wrapped value (more secure).
+    var wrappedClientPublicValue: FFDataWrapper {
+        get {
+            return _A.wrappedSerialize()
+        }
+        set {
+            _A = BigIntType(newValue)
+        }
+    }
+    
+
     /// Client private value 'a' (see the spec. above)
     public var clientPrivateValue: Data {
         get {
@@ -117,6 +129,17 @@ struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
         }
     }
     
+    /// Client private value 'a' (see SRP spec. in SRPProtocol.swift)
+    /// This version returns a wrapped value (more secure).
+    var wrappedClientPrivateValue: FFDataWrapper {
+        get {
+            return _a.wrappedSerialize()
+        }
+        set {
+            _a = BigIntType(newValue)
+        }
+    }
+
     
     /// Client evidence message, computed as: M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S
     var clientEvidenceMessage: Data {
@@ -127,6 +150,18 @@ struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
             _clientM = BigIntType(newValue)
         }
     }
+    
+    /// Client evidence message, computed as: M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S (see SRP spec. in SRPProtocol.swift)
+    /// This version returns a wrapped value (more secure).
+    var wrappedClientEvidenceMessage: FFDataWrapper {
+        get {
+            return _clientM.wrappedSerialize()
+        }
+        set {
+            _clientM = BigIntType(newValue)
+        }
+    }
+
     
     /// Password hash (see the spec. above)
     public var passwordHash: Data {
@@ -139,6 +174,17 @@ struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
         }
     }
     
+    /// Password hash 'x' (see SRP spec. in SRPProtocol.swift). This version returns a wrapped value (more secure).
+    var wrappedPasswordHash: FFDataWrapper {
+        get {
+            return _x.wrappedSerialize()
+        }
+        set {
+            _x = BigIntType(newValue)
+        }
+    }
+
+    
     /// Scrambler u
     public var scrambler: Data {
         get {
@@ -148,6 +194,17 @@ struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
             _u = BigIntType(newValue)
         }
     }
+    
+    /// Scrambler parameter 'u' = H(A, B) (see SRP spec. in SRPProtocol.swift). This version returns a wrapped value (more secure).
+    var wrappedScrambler: FFDataWrapper {
+        get {
+            return _u.wrappedSerialize()
+        }
+        set {
+            _u = BigIntType(newValue)
+        }
+    }
+
     
     /// Client secret 'S' (see SRP spec. in SRPProtocol.swift)
     public var clientSecret: Data {
@@ -159,6 +216,17 @@ struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
         }
     }
     
+    /// Client secret 'S' (see SRP spec. in SRPProtocol.swift). This version returns a wrapped value (more secure).
+    var wrappedClientSecret: FFDataWrapper {
+        get {
+            return _clientS.wrappedSerialize()
+        }
+        set {
+            _clientS = BigIntType(newValue)
+        }
+    }
+
+    
     /// SRP Verifier 'v' (see SRP spec. in SRPProtocol.swift)
     var verifier: Data {
         get {
@@ -168,6 +236,17 @@ struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
             _v = BigIntType(newValue)
         }
     }
+    
+    /// SRP Verifier. (see SRP spec. in SRPProtocol.swift). This version returns a wrapped value (more secure).
+    var wrappedVerifier: FFDataWrapper {
+        get {
+            return _v.wrappedSerialize()
+        }
+        set {
+            _v = BigIntType(newValue)
+        }
+    }
+
     
     /// Server public value 'B' (see SRP spec. in SRPProtocol.swift)
     var serverPublicValue: Data {
@@ -180,6 +259,17 @@ struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
         }
     }
     
+    /// Server public value 'B' (see SRP spec. in SRPProtocol.swift). This version returns a wrapped value (more secure).
+    var wrappedServerPublicValue: FFDataWrapper {
+        get {
+            return _B.wrappedSerialize()
+        }
+        set {
+            _B = BigIntType(newValue)
+        }
+    }
+
+    
     /// Server private value 'b' (see SRP spec. in SRPProtocol.swift)
     public var serverPrivateValue: Data {
         get {
@@ -189,6 +279,17 @@ struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
             _b = BigIntType(newValue)
         }
     }
+    
+    /// Server private value 'b' (see SRP spec. in SRPProtocol.swift). This version returns a wrapped value (more secure).
+    var wrappedServerPrivateValue: FFDataWrapper {
+        get {
+            return _b.wrappedSerialize()
+        }
+        set {
+            _b = BigIntType(newValue)
+        }
+    }
+
     
     /// Server shared secret 'S' (see SRP spec. in SRPProtocol.swift)
     public var serverSecret: Data {
@@ -200,6 +301,17 @@ struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
         }
     }
     
+    /// Server secret 'S' (see SRP spec. in SRPProtocol.swift). This version returns a wrapped value (more secure).
+    var wrappedServerSecret: FFDataWrapper {
+        get {
+            return _serverS.wrappedSerialize()
+        }
+        set {
+            _serverS = BigIntType(newValue)
+        }
+    }
+
+    
     // Multiplier parameter 'k' (see SRP spec. in SRPProtocol.swift)
     public var multiplier: Data {
         get {
@@ -209,6 +321,17 @@ struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
             _k = BigIntType(newValue)
         }
     }
+    
+    /// Multiplier parameter 'k' (see SRP spec. in SRPProtocol.swift). This version returns a wrapped value (more secure).
+    var wrappedMultiplier: FFDataWrapper {
+        get {
+            return _k.wrappedSerialize()
+        }
+        set {
+            _k = BigIntType(newValue)
+        }
+    }
+
     
     /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret. (see SRP spec. in SRPProtocol.swift)
     var serverEvidenceMessage: Data {
@@ -220,6 +343,18 @@ struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
             _serverM = BigIntType(newValue)
         }
     }
+    
+    /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret. (see SRP spec. in SRPProtocol.swift)
+    /// This version returns a wrapped value (more secure).
+    var wrappedServerEvidenceMessage: FFDataWrapper {
+        get {
+            return _serverM.wrappedSerialize()
+        }
+        set {
+            _serverM = BigIntType(newValue)
+        }
+    }
+
 }
 
 
