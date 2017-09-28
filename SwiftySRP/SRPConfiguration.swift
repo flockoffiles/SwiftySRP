@@ -24,6 +24,7 @@
 //  SOFTWARE.
 
 import Foundation
+import FFDataWrapper
 
 /// Digest (hash) function to use in SRP (used in calculations and to derive a single shared key from the shared secret).
 public typealias DigestFunc = (Data) -> Data
@@ -50,8 +51,14 @@ public protocol SRPConfiguration
     /// Function to calculate parameter a (per SRP spec above)
     func clientPrivateValue() -> Data
     
+    /// Function to calculate parameter a (per SRP spec above). Returns a wrapped value (more secure).
+    func wrappedClientPrivateValue() -> FFDataWrapper
+    
     /// Function to calculate parameter b (per SRP spec above)
     func serverPrivateValue() -> Data
+    
+    /// Function to calculate parameter b (per SRP spec above). Returns a wrapped value (more secure).
+    func wrappedServerPrivateValue() -> FFDataWrapper
     
     /// Check if configuration is valid.
     /// Currently only requires the size of the prime to be >= 256 and the g to be greater than 1.

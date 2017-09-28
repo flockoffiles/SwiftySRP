@@ -24,6 +24,7 @@
 //  SOFTWARE.
 
 import Foundation
+import FFDataWrapper
 
 /// Implementation: configuration for SRP algorithms (see the spec. above for more information about the meaning of parameters).
 struct SRPConfigurationGenericImpl<BigIntType: SRPBigIntProtocol>: SRPConfiguration
@@ -127,6 +128,12 @@ struct SRPConfigurationGenericImpl<BigIntType: SRPBigIntProtocol>: SRPConfigurat
         return _a().serialize()
     }
     
+    /// Function to calculate parameter a (per SRP spec above). Returns a wrapped value (more secure).
+    func wrappedClientPrivateValue() -> FFDataWrapper
+    {
+        return _a().wrappedSerialize()
+    }
+    
     /// Function to calculate parameter b (per SRP spec above)
     func _b() -> BigIntType
     {
@@ -141,6 +148,12 @@ struct SRPConfigurationGenericImpl<BigIntType: SRPBigIntProtocol>: SRPConfigurat
     func serverPrivateValue() -> Data
     {
         return _b().serialize()
+    }
+    
+    /// Function to calculate parameter b (per SRP spec above). Returns a wrapped value (more secure).
+    func wrappedServerPrivateValue() -> FFDataWrapper
+    {
+        return _b().wrappedSerialize()
     }
 }
 
