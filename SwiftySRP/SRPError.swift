@@ -26,7 +26,7 @@
 import Foundation
 
 /// Various SRP related errors that can be thrown
-enum SRPError: String, Error, CustomStringConvertible
+public enum SRPError: String, Error, CustomStringConvertible
 {
     case invalidSalt = "SRP salt is too short"
     case invalidUserName = "SRP user name cannot be empty"
