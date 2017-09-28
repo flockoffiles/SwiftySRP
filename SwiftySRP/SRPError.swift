@@ -26,7 +26,7 @@
 import Foundation
 
 /// Various SRP related errors that can be thrown
-public enum SRPError: String, Error, CustomStringConvertible
+public enum SRPError: String, Error, CustomStringConvertible, LocalizedError
 {
     case invalidSalt = "SRP salt is too short"
     case invalidUserName = "SRP user name cannot be empty"
@@ -46,7 +46,13 @@ public enum SRPError: String, Error, CustomStringConvertible
     case configurationGeneratorInvalid = "SRP generator is invalid"
     case dataConversionError = "Data conversion error"
     
-    var description: String {
+    public var description: String {
         return self.rawValue
     }
+    
+    /// A localized message describing what error occurred.
+    public var errorDescription: String? {
+        return self.rawValue
+    }
+
 }

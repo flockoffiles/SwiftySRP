@@ -17,7 +17,7 @@
 		A5E902C21E66FBD8002DC43C /* SwiftySRPPlayground.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftySRPPlayground.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5E902C41E66FBD8002DC43C /* SwiftySRPPlayground.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftySRPPlayground.h; sourceTree = "<group>"; };
 		A5E902C51E66FBD8002DC43C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A5E902CA1E6722B8002DC43C /* SwiftySRP.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = SwiftySRP.playground; sourceTree = "<group>"; };
+		A5E902CA1E6722B8002DC43C /* SwiftySRP.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = SwiftySRP.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		B3495912B281F6A20FABBD7E /* Pods-SwiftySRP_Base-SwiftySRPPlayground.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftySRP_Base-SwiftySRPPlayground.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRPPlayground/Pods-SwiftySRP_Base-SwiftySRPPlayground.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
