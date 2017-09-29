@@ -157,12 +157,6 @@ public extension Data
         }
         return result
     }
-    
-    /// Wipe the contents of mutable data
-    mutating func wipe()
-    {
-        resetBytes(in: 0 ..< count)
-    }
 }
 
 /// Helper extension to provide a simple method for conversion to hex string.

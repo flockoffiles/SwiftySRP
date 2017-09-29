@@ -11,6 +11,7 @@ Pod::Spec.new do |spec|
 	spec.public_header_files = 'SwiftySRP/*.h'
     spec.documentation_url = 'https://github.com/serieuxchat/SwiftySRP/'
     spec.dependency 'BigInt', '~> 3.0.0'
+	spec.dependency 'FFDataWrapper', '~> 1.0'
     spec.preserve_paths = 'CommonCrypto/module.modulemap', 'imath/**', 'README', 'SwiftySRPTests/*.swift'
 
     # Things are listed twice (with different paths) in order to also make it compile as a development pod.
