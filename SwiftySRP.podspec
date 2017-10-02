@@ -4,9 +4,9 @@ Pod::Spec.new do |spec|
     spec.ios.deployment_target = "9.0"
     spec.license      = { :type => 'MIT', :file => 'LICENSE' }
     spec.summary      = 'Swift implementation of SRP'
-    spec.homepage     = 'https://github.com/serieuxchat/SwiftySRP'
+    spec.homepage     = 'https://github.com/flockoffiles/SwiftySRP'
     spec.author       = 'Sergey Novitsky'
-    spec.source       = { :git => 'https://github.com/serieuxchat/SwiftySRP.git', :tag => 'v' + String(spec.version) }
+    spec.source       = { :git => 'https://github.com/flockoffiles//SwiftySRP.git', :tag => 'v' + String(spec.version) }
     spec.source_files = 'SwiftySRP/*.swift', 'imath/*.{c,h}',
 	spec.public_header_files = 'SwiftySRP/*.h'
     spec.documentation_url = 'https://github.com/serieuxchat/SwiftySRP/'
