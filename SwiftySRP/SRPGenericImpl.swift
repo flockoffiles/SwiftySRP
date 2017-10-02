@@ -77,11 +77,11 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         let c = self.configuration
         
         var decoded_s = s.withDecodedData { $0 }
-        defer { decoded_s.wipe() }
+        defer { FFDataWrapper.wipe(&decoded_s) }
         var decoded_I = I.withDecodedData { $0 }
-        defer { decoded_I.wipe() }
+        defer { FFDataWrapper.wipe(&decoded_I) }
         var decoded_p = p.withDecodedData { $0 }
-        defer { decoded_p.wipe() }
+        defer { FFDataWrapper.wipe(&decoded_p) }
         
         let value_x: BigIntType = x(s: decoded_s, I: decoded_I, p: decoded_p)
         let value_a: BigIntType = BigIntType()
@@ -383,7 +383,7 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         let padLength = (N.bitWidth + 7) / 8
         let paddedS = pad((resultData.bigInt_clientS() as BigIntType).serialize(), to: padLength)
         var hash = configuration.digest(paddedS)
-        defer { hash.wipe() }
+        defer { FFDataWrapper.wipe(&hash) }
         return FFDataWrapper(hash)
     }
 
@@ -419,9 +419,9 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         let N: BigIntType = configuration.bigInt_N()
         let padLength: Int = (N.bitWidth + 7) / 8
         var paddedS: Data = pad((resultData.bigInt_clientS() as BigIntType).serialize(), to: padLength)
-        defer { paddedS.wipe() }
+        defer { FFDataWrapper.wipe(&paddedS) }
         var hash: Data = configuration.digest(paddedS)
-        defer { hash.wipe() }
+        defer { FFDataWrapper.wipe(&hash) }
         
         return FFDataWrapper(hash)
     }
@@ -449,9 +449,9 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         try configuration.validate()
         let resultData = srpData
         var decodedSalt = salt.withDecodedData { $0 }
-        defer { decodedSalt.wipe() }
+        defer { FFDataWrapper.wipe(&decodedSalt) }
         var sharedKeyData = configuration.hmac(decodedSalt, (resultData.bigInt_clientS() as BigIntType).serialize())
-        defer { sharedKeyData.wipe() }
+        defer { FFDataWrapper.wipe(&sharedKeyData) }
         return FFDataWrapper(sharedKeyData)
     }
     
@@ -478,10 +478,10 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         try configuration.validate()
         let resultData = srpData
         var decodedSalt = salt.withDecodedData { $0 }
-        defer { decodedSalt.wipe() }
+        defer { FFDataWrapper.wipe(&decodedSalt) }
 
         var sharedKeyData = configuration.hmac(decodedSalt, (resultData.bigInt_serverS() as BigIntType).serialize())
-        defer { sharedKeyData.wipe() }
+        defer { FFDataWrapper.wipe(&sharedKeyData) }
         return FFDataWrapper(sharedKeyData)
     }
     

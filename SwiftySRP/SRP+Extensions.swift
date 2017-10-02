@@ -42,7 +42,7 @@ extension BigUInt: SRPBigIntProtocol
     {
         // Here we rely on the fact that Swift structs are copy-on-write.
         var decodedData = wrappedData.withDecodedData { $0 }
-        defer { decodedData.wipe() }
+        defer { FFDataWrapper.wipe(&decodedData) }
         self.init(decodedData)
     }
     
@@ -52,7 +52,7 @@ extension BigUInt: SRPBigIntProtocol
     public func wrappedSerialize() -> FFDataWrapper
     {
         var serialized = serialize()
-        defer { serialized.wipe() }
+        defer { FFDataWrapper.wipe(&serialized) }
         return FFDataWrapper(serialized)
     }
 }

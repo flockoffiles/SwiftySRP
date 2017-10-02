@@ -235,8 +235,8 @@ class SwiftySRPTests: XCTestCase
                                    g: BigIntType(g),
                                    digest: digest,
                                    hmac: hmac,
-                                   a: { _ in return fixed_a },
-                                   b: { _ in return fixed_b }) as! SRPGenericImpl<BigIntType>
+                                   a: {  return fixed_a },
+                                   b: {  return fixed_b }) as! SRPGenericImpl<BigIntType>
             
             
             let clientSRPData = (try srp.generateClientCredentials(s: s, I: I, p: p))
@@ -367,8 +367,8 @@ class SwiftySRPTests: XCTestCase
                                    g: BigIntType(g),
                                    digest: digest,
                                    hmac: hmac,
-                                   a: { _ in return fixed_a },
-                                   b: { _ in return fixed_b }) as! SRPGenericImpl<BigIntType>
+                                   a: {  return fixed_a },
+                                   b: {  return fixed_b }) as! SRPGenericImpl<BigIntType>
             
             let clientSRPData = try srp.verifier(s: s, I: I, p: p)
             
@@ -445,8 +445,8 @@ class SwiftySRPTests: XCTestCase
                                               g:g,
                                               digest: digest,
                                               hmac: hmac,
-                                              a: { _ in return fixed_a },
-                                              b: { _ in return fixed_b })
+                                              a: {  return fixed_a },
+                                              b: {  return fixed_b })
             
             // Client computes the verifier (and sends it to the server)
             var clientSRPData = try srp.verifier(s: s, I: I, p: p)
@@ -488,7 +488,7 @@ class SwiftySRPTests: XCTestCase
             
             try srp.verifyServerEvidenceMessage(srpData: clientSRPData)
             
-            let clientSharedKey = try! srp.calculateClientSharedKey(srpData: clientSRPData)
+            let clientSharedKey: Data = try! srp.calculateClientSharedKey(srpData: clientSRPData)
             XCTAssertEqual(clientSharedKey.hexString(), expectedStringSharedKey)
             
             let clientSharedHMacKey = try! srp.calculateClientSharedKey(srpData: clientSRPData, salt: hmacSalt)

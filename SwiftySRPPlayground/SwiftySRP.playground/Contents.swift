@@ -3,9 +3,8 @@ import XCPlayground
 import SwiftySRPPlayground
 import SwiftySRP
 
-let e = SRPError.configurationGeneratorInvalid
 
-let nsError = e as NSError
+var testData = Data()
 
-nsError.localizedDescription
+testData.wipe()
 

@@ -115,7 +115,7 @@ final class SRPMpzT: SRPBigIntProtocol
         }
         
         var data = Data(count: Int(byteCount))
-        defer { data.wipe() }
+        defer { FFDataWrapper.wipe(&data) }
         data.withUnsafeMutableBytes({ (bytes: UnsafeMutablePointer<UInt8>) -> Void in
             mp_int_to_unsigned(&value, bytes, byteCount)
         })

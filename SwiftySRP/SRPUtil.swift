@@ -122,7 +122,6 @@ public extension UnicodeScalar
     }
 }
 
-
 /// Helper category to perform conversion of hex strings to data
 public extension Data
 {
