@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		11FEDC701BF8AE396CBFA280 /* Pods_SwiftySRP_Base_SwiftySRP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F59A7100C8CBC36C1AB01B41 /* Pods_SwiftySRP_Base_SwiftySRP.framework */; };
+		939F68611F83960D00C4553D /* FFDataWrapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 939F68601F83960D00C4553D /* FFDataWrapper.framework */; };
 		A05694BEC3ACB141AF182B03 /* Pods_SwiftySRP_Base_SwiftySRP_SwiftySRPTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0922B69B065556E86D599A64 /* Pods_SwiftySRP_Base_SwiftySRP_SwiftySRPTests.framework */; };
 		A50090BF1E4C74BD00238562 /* SwiftySRP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A50090B51E4C74BD00238562 /* SwiftySRP.framework */; };
 		A50090C41E4C74BD00238562 /* SwiftySRPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50090C31E4C74BD00238562 /* SwiftySRPTests.swift */; };
@@ -65,6 +66,7 @@
 		10ED35AB66D3B09F03A8CAC1 /* Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests/Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.debug.xcconfig"; sourceTree = "<group>"; };
 		2FB021FC76E81CB3156016E2 /* Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests/Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.release.xcconfig"; sourceTree = "<group>"; };
 		8489902F0C68A50F44D97659 /* Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig"; path = "Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRP/Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig"; sourceTree = "<group>"; };
+		939F68601F83960D00C4553D /* FFDataWrapper.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FFDataWrapper.framework; path = Carthage/Build/iOS/FFDataWrapper.framework; sourceTree = "<group>"; };
 		A50090B51E4C74BD00238562 /* SwiftySRP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftySRP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A50090B81E4C74BD00238562 /* SwiftySRP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftySRP.h; sourceTree = "<group>"; };
 		A50090B91E4C74BD00238562 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 			files = (
 				A56827421F545DD300C4A80D /* BigInt.framework in Frameworks */,
 				A56827441F545DDD00C4A80D /* SipHash.framework in Frameworks */,
+				939F68611F83960D00C4553D /* FFDataWrapper.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -143,6 +146,7 @@
 		7DFD5AD894CA7CC238161CAA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				939F68601F83960D00C4553D /* FFDataWrapper.framework */,
 				A56827431F545DDD00C4A80D /* SipHash.framework */,
 				A56827411F545DD300C4A80D /* BigInt.framework */,
 				F59A7100C8CBC36C1AB01B41 /* Pods_SwiftySRP_Base_SwiftySRP.framework */,
