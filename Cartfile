@@ -1,1 +1,2 @@
 github "lorentey/BigInt" ~> 3.0.0
+github "flockoffiles/FFDataWrapper" ~> 1.0
