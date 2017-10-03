@@ -1,9 +1,0 @@
-[submodule "Carthage/Checkouts/BigInt"]
-	path = Carthage/Checkouts/BigInt
-	url = https://github.com/lorentey/BigInt.git
-[submodule "Carthage/Checkouts/SipHash"]
-	path = Carthage/Checkouts/SipHash
-	url = https://github.com/attaswift/SipHash.git
-[submodule "Carthage/Checkouts/FFDataWrapper"]
-	url = https://github.com/flockoffiles/FFDataWrapper.git
-	path = Carthage/Checkouts/FFDataWrapper
