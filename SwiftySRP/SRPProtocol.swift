@@ -86,6 +86,16 @@ public protocol SRPProtocol
     /// - Throws: SRPError if input parameters or configuration are not valid.
     func verifier(s: Data, I: Data,  p: Data) throws -> SRPData
     
+    /// Compute the verifier and client credentials.
+    ///
+    /// - Parameters:
+    ///   - s: SRP salt
+    ///   - I: User name
+    ///   - p: Password
+    /// - Returns: SRPData with parameters v, x, a, and A populated.
+    /// - Throws: SRPError if input parameters or configuration are not valid.
+    func verifier(s: FFDataWrapper, I: FFDataWrapper,  p: FFDataWrapper) throws -> SRPData
+
     /// Generate client credentials (parameters x, a, and A) from the SRP salt, user name (I), and password (p)
     ///
     /// - Parameters:
