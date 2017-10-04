@@ -55,17 +55,54 @@ public enum SRPError: String, Error, CustomStringConvertible, LocalizedError, Cu
         return self.rawValue
     }
 
-    public static var errorDomain = "SwiftySRP.SRPError"
+    public static var customErrorDomain: String? = nil
     
-    public static var errorCodeMappingFunction: ((SRPError) -> Int)? = nil
+    public static var errorDomain: String {
+        return customErrorDomain ?? "SwiftySRP.SRPError"
+    }
+    
+    public static var customErrorCodeMappingFunction: ((SRPError) -> Int)? = nil
     
     public var errorCode: Int
     {
-        if let errorCodeMappingFunction = SRPError.errorCodeMappingFunction
+        if let errorCodeMappingFunction = SRPError.customErrorCodeMappingFunction
         {
             return errorCodeMappingFunction(self)
         }
-        return 1
+        switch self {
+        case .invalidSalt:
+            return 1
+        case .invalidUserName:
+            return 2
+        case .invalidPassword:
+            return 3
+        case .invalidVerifier:
+            return 4
+        case .invalidClientPublicValue:
+            return 5
+        case .invalidServerPublicValue:
+            return 6
+        case .invalidClientPrivateValue:
+            return 7
+        case .invalidServerPrivateValue:
+            return 8
+        case .invalidPasswordHash:
+            return 9
+        case .invalidClientEvidenceMessage:
+            return 10
+        case .invalidServerEvidenceMessage:
+            return 11
+        case .invalidClientSharedSecret:
+            return 12
+        case .invalidServerSharedSecret:
+            return 13
+        case .configurationPrimeTooShort:
+            return 14
+        case .configurationGeneratorInvalid:
+            return 15
+        case .dataConversionError:
+            return 16
+        }
     }
     
 }
