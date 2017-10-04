@@ -84,7 +84,7 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         defer { FFDataWrapper.wipe(&decoded_p) }
         
         let value_x: BigIntType = x(s: decoded_s, I: decoded_I, p: decoded_p)
-        let value_a: BigIntType = BigIntType()
+        let value_a: BigIntType = BigIntType(configuration.clientPrivateValue())
         // A = g^a
         let value_A = BigIntType(c.generator).power(value_a, modulus: BigIntType(c.modulus))
         return SRPDataGenericImpl<BigIntType>(x: value_x, a: value_a, A: value_A)
