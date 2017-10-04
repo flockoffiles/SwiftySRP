@@ -26,7 +26,7 @@
 import Foundation
 
 /// Various SRP related errors that can be thrown
-public enum SRPError: String, Error, CustomStringConvertible, LocalizedError
+public enum SRPError: String, Error, CustomStringConvertible, LocalizedError, CustomNSError
 {
     case invalidSalt = "SRP salt is too short"
     case invalidUserName = "SRP user name cannot be empty"
@@ -55,4 +55,17 @@ public enum SRPError: String, Error, CustomStringConvertible, LocalizedError
         return self.rawValue
     }
 
+    public static var errorDomain = "SwiftySRP.SRPError"
+    
+    public static var errorCodeMappingFunction: ((SRPError) -> Int)? = nil
+    
+    public var errorCode: Int
+    {
+        if let errorCodeMappingFunction = SRPError.errorCodeMappingFunction
+        {
+            return errorCodeMappingFunction(self)
+        }
+        return 1
+    }
+    
 }
