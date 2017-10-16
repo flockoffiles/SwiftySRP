@@ -40,10 +40,8 @@ extension BigUInt: SRPBigIntProtocol
     /// - Parameter data: Wrapped data buffer holding the value.
     public init(_ wrappedData: FFDataWrapper)
     {
-        // Here we rely on the fact that Swift structs are copy-on-write.
-        var decodedData = wrappedData.withDecodedData { $0 }
-        defer { FFDataWrapper.wipe(&decodedData) }
-        self.init(decodedData)
+        // Do NOT copy the data given to the closure, so that it can be wiped properly.
+        self = wrappedData.withDecodedData { BigUInt($0) }
     }
     
     /// Store the data in a wrapped big endian data buffer (more secure)

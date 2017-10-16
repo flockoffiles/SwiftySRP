@@ -76,14 +76,14 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
 
         let c = self.configuration
         
-        var decoded_s = s.withDecodedData { $0 }
-        defer { FFDataWrapper.wipe(&decoded_s) }
-        var decoded_I = I.withDecodedData { $0 }
-        defer { FFDataWrapper.wipe(&decoded_I) }
-        var decoded_p = p.withDecodedData { $0 }
-        defer { FFDataWrapper.wipe(&decoded_p) }
+        let value_x: BigIntType = s.withDecodedData { decoded_s in
+            return I.withDecodedData { decoded_I in
+                return p.withDecodedData { decoded_p in
+                    return self.x(s: decoded_s, I: decoded_I, p: decoded_p)
+                }
+            }
+        }
         
-        let value_x: BigIntType = x(s: decoded_s, I: decoded_I, p: decoded_p)
         let value_a: BigIntType = BigIntType(configuration.clientPrivateValue())
         // A = g^a
         let value_A = BigIntType(c.generator).power(value_a, modulus: BigIntType(c.modulus))
@@ -448,11 +448,12 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
     {
         try configuration.validate()
         let resultData = srpData
-        var decodedSalt = salt.withDecodedData { $0 }
-        defer { FFDataWrapper.wipe(&decodedSalt) }
-        var sharedKeyData = configuration.hmac(decodedSalt, (resultData.bigInt_clientS() as BigIntType).serialize())
-        defer { FFDataWrapper.wipe(&sharedKeyData) }
-        return FFDataWrapper(sharedKeyData)
+        
+        return salt.withDecodedData { decodedSalt in
+            var sharedKeyData = configuration.hmac(decodedSalt, (resultData.bigInt_clientS() as BigIntType).serialize())
+            defer { FFDataWrapper.wipe(&sharedKeyData) }
+            return FFDataWrapper(sharedKeyData)
+        }
     }
     
     /// Calculate the shared key (server side) by using HMAC: sharedKey = HMAC(salt, clientS)
@@ -477,12 +478,12 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
     {
         try configuration.validate()
         let resultData = srpData
-        var decodedSalt = salt.withDecodedData { $0 }
-        defer { FFDataWrapper.wipe(&decodedSalt) }
-
-        var sharedKeyData = configuration.hmac(decodedSalt, (resultData.bigInt_serverS() as BigIntType).serialize())
-        defer { FFDataWrapper.wipe(&sharedKeyData) }
-        return FFDataWrapper(sharedKeyData)
+        
+        return salt.withDecodedData { decodedSalt in
+            var sharedKeyData = configuration.hmac(decodedSalt, (resultData.bigInt_serverS() as BigIntType).serialize())
+            defer { FFDataWrapper.wipe(&sharedKeyData) }
+            return FFDataWrapper(sharedKeyData)
+        }
     }
     
     /// Helper method to concatenate, pad, and hash two values.

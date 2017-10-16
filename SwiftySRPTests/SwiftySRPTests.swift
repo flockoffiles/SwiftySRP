@@ -26,6 +26,7 @@
 import XCTest
 @testable import SwiftySRP
 import BigInt
+import FFDataWrapper
 
 let N_asString = "EEAF0AB9ADB38DD69C33F80AFA8FC5E86072618775FF3C0B9EA2314C"
     + "9C256576D674DF7496EA81D3383B4813D692C6E0E0D5D8E250B98BE4"
@@ -572,5 +573,36 @@ class SwiftySRPTests: XCTestCase
                             expectedStringSharedHMacKey: expectedStringSharedHMacKey_512)
     }
     
-    
+    /// This test verfies that wrappedSerialize() function won't leak unwiped data buffer.
+    /// Inside wrappedSerialize we invoke FFDataWrapper.wipe(&serialized),
+    /// and it will wipe the underlying data store ONLY if the data store is not retained or passed outside the closure.
+    func testBigUIntSerializeWiping()
+    {
+        class TestDataStorage
+        {
+            var bytes: UnsafeMutableRawPointer? = nil
+        }
+        
+        let value = BigUInt(5)
+        var dataBytesPtr: UnsafeMutableRawPointer? = nil
+        var serializedDataLength = 0
+        let wrapper = { () -> FFDataWrapper in
+            var serialized = value.serialize()
+            serializedDataLength = serialized.count
+            dataBytesPtr = { (_ o: UnsafeRawPointer) -> UnsafeRawPointer in o }(&serialized).assumingMemoryBound(to: TestDataStorage.self).pointee.bytes
+            defer { FFDataWrapper.wipe(&serialized) }
+            return FFDataWrapper(serialized)
+        }()
+        
+        
+        guard let dataBytes = dataBytesPtr else {
+            XCTFail("Expecting non-nil data bytes")
+            return
+        }
+        
+        let expectedData = Data(count: serializedDataLength)
+        let reconstructedData = Data(bytes: dataBytes, count: serializedDataLength)
+        XCTAssertEqual(reconstructedData, expectedData)
+        
+    }
 }
