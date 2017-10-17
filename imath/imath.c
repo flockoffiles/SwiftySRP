@@ -993,7 +993,7 @@ mp_result mp_int_expt(mp_int a, mp_small b, mp_int c)
 {
   mpz_t t;
   mp_result res;
-  unsigned int v = labs(b);
+  long v = labs(b);
 
   CHECK(c != NULL);
   if (b < 0)
@@ -1025,7 +1025,7 @@ mp_result mp_int_expt_value(mp_small a, mp_small b, mp_int c)
 {
   mpz_t     t;
   mp_result res;
-  unsigned int v = labs(b);
+  long v = labs(b);
 
   CHECK(c != NULL);
   if (b < 0)
@@ -1780,7 +1780,7 @@ mp_result mp_int_read_cstring(mp_int z, mp_size radix, const char *str, char **e
     ++str;
 
   /* Make sure there is enough space for the value */
-  if (!s_pad(z, s_inlen(strlen(str), radix)))
+  if (!s_pad(z, s_inlen((int)strlen(str), radix)))
     return MP_MEMORY;
 
   MP_USED(z) = 1; z->digits[0] = 0;
@@ -2660,7 +2660,7 @@ STATIC int       s_2expt(mp_int z, mp_small k)
   mp_size  ndig, rest;
   mp_digit *dz;
 
-  ndig = (k + MP_DIGIT_BIT) / MP_DIGIT_BIT;
+  ndig = (mp_size)((k + MP_DIGIT_BIT) / MP_DIGIT_BIT);
   rest = k % MP_DIGIT_BIT;
 
   if (!s_pad(z, ndig))
@@ -2752,7 +2752,7 @@ STATIC int       s_reduce(mp_int x, mp_int m, mp_int mu, mp_int q1, mp_int q2)
 STATIC mp_result s_embar(mp_int a, mp_int b, mp_int m, mp_int mu, mp_int c)
 {
   mp_digit  *db, *dbt, umu, d;
-  mp_result res;
+  mp_result res = 0;
   DECLARE_TEMP(3);
 
   umu = MP_USED(mu); db = MP_DIGITS(b); dbt = db + MP_USED(b) - 1;
