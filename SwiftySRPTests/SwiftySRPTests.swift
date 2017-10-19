@@ -586,11 +586,15 @@ class SwiftySRPTests: XCTestCase
         let value = BigUInt(5)
         var dataBytesPtr: UnsafeMutableRawPointer? = nil
         var serializedDataLength = 0
+        var dataBytesPtrAfterWiping: UnsafeMutableRawPointer? = nil
         let wrapper = { () -> FFDataWrapper in
             var serialized = value.serialize()
             serializedDataLength = serialized.count
             dataBytesPtr = { (_ o: UnsafeRawPointer) -> UnsafeRawPointer in o }(&serialized).assumingMemoryBound(to: TestDataStorage.self).pointee.bytes
-            defer { FFDataWrapper.wipe(&serialized) }
+            defer {
+                FFDataWrapper.wipe(&serialized)
+                dataBytesPtrAfterWiping = { (_ o: UnsafeRawPointer) -> UnsafeRawPointer in o }(&serialized).assumingMemoryBound(to: TestDataStorage.self).pointee.bytes
+            }
             return FFDataWrapper(serialized)
         }()
         
@@ -600,6 +604,12 @@ class SwiftySRPTests: XCTestCase
             return
         }
         
+        guard let dataBytesAfterWiping = dataBytesPtrAfterWiping else {
+            XCTFail("Expecting non-nil data bytes after wiping.")
+            return
+        }
+        
+        XCTAssertEqual(dataBytes, dataBytesAfterWiping)
         let expectedData = Data(count: serializedDataLength)
         let reconstructedData = Data(bytes: dataBytes, count: serializedDataLength)
         XCTAssertEqual(reconstructedData, expectedData)
