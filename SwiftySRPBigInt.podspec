@@ -1,5 +1,5 @@
 Pod::Spec.new do |spec|
-    spec.name         = 'SwiftySRP'
+    spec.name         = 'SwiftySRPBigInt'
     spec.version      = '2.1'
     spec.ios.deployment_target = "9.0"
     spec.license      = { :type => 'MIT', :file => 'LICENSE' }
@@ -10,7 +10,7 @@ Pod::Spec.new do |spec|
     spec.source_files = 'SwiftySRP/*.swift', 'imath/*.{c,h}',
 	spec.public_header_files = 'SwiftySRP/*.h'
     spec.documentation_url = 'https://github.com/serieuxchat/SwiftySRP/'
-    # spec.dependency 'BigInt', '~> 3.0.0'
+    spec.dependency 'BigInt', '~> 3.0.0'
 	spec.dependency 'FFDataWrapper', '~> 1.1'
     spec.preserve_paths = 'CommonCrypto/module.modulemap', 'imath/**', 'README', 'SwiftySRPTests/*.swift'
 
