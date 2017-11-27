@@ -24,7 +24,6 @@
 //  SOFTWARE.
 
 import Foundation
-import BigInt
 import FFDataWrapper
 
 
