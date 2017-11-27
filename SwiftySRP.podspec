@@ -7,11 +7,10 @@ Pod::Spec.new do |spec|
     spec.homepage     = 'https://github.com/flockoffiles/SwiftySRP'
     spec.author       = 'Sergey Novitsky'
     spec.source       = { :git => 'https://github.com/flockoffiles/SwiftySRP.git', :tag => 'v' + String(spec.version) }
-    spec.source_files = 'SwiftySRP/*.swift', 'imath/*.{c,h}',
+    spec.source_files = 'SwiftySRP/*.{h,swift}', 'imath/*.{c,h}'
 	spec.exclude_files = 'SwiftySRP/BigIntSpecific/*'
-	spec.public_header_files = 'SwiftySRP/*.h'
+	spec.public_header_files = 'SwiftySRP/**/*.h'
     spec.documentation_url = 'https://github.com/serieuxchat/SwiftySRP/'
-    # spec.dependency 'BigInt', '~> 3.0.0'
 	spec.dependency 'FFDataWrapper', '~> 1.1'
     spec.preserve_paths = 'CommonCrypto/module.modulemap', 'imath/**', 'README', 'SwiftySRPTests/*.swift'
 
