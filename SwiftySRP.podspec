@@ -6,7 +6,7 @@ Pod::Spec.new do |spec|
     spec.summary      = 'Swift implementation of SRP'
     spec.homepage     = 'https://github.com/flockoffiles/SwiftySRP'
     spec.author       = 'Sergey Novitsky'
-    spec.source       = { :git => 'https://github.com/flockoffiles//SwiftySRP.git', :tag => 'v' + String(spec.version) }
+    spec.source       = { :git => 'https://github.com/flockoffiles/SwiftySRP.git', :tag => 'v' + String(spec.version) }
     spec.source_files = 'SwiftySRP/*.swift', 'imath/*.{c,h}',
 	spec.exclude_files = 'SwiftySRP/BigIntSpecific/*'
 	spec.public_header_files = 'SwiftySRP/*.h'
