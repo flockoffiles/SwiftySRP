@@ -24,7 +24,6 @@
 //  SOFTWARE.
 
 import Foundation
-import BigInt
 import CommonCrypto
 import FFDataWrapper
 
@@ -158,24 +157,5 @@ public extension Data
     }
 }
 
-/// Helper extension to provide a simple method for conversion to hex string.
-public extension BigUInt
-{
-    /// Convert to hex string. Uses a String initializer from BigUInt
-    ///
-    /// - Returns: Hex string representation (uppercase, without 0x) of the current BigUInt
-    func hexString() -> String
-    {
-        return String(self, radix: 16, uppercase: true)
-    }
-}
-
-/// Helper category to output hex string representation to the debug console.
-extension BigUInt: CustomDebugStringConvertible
-{
-    public var debugDescription: String {
-        return String(self, radix: 16, uppercase: true)
-    }
-}
 
 

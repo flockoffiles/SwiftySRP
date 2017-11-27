@@ -27,78 +27,11 @@ import Foundation
 import BigInt
 import FFDataWrapper
 
-/// Custom extension to make third party BigUInt type conform to SRPBigIntProtocol
-extension BigUInt: SRPBigIntProtocol
-{
-    public init(_ other: BigUInt)
-    {
-        self = other
-    }
-    
-    /// Initialize with an unsigned value stored in a big endian data buffer.
-    ///
-    /// - Parameter data: Wrapped data buffer holding the value.
-    public init(_ wrappedData: FFDataWrapper)
-    {
-        // Do NOT copy the data given to the closure, so that it can be wiped properly.
-        self = wrappedData.withDecodedData { BigUInt($0) }
-    }
-    
-    /// Store the data in a wrapped big endian data buffer (more secure)
-    ///
-    /// - Returns: The big endian data buffer which contains the value.
-    public func wrappedSerialize() -> FFDataWrapper
-    {
-        var serialized = serialize()
-        defer { FFDataWrapper.wipe(&serialized) }
-        return FFDataWrapper(serialized)
-    }
-}
-
 
 /// Internal extension. For test purposes only.
 /// Allows to create a configuration with custom (fixed) private ephemeral values 'a' and 'b'
 public extension SRP
 {
-    /// Only for use in testing! Create an SRP configuration and provide custom closures to generate private ephemeral values 'a' and 'b'
-    /// This is done to be able to use fixed values for 'a' and 'b' and make generated values predictable (and compare them with expected values).
-    /// - Parameters:
-    ///   - N: Safe large prime per SRP spec.
-    ///   - g: Group generator per SRP spec.
-    ///   - digest: Hash function to be used.
-    ///   - hmac: HMAC function to be used.
-    ///   - a: Custom closure to generate the private ephemeral value 'a'
-    ///   - b: Custom closure to generate the private ephemeral value 'b'
-    /// - Throws: SRPError if configuration parameters are not valid.
-    /// - Returns: The resulting SRP protocol implementation.
-    public func `protocol`(N: Data,
-                           g: Data,
-                           digest: @escaping DigestFunc = CryptoAlgorithm.SHA256.digestFunc(),
-                           hmac: @escaping HMacFunc = CryptoAlgorithm.SHA256.hmacFunc(),
-                           a: @escaping () -> Data,
-                           b: @escaping () -> Data) throws -> SRPProtocol
-    {
-        switch self
-        {
-        case .bigUInt:
-            let configuration = SRPConfigurationGenericImpl<BigUInt>(N: BigUInt(N),
-                                                                     g: BigUInt(g),
-                                                                     digest: digest,
-                                                                     hmac: hmac,
-                                                                     aFunc: { BigUInt(a()) },
-                                                                     bFunc: { BigUInt(b()) })
-            
-            return SRPGenericImpl<BigUInt>(configuration: configuration)
-        case .iMath:
-            let configuration = SRPConfigurationGenericImpl<SRPMpzT>(N: SRPMpzT(N),
-                                                                     g: SRPMpzT(g),
-                                                                     digest: digest,
-                                                                     hmac: hmac,
-                                                                     aFunc: { SRPMpzT(a()) },
-                                                                     bFunc: { SRPMpzT(b()) })
-            return SRPGenericImpl<SRPMpzT>(configuration: configuration)
-        }
-    }
     
     /// Only for use in testing! Create an SRP configuration and provide custom closures to generate private ephemeral values 'a' and 'b'
     /// This is done to be able to use fixed values for 'a' and 'b' and make generated values predictable (and compare them with expected values).

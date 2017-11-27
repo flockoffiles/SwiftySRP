@@ -24,51 +24,11 @@
 //  SOFTWARE.
 
 import Foundation
-import BigInt
 
 /// This class serves as a namespace for SRP related methods. It is not meant to be instantiated.
 /// For a short description of the SRP protocol, see SRPProtocol.swift
-public enum SRP
+public struct SRP
 {
-    case bigUInt
-    case iMath
-    
-    /// Create an instance of SRPProtocol with the given configuration.
-    /// - Parameters:
-    ///   - N: Safe large prime per SRP spec. You can generate the prime with openssl: openssl dhparam -text 2048
-    ///   - g: Group generator per SRP spec.
-    ///   - digest: Hash function to be used.
-    ///   - hmac: HMAC function to be used.
-    /// - Throws: SRPError if configuration parameters are not valid.
-    /// - Returns: The resulting SRP protocol implementation.
-    public func `protocol`(N: Data,
-                           g: Data,
-                           digest: @escaping DigestFunc = CryptoAlgorithm.SHA256.digestFunc(),
-                           hmac: @escaping HMacFunc = CryptoAlgorithm.SHA256.hmacFunc()) throws -> SRPProtocol
-    {
-        switch self
-        {
-        case .bigUInt:
-            let configuration = SRPConfigurationGenericImpl<BigUInt>(N: BigUInt(N),
-                                                                     g: BigUInt(g),
-                                                                     digest: digest,
-                                                                     hmac: hmac,
-                                                                     aFunc: nil,
-                                                                     bFunc: nil)
-            try configuration.validate()
-            return SRPGenericImpl<BigUInt>(configuration: configuration)
-        case .iMath:
-            let configuration = SRPConfigurationGenericImpl<SRPMpzT>(N: SRPMpzT(N),
-                                                                     g: SRPMpzT(g),
-                                                                     digest: digest,
-                                                                     hmac: hmac,
-                                                                     aFunc: nil,
-                                                                     bFunc: nil)
-            try configuration.validate()
-            return SRPGenericImpl<SRPMpzT>(configuration: configuration)
-        }
-    }
-    
     /// Create an instance of SRPProtocol with the given configuration.
     /// - Parameters:
     ///   - N: Safe large prime per SRP spec. You can generate the prime with openssl: openssl dhparam -text 2048
