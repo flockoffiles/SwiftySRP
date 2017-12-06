@@ -25,7 +25,6 @@
 		A52B24CA1E7FFB9C0024707F /* SRPData+BigIntType.swift in Sources */ = {isa = PBXBuildFile; fileRef = A52B24C91E7FFB9C0024707F /* SRPData+BigIntType.swift */; };
 		A52B24CC1E800ED40024707F /* SRPGenericImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A52B24CB1E800ED40024707F /* SRPGenericImpl.swift */; };
 		A54DFB681E7AD094003F4DB0 /* SRPMpzT.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54DFB671E7AD094003F4DB0 /* SRPMpzT.swift */; };
-		A56827421F545DD300C4A80D /* BigInt.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56827411F545DD300C4A80D /* BigInt.framework */; };
 		A56827441F545DDD00C4A80D /* SipHash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56827431F545DDD00C4A80D /* SipHash.framework */; };
 		A58ACE871E5D818000FF2C0D /* SRPConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE861E5D818000FF2C0D /* SRPConfiguration.swift */; };
 		A58ACE8D1E5D826400FF2C0D /* SRPUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE8C1E5D826400FF2C0D /* SRPUtil.swift */; };
@@ -135,7 +134,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A56827421F545DD300C4A80D /* BigInt.framework in Frameworks */,
 				A56827441F545DDD00C4A80D /* SipHash.framework in Frameworks */,
 				939F68611F83960D00C4553D /* FFDataWrapper.framework in Frameworks */,
 			);
