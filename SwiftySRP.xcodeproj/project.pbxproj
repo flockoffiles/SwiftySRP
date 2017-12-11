@@ -25,7 +25,6 @@
 		A52B24CA1E7FFB9C0024707F /* SRPData+BigIntType.swift in Sources */ = {isa = PBXBuildFile; fileRef = A52B24C91E7FFB9C0024707F /* SRPData+BigIntType.swift */; };
 		A52B24CC1E800ED40024707F /* SRPGenericImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A52B24CB1E800ED40024707F /* SRPGenericImpl.swift */; };
 		A54DFB681E7AD094003F4DB0 /* SRPMpzT.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54DFB671E7AD094003F4DB0 /* SRPMpzT.swift */; };
-		A56827441F545DDD00C4A80D /* SipHash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56827431F545DDD00C4A80D /* SipHash.framework */; };
 		A58ACE871E5D818000FF2C0D /* SRPConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE861E5D818000FF2C0D /* SRPConfiguration.swift */; };
 		A58ACE8D1E5D826400FF2C0D /* SRPUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE8C1E5D826400FF2C0D /* SRPUtil.swift */; };
 		A58ACE8F1E5D82B400FF2C0D /* SRPProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58ACE8E1E5D82B400FF2C0D /* SRPProtocol.swift */; };
@@ -104,7 +103,6 @@
 		A5BF31AE1E7ABFEE00EC5BCA /* imath+additions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "imath+additions.c"; sourceTree = "<group>"; };
 		A5BF31AF1E7ABFEE00EC5BCA /* imath+additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "imath+additions.h"; sourceTree = "<group>"; };
 		A5D0576F1F5454A1004BC5D6 /* SwiftySRP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftySRP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A5D057701F5454A1004BC5D6 /* SwiftySRP copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SwiftySRP copy-Info.plist"; path = "/Users/sergey/Projects/SwiftySRP/SwiftySRP copy-Info.plist"; sourceTree = "<absolute>"; };
 		A5D4B1C81E7BE5C800BC9A9A /* SRPBigIntProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPBigIntProtocol.swift; sourceTree = "<group>"; };
 		A5D4B1D91E7C1D2100BC9A9A /* SRPConfigurationGenericImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPConfigurationGenericImpl.swift; sourceTree = "<group>"; };
 		A5D4B1DB1E7C2C0F00BC9A9A /* SRP+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SRP+Extensions.swift"; sourceTree = "<group>"; };
@@ -134,7 +132,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A56827441F545DDD00C4A80D /* SipHash.framework in Frameworks */,
 				939F68611F83960D00C4553D /* FFDataWrapper.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -185,7 +182,6 @@
 				A50090B61E4C74BD00238562 /* Products */,
 				1F81678CD039CA044C2F09CC /* Pods */,
 				7DFD5AD894CA7CC238161CAA /* Frameworks */,
-				A5D057701F5454A1004BC5D6 /* SwiftySRP copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
