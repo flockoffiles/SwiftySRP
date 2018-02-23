@@ -121,41 +121,34 @@ public extension UnicodeScalar
     }
 }
 
-/// Helper category to perform conversion of hex strings to data
-public extension Data
+/// Create an instance of Data from a hex string representation.
+///
+/// - Parameter hex: hex string from which to create the data
+public func data(hex: String) -> Data
 {
-    /// Create an instance of Data from a hex string representation.
-    ///
-    /// - Parameter hex: hex string from which to create the data
-    init(hex:String)
+    let scalars = hex.unicodeScalars
+    var bytes = Array<UInt8>(repeating: 0, count: (scalars.count + 1) >> 1)
+    for (index, scalar) in scalars.enumerated()
     {
-        let scalars = hex.unicodeScalars
-        var bytes = Array<UInt8>(repeating: 0, count: (scalars.count + 1) >> 1)
-        for (index, scalar) in scalars.enumerated()
-        {
-            var nibble = scalar.hexNibble
-            if index & 1 == 0 {
-                nibble <<= 4
-            }
-            bytes[index >> 1] |= nibble
+        var nibble = scalar.hexNibble
+        if index & 1 == 0 {
+            nibble <<= 4
         }
-        self = Data(bytes: bytes)
+        bytes[index >> 1] |= nibble
     }
-    
-    
-    /// Convert data to a hex string
-    ///
-    /// - Returns: hex string representation of the data.
-    func hexString() -> String
-    {
-        var result = String()
-        result.reserveCapacity(self.count * 2)
-        [UInt8](self).forEach { (aByte) in
-            result += String(format: "%02X", aByte)
-        }
-        return result
-    }
+    return Data(bytes: bytes)
 }
 
-
+/// Convert data to a hex string
+///
+/// - Returns: hex string representation of the data.
+public func hexString(data: Data) -> String
+{
+    var result = String()
+    result.reserveCapacity(data.count * 2)
+    [UInt8](data).forEach { (aByte) in
+        result += String(format: "%02X", aByte)
+    }
+    return result
+}
 

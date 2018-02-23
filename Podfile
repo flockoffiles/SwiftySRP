@@ -1,18 +1,18 @@
 # TODO: Bump this up to iOS9
-platform :ios, '9.0'
+platform :ios, '9.3'
 workspace 'SwiftySRP'
 
 abstract_target 'SwiftySRP_Base' do
     use_frameworks!
     
-	pod 'BigInt', :git => 'https://github.com/lorentey/BigInt.git', :tag => 'v3.0.0'
-    pod 'FFDataWrapper', '~> 1.2'
+    pod 'FFDataWrapper', '~> 1.3'
     # pod 'FFDataWrapper', :git => 'https://github.com/flockoffiles/FFDataWrapper.git', :tag => 'v1.2'
     
     target 'SwiftySRP' do
       project 'SwiftySRP'
       
       target 'SwiftySRPTests' do
+          pod 'BigInt', :git => 'https://github.com/lorentey/BigInt.git', :tag => 'v3.0.0'
       end
     end
 

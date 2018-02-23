@@ -12,9 +12,9 @@
 		57AA468B1FCC424E00DEDF67 /* SRP+iMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA46891FCC424E00DEDF67 /* SRP+iMath.swift */; };
 		57AA468D1FCC436200DEDF67 /* SRP+iMath+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA468C1FCC436200DEDF67 /* SRP+iMath+Extensions.swift */; };
 		57AA468E1FCC436200DEDF67 /* SRP+iMath+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA468C1FCC436200DEDF67 /* SRP+iMath+Extensions.swift */; };
-		57AA46941FCC455A00DEDF67 /* SRP+BigInt+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA468F1FCC43F400DEDF67 /* SRP+BigInt+Extensions.swift */; };
-		57AA46951FCC455C00DEDF67 /* SRP+BigInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA46871FCC40F900DEDF67 /* SRP+BigInt.swift */; };
-		57AA46961FCC455F00DEDF67 /* BigUInt+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA46851FCC3B2E00DEDF67 /* BigUInt+Extensions.swift */; };
+		57E011D020403EA0004EDC65 /* BigUInt+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA46851FCC3B2E00DEDF67 /* BigUInt+Extensions.swift */; };
+		57E011D120403EB0004EDC65 /* SRP+BigInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA46871FCC40F900DEDF67 /* SRP+BigInt.swift */; };
+		57E011D220403EB5004EDC65 /* SRP+BigInt+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA468F1FCC43F400DEDF67 /* SRP+BigInt+Extensions.swift */; };
 		939F68611F83960D00C4553D /* FFDataWrapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 939F68601F83960D00C4553D /* FFDataWrapper.framework */; };
 		A05694BEC3ACB141AF182B03 /* Pods_SwiftySRP_Base_SwiftySRP_SwiftySRPTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0922B69B065556E86D599A64 /* Pods_SwiftySRP_Base_SwiftySRP_SwiftySRPTests.framework */; };
 		A50090BF1E4C74BD00238562 /* SwiftySRP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A50090B51E4C74BD00238562 /* SwiftySRP.framework */; };
@@ -203,7 +203,6 @@
 				A5D4B1CD1E7BE9E500BC9A9A /* Configuration */,
 				A5D4B1CF1E7BEA5700BC9A9A /* Common */,
 				A5D4B1CE1E7BEA3400BC9A9A /* Main */,
-				57AA46841FCC3AED00DEDF67 /* BigIntSpecific */,
 				A5D4B1D11E7BEB0300BC9A9A /* Implementation */,
 			);
 			path = SwiftySRP;
@@ -212,6 +211,7 @@
 		A50090C21E4C74BD00238562 /* SwiftySRPTests */ = {
 			isa = PBXGroup;
 			children = (
+				57AA46841FCC3AED00DEDF67 /* BigIntSpecific */,
 				A50090C31E4C74BD00238562 /* SwiftySRPTests.swift */,
 				A50090C51E4C74BD00238562 /* Info.plist */,
 				A53E4F1F1E5B522000C7DDEA /* SwiftySRPTests-Bridging-Header.h */,
@@ -432,14 +432,14 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests/Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/BigInt/BigInt.framework",
 				"${BUILT_PRODUCTS_DIR}/FFDataWrapper/FFDataWrapper.framework",
+				"${BUILT_PRODUCTS_DIR}/BigInt/BigInt.framework",
 				"${BUILT_PRODUCTS_DIR}/SipHash/SipHash.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BigInt.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FFDataWrapper.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BigInt.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SipHash.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -526,7 +526,6 @@
 				A58ACE971E5D8A8500FF2C0D /* SRPError.swift in Sources */,
 				A5BF31B01E7ABFEE00EC5BCA /* imath+additions.c in Sources */,
 				A5D4B1DC1E7C2C0F00BC9A9A /* SRP+Extensions.swift in Sources */,
-				57AA46941FCC455A00DEDF67 /* SRP+BigInt+Extensions.swift in Sources */,
 				A54DFB681E7AD094003F4DB0 /* SRPMpzT.swift in Sources */,
 				A52B24CC1E800ED40024707F /* SRPGenericImpl.swift in Sources */,
 				A58ACE8F1E5D82B400FF2C0D /* SRPProtocol.swift in Sources */,
@@ -536,9 +535,7 @@
 				A52B24C81E7FF54B0024707F /* SRPDataGenericImpl.swift in Sources */,
 				A52B24CA1E7FFB9C0024707F /* SRPData+BigIntType.swift in Sources */,
 				A58ACE8D1E5D826400FF2C0D /* SRPUtil.swift in Sources */,
-				57AA46951FCC455C00DEDF67 /* SRP+BigInt.swift in Sources */,
 				A5D4B1DA1E7C1D2100BC9A9A /* SRPConfigurationGenericImpl.swift in Sources */,
-				57AA46961FCC455F00DEDF67 /* BigUInt+Extensions.swift in Sources */,
 				A5D4B1DE1E7C2D0A00BC9A9A /* SRPConfiguration+Extensions.swift in Sources */,
 				57AA468D1FCC436200DEDF67 /* SRP+iMath+Extensions.swift in Sources */,
 			);
@@ -548,7 +545,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				57E011D020403EA0004EDC65 /* BigUInt+Extensions.swift in Sources */,
 				A50090C41E4C74BD00238562 /* SwiftySRPTests.swift in Sources */,
+				57E011D220403EB5004EDC65 /* SRP+BigInt+Extensions.swift in Sources */,
+				57E011D120403EB0004EDC65 /* SRP+BigInt.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -635,7 +635,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -689,7 +689,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";

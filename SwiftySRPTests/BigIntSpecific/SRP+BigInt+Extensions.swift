@@ -8,6 +8,7 @@
 
 import Foundation
 import BigInt
+@testable import SwiftySRP
 
 public extension SRPBigIntFactory
 {

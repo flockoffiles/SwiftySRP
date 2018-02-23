@@ -26,14 +26,14 @@ To use the SRP on the client side you need to create an SRP protocol instance, <
 ```swift
 
 // In this example we use the same prime that BouncyCastle tests use.
-let N = Data(hex: "EEAF0AB9ADB38DD69C33F80AFA8FC5E86072618775FF3C0B9EA2314C"
+let N = data(hex: "EEAF0AB9ADB38DD69C33F80AFA8FC5E86072618775FF3C0B9EA2314C"
     + "9C256576D674DF7496EA81D3383B4813D692C6E0E0D5D8E250B98BE4"
     + "8E495C1D6089DAD15DC7D7B46154D6B6CE8EF4AD69B15D4982559B29"
     + "7BCF1885C529F566660E57EC68EDBC3C05726CC02FD4CBF4976EAA9A"
     + "FD5138FE8376435B9FC61D2FC0EB06E3")
 
 // In this example we use the same prime that BouncyCastle tests use.
-let g = Data(hex: "02")
+let g = data(hex: "02")
 
 // Use SHA256 as the hashing function, and HMAC-SHA256 as the HMAC function.
 let srp256 = try SRP.iMath.protocol(N: N, g:g, digest: CryptoAlgorithm.SHA256.digestFunc(), hmac: CryptoAlgorithm.SHA256.hmacFunc())
