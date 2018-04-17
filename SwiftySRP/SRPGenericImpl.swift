@@ -399,7 +399,7 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         guard resultData.bigInt_serverS() > BigIntType(0) else { throw SRPError.invalidServerSharedSecret }
         let N: BigIntType = configuration.bigInt_N()
         let padLength: Int = (N.bitWidth + 7) / 8
-        let paddedS = pad((resultData.bigInt_clientS() as BigIntType).serialize(), to: padLength)
+        let paddedS = pad((resultData.bigInt_serverS() as BigIntType).serialize(), to: padLength)
         let hash = configuration.digest(paddedS)
         
         return hash
@@ -418,7 +418,7 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         guard resultData.bigInt_serverS() > BigIntType(0) else { throw SRPError.invalidServerSharedSecret }
         let N: BigIntType = configuration.bigInt_N()
         let padLength: Int = (N.bitWidth + 7) / 8
-        var paddedS: Data = pad((resultData.bigInt_clientS() as BigIntType).serialize(), to: padLength)
+        var paddedS: Data = pad((resultData.bigInt_serverS() as BigIntType).serialize(), to: padLength)
         defer { FFDataWrapper.wipe(&paddedS) }
         var hash: Data = configuration.digest(paddedS)
         defer { FFDataWrapper.wipe(&hash) }
