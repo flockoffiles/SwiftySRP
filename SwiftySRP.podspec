@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name         = 'SwiftySRP'
-    spec.version      = '2.3'
+    spec.version      = '2.4'
     spec.ios.deployment_target = "9.3"
     spec.license      = { :type => 'MIT', :file => 'LICENSE' }
     spec.summary      = 'Swift implementation of SRP'
@@ -11,7 +11,7 @@ Pod::Spec.new do |spec|
     spec.exclude_files = 'SwiftySRP/BigIntSpecific/*'
     spec.public_header_files = 'SwiftySRP/**/*.h'
     spec.documentation_url = 'https://github.com/serieuxchat/SwiftySRP/'
-    spec.dependency 'FFDataWrapper', '~> 1.3'
+    spec.dependency 'FFDataWrapper', '~> 1.4'
     spec.preserve_paths = 'CommonCrypto/module.modulemap', 'imath/**', 'README', 'SwiftySRPTests/*.swift'
 
     # Things are listed twice (with different paths) in order to also make it compile as a development pod.

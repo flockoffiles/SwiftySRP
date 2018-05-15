@@ -233,7 +233,7 @@ final class SRPMpzT: SRPBigIntProtocol
         }
         defer {
             buffer.deinitialize(count: byteCount)
-            buffer.deallocate(capacity: byteCount)
+            buffer.deallocate()
         }
         return SRPMpzT(Data(bytesNoCopy: buffer, count: byteCount, deallocator: .none))
     }
