@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name         = 'SwiftySRP'
-    spec.version      = '2.4'
+    spec.version      = '2.5'
     spec.ios.deployment_target = "9.3"
     spec.license      = { :type => 'MIT', :file => 'LICENSE' }
     spec.summary      = 'Swift implementation of SRP'
