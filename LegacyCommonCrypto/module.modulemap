@@ -1,4 +1,4 @@
-module CommonCrypto {
+module LegacyCommonCrypto {
   header "/usr/include/CommonCrypto/CommonCrypto.h"
   export *
 }

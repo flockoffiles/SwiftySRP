@@ -105,4 +105,3 @@ public protocol SRPData
     var wrappedServerPrivateValue: FFDataWrapper { get }
 }
 
-

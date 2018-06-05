@@ -24,7 +24,7 @@
 //  SOFTWARE.
 
 import Foundation
-import CommonCrypto
+import LegacyCommonCrypto
 import FFDataWrapper
 
 /// Convenience enum to specify a hashing algorithm
@@ -118,6 +118,7 @@ public extension UnicodeScalar
             return UInt8(value - 87)
         }
         fatalError("\(self) not a legal hex nibble")
+
     }
 }
 

@@ -12,8 +12,8 @@ Pod::Spec.new do |spec|
     spec.public_header_files = 'SwiftySRP/**/*.h'
     spec.documentation_url = 'https://github.com/serieuxchat/SwiftySRP/'
     spec.dependency 'FFDataWrapper', '~> 1.4'
-    spec.preserve_paths = 'CommonCrypto/module.modulemap', 'imath/**', 'README', 'SwiftySRPTests/*.swift'
+    spec.preserve_paths = 'LegacyCommonCrypto/module.modulemap', 'imath/**', 'README', 'SwiftySRPTests/*.swift'
 
     # Things are listed twice (with different paths) in order to also make it compile as a development pod.
-    spec.xcconfig = { 'SWIFT_INCLUDE_PATHS' => '$(PODS_ROOT)/SwiftySRP/CommonCrypto $(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../CommonCrypto $(SRCROOT)/../imath' }
+    spec.xcconfig = { 'SWIFT_INCLUDE_PATHS' => '$(PODS_ROOT)/SwiftySRP/LegacyCommonCrypto $(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../LegacyCommonCrypto $(SRCROOT)/../imath' }
 end
