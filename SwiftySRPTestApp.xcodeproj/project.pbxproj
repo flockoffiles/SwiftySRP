@@ -140,7 +140,6 @@
 				A50090D51E4C763400238562 /* Frameworks */,
 				A50090D61E4C763400238562 /* Resources */,
 				BA9BF83702984754DD572A95 /* [CP] Embed Pods Frameworks */,
-				8EE65A629C399798DCB8B781 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -160,7 +159,6 @@
 				A50090E91E4C763400238562 /* Frameworks */,
 				A50090EA1E4C763400238562 /* Resources */,
 				87530594674B7A3CFA8A316A /* [CP] Embed Pods Frameworks */,
-				C6E81BCDAEEEAF74B3D3382B /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -255,21 +253,6 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRPTestApp-SwiftySRPTestAppTests/Pods-SwiftySRP_Base-SwiftySRPTestApp-SwiftySRPTestAppTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		8EE65A629C399798DCB8B781 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRPTestApp/Pods-SwiftySRP_Base-SwiftySRPTestApp-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		AC8F0E17C3813C5817DE0252 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -324,21 +307,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRPTestApp/Pods-SwiftySRP_Base-SwiftySRPTestApp-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C6E81BCDAEEEAF74B3D3382B /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRPTestApp-SwiftySRPTestAppTests/Pods-SwiftySRP_Base-SwiftySRPTestApp-SwiftySRPTestAppTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

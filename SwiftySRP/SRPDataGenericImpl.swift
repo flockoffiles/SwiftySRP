@@ -354,8 +354,53 @@ struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
             _serverM = BigIntType(newValue)
         }
     }
+    
+    enum CodingKeys: String, CodingKey {
+        case wrappedClientPublicValue
+        case wrappedClientEvidenceMessage
+        case wrappedVerifier
+        case wrappedServerPublicValue
+        case wrappedServerEvidenceMessage
+        case wrappedPasswordHash
+        case wrappedClientPrivateValue
+        case wrappedScrambler
+        case wrappedClientSecret
+        case wrappedServerSecret
+        case wrappedMultiplier
+        case wrappedServerPrivateValue
+    }
 
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(self.wrappedClientPublicValue, forKey: .wrappedClientPublicValue)
+        try container.encode(self.wrappedClientEvidenceMessage, forKey: .wrappedClientEvidenceMessage)
+        try container.encode(self.wrappedVerifier, forKey: .wrappedVerifier)
+        try container.encode(self.wrappedServerPublicValue, forKey: .wrappedServerPublicValue)
+        try container.encode(self.wrappedServerEvidenceMessage, forKey: .wrappedServerEvidenceMessage)
+        try container.encode(self.wrappedPasswordHash, forKey: .wrappedPasswordHash)
+        try container.encode(self.wrappedClientPrivateValue, forKey: .wrappedClientPrivateValue)
+        try container.encode(self.wrappedScrambler, forKey: .wrappedScrambler)
+        try container.encode(self.wrappedClientSecret, forKey: .wrappedClientSecret)
+        try container.encode(self.wrappedServerSecret, forKey: .wrappedServerSecret)
+        try container.encode(self.wrappedMultiplier, forKey: .wrappedMultiplier)
+        try container.encode(self.wrappedServerPrivateValue, forKey: .wrappedServerPrivateValue)
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.wrappedClientPublicValue = try container.decode(FFDataWrapper.self, forKey: .wrappedClientPublicValue)
+        self.wrappedClientEvidenceMessage = try container.decode(FFDataWrapper.self, forKey: .wrappedClientEvidenceMessage)
+        self.wrappedVerifier = try container.decode(FFDataWrapper.self, forKey: .wrappedVerifier)
+        self.wrappedServerPublicValue = try container.decode(FFDataWrapper.self, forKey: .wrappedServerPublicValue)
+        self.wrappedServerEvidenceMessage = try container.decode(FFDataWrapper.self, forKey: .wrappedServerEvidenceMessage)
+        self.wrappedPasswordHash = try container.decode(FFDataWrapper.self, forKey: .wrappedPasswordHash)
+        self.wrappedClientPrivateValue = try container.decode(FFDataWrapper.self, forKey: .wrappedClientPrivateValue)
+        self.wrappedScrambler = try container.decode(FFDataWrapper.self, forKey: .wrappedScrambler)
+        self.wrappedClientSecret = try container.decode(FFDataWrapper.self, forKey: .wrappedClientSecret)
+        self.wrappedServerSecret = try container.decode(FFDataWrapper.self, forKey: .wrappedServerSecret)
+        self.wrappedMultiplier = try container.decode(FFDataWrapper.self, forKey: .wrappedMultiplier)
+        self.wrappedServerPrivateValue = try container.decode(FFDataWrapper.self, forKey: .wrappedServerPrivateValue)
+    }
 }
-
-
-

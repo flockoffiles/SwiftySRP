@@ -27,7 +27,7 @@ import Foundation
 import FFDataWrapper
 
 /// Protocol defining SRP intermediate data.
-public protocol SRPData
+public protocol SRPData: Codable
 {
     /// Client public value 'A' (see SRP spec. in SRPProtocol.swift)
     var clientPublicValue: Data { get set }
@@ -104,4 +104,3 @@ public protocol SRPData
     /// Server private value 'b' (see SRP spec. in SRPProtocol.swift). This version returns a wrapped value (more secure).
     var wrappedServerPrivateValue: FFDataWrapper { get }
 }
-
