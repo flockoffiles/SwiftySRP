@@ -1,7 +1,0 @@
-module LegacyCommonCrypto {
-  header "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/include/CommonCrypto/CommonCrypto.h"
-  export *
-}
-
-// if Xcode warn you that can't find "/usr/include/CommonCrypto/CommonCrypto.h"
-// please run `xcode-select --install` in Terminal to install Xcode Command Line Tools

@@ -15,17 +15,15 @@ Pod::Spec.new do |spec|
     spec.swift_version = '4.1'
 
     # Things are listed twice (with different paths) in order to also make it compile as a development pod.
-    # spec.preserve_paths = 'LegacyCommonCrypto/module.modulemap', 'imath/**', 'README', 'SwiftySRPTests/*.swift'
-    # spec.xcconfig = { 'SWIFT_INCLUDE_PATHS' => '$(PODS_ROOT)/SwiftySRP/LegacyCommonCrypto $(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../LegacyCommonCrypto $(SRCROOT)/../imath' }
 
-    spec.preserve_paths = 'LegacyCommonCrypto/**/*', 'imath/**', 'README', 'SwiftySRPTests/*.swift'
+    spec.preserve_paths = 'imath/**', 'README', 'SwiftySRPTests/*.swift'
     spec.xcconfig = {
-        'SWIFT_INCLUDE_PATHS[sdk=iphoneos*]'            => '$(PODS_ROOT)/SwiftySRP/LegacyCommonCrypto/iphoneos $(SRCROOT)/../LegacyCommonCrypto/iphoneos $(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath',
-        'SWIFT_INCLUDE_PATHS[sdk=iphonesimulator*]'     => '$(PODS_ROOT)/SwiftySRP/LegacyCommonCrypto/iphonesimulator $(SRCROOT)/../LegacyCommonCrypto/iphonesimulator $(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath',
-        'SWIFT_INCLUDE_PATHS[sdk=appletvos*]'           => '$(PODS_ROOT)/SwiftySRP/LegacyCommonCrypto/appletvos $(SRCROOT)/../LegacyCommonCrypto/appletvos $(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath',
-        'SWIFT_INCLUDE_PATHS[sdk=appletvsimulator*]'    => '$(PODS_ROOT)/SwiftySRP/LegacyCommonCrypto/appletvsimulator $(SRCROOT)/../LegacyCommonCrypto/appletvsimulator $(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath',
-        'SWIFT_INCLUDE_PATHS[sdk=watchos*]'             => '$(PODS_ROOT)/SwiftySRP/LegacyCommonCrypto/watchos $(SRCROOT)/../LegacyCommonCrypto/watchos $(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath',
-        'SWIFT_INCLUDE_PATHS[sdk=appletvsimulator*]'    => '$(PODS_ROOT)/SwiftySRP/LegacyCommonCrypto/watchsimulator $(SRCROOT)/../LegacyCommonCrypto/watchsimulator $(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath'
+        'SWIFT_INCLUDE_PATHS[sdk=iphoneos*]'            => '$(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath',
+        'SWIFT_INCLUDE_PATHS[sdk=iphonesimulator*]'     => '$(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath',
+        'SWIFT_INCLUDE_PATHS[sdk=appletvos*]'           => '$(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath',
+        'SWIFT_INCLUDE_PATHS[sdk=appletvsimulator*]'    => '$(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath',
+        'SWIFT_INCLUDE_PATHS[sdk=watchos*]'             => '$(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath',
+        'SWIFT_INCLUDE_PATHS[sdk=watchsimulator*]'      => '$(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath'
     }
 
 end

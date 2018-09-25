@@ -24,7 +24,7 @@
 //  SOFTWARE.
 
 import Foundation
-import LegacyCommonCrypto
+import CommonCrypto
 import FFDataWrapper
 
 /// Convenience enum to specify a hashing algorithm

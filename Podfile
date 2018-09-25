@@ -39,7 +39,7 @@ post_install do |installer|
         target.new_shell_script_build_phase.shell_script = "mkdir -p $PODS_CONFIGURATION_BUILD_DIR/#{target.name}"
 
         target.build_configurations.each do |config|
-            config.build_settings['SWIFT_VERSION'] = '4.0'
+            config.build_settings['SWIFT_VERSION'] = '4.1'
             config.build_settings['CONFIGURATION_BUILD_DIR'] = '$PODS_CONFIGURATION_BUILD_DIR'
             if config.name == 'Debug'
                 config.build_settings['OTHER_SWIFT_FLAGS'] = '-DDEBUG'
