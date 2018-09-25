@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name         = 'SwiftySRP'
-    spec.version      = '2.6'
+    spec.version      = '2.7'
     spec.ios.deployment_target = "9.3"
     spec.license      = { :type => 'MIT', :file => 'LICENSE' }
     spec.summary      = 'Swift implementation of SRP'
@@ -21,8 +21,11 @@ Pod::Spec.new do |spec|
     spec.preserve_paths = 'LegacyCommonCrypto/**/*', 'imath/**', 'README', 'SwiftySRPTests/*.swift'
     spec.xcconfig = {
         'SWIFT_INCLUDE_PATHS[sdk=iphoneos*]'            => '$(PODS_ROOT)/SwiftySRP/LegacyCommonCrypto/iphoneos $(SRCROOT)/../LegacyCommonCrypto/iphoneos $(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath',
-        'SWIFT_INCLUDE_PATHS[sdk=iphonesimulator*]'     => '$(PODS_ROOT)/SwiftySRP/LegacyCommonCrypto/iphonesimulator $(SRCROOT)/../LegacyCommonCrypto/iphonesimulator $(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath'
-        # 'SWIFT_INCLUDE_PATHS' => '$(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath' 
+        'SWIFT_INCLUDE_PATHS[sdk=iphonesimulator*]'     => '$(PODS_ROOT)/SwiftySRP/LegacyCommonCrypto/iphonesimulator $(SRCROOT)/../LegacyCommonCrypto/iphonesimulator $(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath',
+        'SWIFT_INCLUDE_PATHS[sdk=appletvos*]'           => '$(PODS_ROOT)/SwiftySRP/LegacyCommonCrypto/appletvos $(SRCROOT)/../LegacyCommonCrypto/appletvos $(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath',
+        'SWIFT_INCLUDE_PATHS[sdk=appletvsimulator*]'    => '$(PODS_ROOT)/SwiftySRP/LegacyCommonCrypto/appletvsimulator $(SRCROOT)/../LegacyCommonCrypto/appletvsimulator $(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath',
+        'SWIFT_INCLUDE_PATHS[sdk=watchos*]'             => '$(PODS_ROOT)/SwiftySRP/LegacyCommonCrypto/watchos $(SRCROOT)/../LegacyCommonCrypto/watchos $(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath',
+        'SWIFT_INCLUDE_PATHS[sdk=appletvsimulator*]'    => '$(PODS_ROOT)/SwiftySRP/LegacyCommonCrypto/watchsimulator $(SRCROOT)/../LegacyCommonCrypto/watchsimulator $(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath'
     }
 
 end
