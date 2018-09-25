@@ -12,8 +12,17 @@ Pod::Spec.new do |spec|
     spec.public_header_files = 'SwiftySRP/**/*.h'
     spec.documentation_url = 'https://github.com/serieuxchat/SwiftySRP/'
     spec.dependency 'FFDataWrapper', '~> 1.4'
-    spec.preserve_paths = 'LegacyCommonCrypto/module.modulemap', 'imath/**', 'README', 'SwiftySRPTests/*.swift'
     spec.swift_version = '4.1'
+
     # Things are listed twice (with different paths) in order to also make it compile as a development pod.
-    spec.xcconfig = { 'SWIFT_INCLUDE_PATHS' => '$(PODS_ROOT)/SwiftySRP/LegacyCommonCrypto $(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../LegacyCommonCrypto $(SRCROOT)/../imath' }
+    # spec.preserve_paths = 'LegacyCommonCrypto/module.modulemap', 'imath/**', 'README', 'SwiftySRPTests/*.swift'
+    # spec.xcconfig = { 'SWIFT_INCLUDE_PATHS' => '$(PODS_ROOT)/SwiftySRP/LegacyCommonCrypto $(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../LegacyCommonCrypto $(SRCROOT)/../imath' }
+
+    spec.preserve_paths = 'LegacyCommonCrypto/**/*', 'imath/**', 'README', 'SwiftySRPTests/*.swift'
+    spec.xcconfig = {
+        'SWIFT_INCLUDE_PATHS[sdk=iphoneos*]'            => '$(PODS_ROOT)/SwiftySRP/LegacyCommonCrypto/iphoneos $(SRCROOT)/../LegacyCommonCrypto/iphoneos $(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath',
+        'SWIFT_INCLUDE_PATHS[sdk=iphonesimulator*]'     => '$(PODS_ROOT)/SwiftySRP/LegacyCommonCrypto/iphonesimulator $(SRCROOT)/../LegacyCommonCrypto/iphonesimulator $(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath'
+        # 'SWIFT_INCLUDE_PATHS' => '$(PODS_ROOT)/SwiftySRP/imath $(SRCROOT)/../imath' 
+    }
+
 end
