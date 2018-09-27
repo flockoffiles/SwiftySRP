@@ -15,6 +15,10 @@ To use with cocoapods, add the following line to your Podfile:
 pod 'SwiftySRP', :git => 'https://github.com/serieuxchat/SwiftySRP', :branch => 'master'
 ```
 
+## Xcode 10 vs 9.4 Support
+
+Starting with version 2.7 SwiftySRP no longer supports building with Xcode 9 (because of the different ways the CommonCrypto library must be imported). If you still need to support XCode 9, you have to stay on version 2.6.
+
 ## How to Use
 
 Currently the implementation is Swift-only and supports iOS9.0 and higher.
