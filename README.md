@@ -9,11 +9,20 @@ For SRP 6a Specification, see:
 
 ## How to Install
 
+### Cocoapods
 To use with cocoapods, add the following line to your Podfile:
 
 ```
-pod 'SwiftySRP', :git => 'https://github.com/serieuxchat/SwiftySRP', :branch => 'master'
+pod 'SwiftySRP', '~> 2.8'
 ```
+
+### Carthage
+To use with Carthage, add the following line to your Cartfile:
+
+```
+github "flockoffiles/SwiftySRP" ~> 2.8
+```
+
 
 ## Xcode 10 vs 9.4 Support
 
@@ -21,11 +30,10 @@ Starting with version 2.7 SwiftySRP no longer supports building with Xcode 9 (be
 
 ## How to Use
 
-Currently the implementation is Swift-only and supports iOS9.0 and higher.
-(Objective-C wrappers may be added in a future release).
+Currently the implementation is Swift-only and supports iOS9.3 and higher.
 
 To use the SRP on the client side you need to create an SRP protocol instance, <br/> where you specify a **large safe prime number** (see below on how to generate one), a **generator**, a **hashing function**, and an **HMAC function** <br/>
-(HMAC function is used as an alternative way to generate a shared session key from the shared secret; this way we can generate multiple session keys from the same shared secret by utilizing different HMAC keys). The SRP implementation can use two different big integer implementations: BigInt (written in pure Swift) and imath (written in C). At the moment the C implementation is a lot (about 50 times) faster than the pure Swift one.
+(HMAC function is used as an alternative way to generate a shared session key from the shared secret; this way we can generate multiple session keys from the same shared secret by utilizing different HMAC keys).
 
 ```swift
 
@@ -58,8 +66,8 @@ let userPassword = "password123".data(using: .utf8)!
 let salt = Data.generateRandomBytes(count: 128)
 
 // Generate the verifier
-let srpData = try srp256.verifier(s: salt, I: userName, p: password)
-let verifier = srpData.v.serialize()
+let srpData: SRPData = try srp256.verifier(s: salt, I: userName, p: password)
+let verifier: Data = srpData.verifier()
 
 // Now you must send the salt, userName, and the verifier to the server.
 ```

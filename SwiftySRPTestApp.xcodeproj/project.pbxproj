@@ -239,7 +239,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRPTestApp-SwiftySRPTestAppTests/Pods-SwiftySRP_Base-SwiftySRPTestApp-SwiftySRPTestAppTests-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-SwiftySRP_Base-SwiftySRPTestApp-SwiftySRPTestAppTests/Pods-SwiftySRP_Base-SwiftySRPTestApp-SwiftySRPTestAppTests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/FFDataWrapper/FFDataWrapper.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftySRP/SwiftySRP.framework",
 			);
@@ -250,7 +250,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRPTestApp-SwiftySRPTestAppTests/Pods-SwiftySRP_Base-SwiftySRPTestApp-SwiftySRPTestAppTests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SwiftySRP_Base-SwiftySRPTestApp-SwiftySRPTestAppTests/Pods-SwiftySRP_Base-SwiftySRPTestApp-SwiftySRPTestAppTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		AC8F0E17C3813C5817DE0252 /* [CP] Check Pods Manifest.lock */ = {
@@ -295,7 +295,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRPTestApp/Pods-SwiftySRP_Base-SwiftySRPTestApp-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-SwiftySRP_Base-SwiftySRPTestApp/Pods-SwiftySRP_Base-SwiftySRPTestApp-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/FFDataWrapper/FFDataWrapper.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftySRP/SwiftySRP.framework",
 			);
@@ -306,7 +306,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRPTestApp/Pods-SwiftySRP_Base-SwiftySRPTestApp-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SwiftySRP_Base-SwiftySRPTestApp/Pods-SwiftySRP_Base-SwiftySRPTestApp-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

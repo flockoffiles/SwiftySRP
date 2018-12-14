@@ -5,7 +5,7 @@ workspace 'SwiftySRP'
 abstract_target 'SwiftySRP_Base' do
     use_frameworks!
     
-    pod 'FFDataWrapper', '~> 1.3'
+    pod 'FFDataWrapper', '~> 1.5'
     # pod 'FFDataWrapper', :git => 'https://github.com/flockoffiles/FFDataWrapper.git', :tag => 'v1.2'
     
     target 'SwiftySRP' do
