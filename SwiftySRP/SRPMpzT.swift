@@ -64,7 +64,7 @@ public final class SRPMpzT: SRPBigIntProtocol
     /// - Parameter data: Wrapped data buffer holding the value.
     public required init(_ wrappedData: FFDataWrapper)
     {
-        wrappedData.withDecodedData { decodedData in
+        wrappedData.mapData { decodedData in
             decodedData.withUnsafeBytes { (bytes: UnsafePointer<UInt8>) -> Void in
                 mp_int_read_const_unsigned(&value, bytes, Int32(decodedData.count))
             }
@@ -120,7 +120,7 @@ public final class SRPMpzT: SRPBigIntProtocol
             mp_int_to_unsigned(&value, bytes, byteCount)
         })
 
-        return FFDataWrapper(data)
+        return FFDataWrapper(data: data)
     }
     
     /// Number of bits needed to represent the value.

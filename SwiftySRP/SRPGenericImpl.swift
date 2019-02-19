@@ -76,9 +76,9 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
 
         let c = self.configuration
         
-        let value_x: BigIntType = s.withDecodedData { decoded_s in
-            return I.withDecodedData { decoded_I in
-                return p.withDecodedData { decoded_p in
+        let value_x: BigIntType = s.mapData { decoded_s in
+            return I.mapData { decoded_I in
+                return p.mapData { decoded_p in
                     return self.x(s: decoded_s, I: decoded_I, p: decoded_p)
                 }
             }
@@ -384,7 +384,7 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         let paddedS = pad((resultData.bigInt_clientS() as BigIntType).serialize(), to: padLength)
         var hash = configuration.digest(paddedS)
         defer { FFDataWrapper.wipe(&hash) }
-        return FFDataWrapper(hash)
+        return FFDataWrapper(data: hash)
     }
 
     /// Calculate the shared key (server side) in the standard way: sharedKey = H(serverS)
@@ -423,7 +423,7 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         var hash: Data = configuration.digest(paddedS)
         defer { FFDataWrapper.wipe(&hash) }
         
-        return FFDataWrapper(hash)
+        return FFDataWrapper(data: hash)
     }
     
     /// Calculate the shared key (client side) by using HMAC: sharedKey = HMAC(salt, clientS)
@@ -449,10 +449,10 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         try configuration.validate()
         let resultData = srpData
         
-        return salt.withDecodedData { decodedSalt in
+        return salt.mapData { decodedSalt in
             var sharedKeyData = configuration.hmac(decodedSalt, (resultData.bigInt_clientS() as BigIntType).serialize())
             defer { FFDataWrapper.wipe(&sharedKeyData) }
-            return FFDataWrapper(sharedKeyData)
+            return FFDataWrapper(data: sharedKeyData)
         }
     }
     
@@ -479,10 +479,10 @@ public struct SRPGenericImpl<BigIntType: SRPBigIntProtocol>: SRPProtocol
         try configuration.validate()
         let resultData = srpData
         
-        return salt.withDecodedData { decodedSalt in
+        return salt.mapData { decodedSalt in
             var sharedKeyData = configuration.hmac(decodedSalt, (resultData.bigInt_serverS() as BigIntType).serialize())
             defer { FFDataWrapper.wipe(&sharedKeyData) }
-            return FFDataWrapper(sharedKeyData)
+            return FFDataWrapper(data: sharedKeyData)
         }
     }
     
