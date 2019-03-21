@@ -24,7 +24,6 @@
 //  SOFTWARE.
 
 import Foundation
-import imath
 import FFDataWrapper
 
 /// This class wraps an mpz_t value from imath and provides methods to conform to SRPBigIntProtocol
