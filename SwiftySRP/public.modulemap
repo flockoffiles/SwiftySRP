@@ -1,0 +1,7 @@
+framework module SwiftySRP {
+
+    umbrella header "SwiftySRP.h"
+
+    export *
+    module * {export *}
+}
