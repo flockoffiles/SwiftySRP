@@ -491,7 +491,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Delete PrivateHeaders folder\nrm -rf \"${TARGET_BUILD_DIR}/${PRODUCT_NAME}${WRAPPER_SUFFIX}/PrivateHeaders\"\n\n# Remove module.modulemap file\nrm \"${TARGET_BUILD_DIR}/${PRODUCT_NAME}${WRAPPER_SUFFIX}/Modules/module.modulemap\"\n\n# Copy public.modulemap file and rename it to module.modulemap\ncp \"${SRCROOT}/SwiftySRP/public.modulemap\" \"${TARGET_BUILD_DIR}/${PRODUCT_NAME}${WRAPPER_SUFFIX}/Modules/module.modulemap\"\n\n# Append the Swift module so you can access you Swift code in Objective-C via @import MyFramework.Swift\necho \"module ${PRODUCT_NAME}.Swift { header \\\"${PRODUCT_NAME}-Swift.h\\\" }\" >> \"${TARGET_BUILD_DIR}/${PRODUCT_NAME}${WRAPPER_SUFFIX}/Modules/module.modulemap\"\n";
+			shellScript = "# Delete PrivateHeaders folder\nrm -rf \"${TARGET_BUILD_DIR}/${PRODUCT_NAME}${WRAPPER_SUFFIX}/PrivateHeaders\"\n\n# Copy public.modulemap file and rename it to module.modulemap\ncp \"${SRCROOT}/SwiftySRP/public.modulemap\" \"${TARGET_BUILD_DIR}/${PRODUCT_NAME}${WRAPPER_SUFFIX}/Modules/module.modulemap\"\n";
 			showEnvVarsInLog = 0;
 		};
 		745DDED12243A54800ADFBF4 /* Fix Framework Module Map */ = {
@@ -510,7 +510,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Delete PrivateHeaders folder\nrm -rf \"${TARGET_BUILD_DIR}/${PRODUCT_NAME}${WRAPPER_SUFFIX}/PrivateHeaders\"\n\n# Remove module.modulemap file\nrm \"${TARGET_BUILD_DIR}/${PRODUCT_NAME}${WRAPPER_SUFFIX}/Modules/module.modulemap\"\n\n# Copy public.modulemap file and rename it to module.modulemap\ncp \"${SRCROOT}/SwiftySRP/public.modulemap\" \"${TARGET_BUILD_DIR}/${PRODUCT_NAME}${WRAPPER_SUFFIX}/Modules/module.modulemap\"\n\n# Append the Swift module so you can access you Swift code in Objective-C via @import MyFramework.Swift\necho \"module ${PRODUCT_NAME}.Swift { header \\\"${PRODUCT_NAME}-Swift.h\\\" }\" >> \"${TARGET_BUILD_DIR}/${PRODUCT_NAME}${WRAPPER_SUFFIX}/Modules/module.modulemap\"\n";
+			shellScript = "# Delete PrivateHeaders folder\nrm -rf \"${TARGET_BUILD_DIR}/${PRODUCT_NAME}${WRAPPER_SUFFIX}/PrivateHeaders\"\n\n# Copy public.modulemap file and rename it to module.modulemap\ncp \"${SRCROOT}/SwiftySRP/public.modulemap\" \"${TARGET_BUILD_DIR}/${PRODUCT_NAME}${WRAPPER_SUFFIX}/Modules/module.modulemap\"\n";
 			showEnvVarsInLog = 0;
 		};
 		BD890336167236BD4F0E34CA /* [CP] Check Pods Manifest.lock */ = {

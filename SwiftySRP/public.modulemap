@@ -5,3 +5,8 @@ framework module SwiftySRP {
     export *
     module * {export *}
 }
+
+module SwiftySRP.Swift {
+    header "SwiftySRP-Swift.h"
+    requires objc
+}
