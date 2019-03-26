@@ -727,6 +727,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 03CEC297138466C580FA298C /* Pods-SwiftySRP_Base-SwiftySRP.debug.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
@@ -752,6 +753,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 8489902F0C68A50F44D97659 /* Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
@@ -812,6 +814,7 @@
 		A5D0576D1F5454A1004BC5D6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
@@ -838,6 +841,7 @@
 		A5D0576E1F5454A1004BC5D6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;

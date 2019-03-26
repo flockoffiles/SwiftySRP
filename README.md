@@ -13,14 +13,14 @@ For SRP 6a Specification, see:
 To use with cocoapods, add the following line to your Podfile:
 
 ```
-pod 'SwiftySRP', '~> 2.10'
+pod 'SwiftySRP', '~> 2.11'
 ```
 
 ### Carthage
 To use with Carthage, add the following line to your Cartfile:
 
 ```
-github "flockoffiles/SwiftySRP" ~> 2.10
+github "flockoffiles/SwiftySRP" ~> 2.11
 ```
 
 
