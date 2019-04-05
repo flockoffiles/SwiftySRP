@@ -10,7 +10,7 @@ import Foundation
 
 public extension SRP
 {
-    public static var iMath: SRPIMathFactory {
+    static var iMath: SRPIMathFactory {
         return SRPIMathFactory()
     }
 }

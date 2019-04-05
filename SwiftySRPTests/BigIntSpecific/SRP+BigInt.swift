@@ -12,7 +12,7 @@ import BigInt
 
 public extension SRP
 {
-    public static var bigUInt: SRPBigIntFactory {
+    static var bigUInt: SRPBigIntFactory {
         return SRPBigIntFactory()
     }
 }

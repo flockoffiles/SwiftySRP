@@ -21,12 +21,12 @@ public extension SRPIMathFactory
     ///   - b: Custom closure to generate the private ephemeral value 'b'
     /// - Throws: SRPError if configuration parameters are not valid.
     /// - Returns: The resulting SRP protocol implementation.
-    public func `protocol`(N: Data,
-                           g: Data,
-                           digest: @escaping DigestFunc = CryptoAlgorithm.SHA256.digestFunc(),
-                           hmac: @escaping HMacFunc = CryptoAlgorithm.SHA256.hmacFunc(),
-                           a: @escaping () -> Data,
-                           b: @escaping () -> Data) throws -> SRPProtocol
+    func `protocol`(N: Data,
+                    g: Data,
+                    digest: @escaping DigestFunc = CryptoAlgorithm.SHA256.digestFunc(),
+                    hmac: @escaping HMacFunc = CryptoAlgorithm.SHA256.hmacFunc(),
+                    a: @escaping () -> Data,
+                    b: @escaping () -> Data) throws -> SRPProtocol
     {
         let configuration = SRPConfigurationGenericImpl<SRPMpzT>(N: SRPMpzT(N),
                                                                  g: SRPMpzT(g),

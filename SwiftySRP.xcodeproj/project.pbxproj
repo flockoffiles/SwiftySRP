@@ -74,6 +74,7 @@
 		0922B69B065556E86D599A64 /* Pods_SwiftySRP_Base_SwiftySRP_SwiftySRPTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SwiftySRP_Base_SwiftySRP_SwiftySRPTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		10ED35AB66D3B09F03A8CAC1 /* Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests/Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.debug.xcconfig"; sourceTree = "<group>"; };
 		2FB021FC76E81CB3156016E2 /* Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests/Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.release.xcconfig"; sourceTree = "<group>"; };
+		577FCE7B2257ABB20048BD0F /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		57AA46851FCC3B2E00DEDF67 /* BigUInt+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BigUInt+Extensions.swift"; sourceTree = "<group>"; };
 		57AA46871FCC40F900DEDF67 /* SRP+BigInt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SRP+BigInt.swift"; sourceTree = "<group>"; };
 		57AA46891FCC424E00DEDF67 /* SRP+iMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SRP+iMath.swift"; sourceTree = "<group>"; };
@@ -182,6 +183,7 @@
 			children = (
 				A5BF31A61E7A9A8500EC5BCA /* imath */,
 				A5A56B671E5C34560024CA0A /* README.md */,
+				577FCE7B2257ABB20048BD0F /* CHANGELOG.md */,
 				A50090B71E4C74BD00238562 /* SwiftySRP */,
 				A50090C21E4C74BD00238562 /* SwiftySRPTests */,
 				A50090B61E4C74BD00238562 /* Products */,
@@ -373,7 +375,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0820;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "Flock of Files";
 				TargetAttributes = {
 					A50090B41E4C74BD00238562 = {
@@ -396,6 +398,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = A50090AB1E4C74BD00238562;
@@ -610,6 +613,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -661,7 +665,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -672,6 +676,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -715,7 +720,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -745,7 +750,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -770,7 +775,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -789,7 +794,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "SwiftySRPTests/SwiftySRPTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -807,7 +812,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "SwiftySRPTests/SwiftySRPTests-Bridging-Header.h";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -834,7 +839,7 @@
 				PRODUCT_NAME = SwiftySRP;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -860,7 +865,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.flockoffiles.SwiftySRP;
 				PRODUCT_NAME = SwiftySRP;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};

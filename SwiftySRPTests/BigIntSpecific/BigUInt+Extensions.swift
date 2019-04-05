@@ -25,7 +25,7 @@ extension BigUInt: SRPBigIntProtocol
     public init(_ wrappedData: FFDataWrapper)
     {
         // Do NOT copy the data given to the closure, so that it can be wiped properly.
-        self = wrappedData.withDecodedData { BigUInt($0) }
+        self = wrappedData.mapData { BigUInt($0) }
     }
     
     /// Store the data in a wrapped big endian data buffer (more secure)
@@ -35,7 +35,7 @@ extension BigUInt: SRPBigIntProtocol
     {
         var serialized = serialize()
         defer { FFDataWrapper.wipe(&serialized) }
-        return FFDataWrapper(serialized)
+        return FFDataWrapper(data: serialized)
     }
 }
 

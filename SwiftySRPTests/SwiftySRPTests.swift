@@ -573,46 +573,4 @@ class SwiftySRPTests: XCTestCase
                             expectedStringSharedHMacKey: expectedStringSharedHMacKey_512)
     }
     
-    /// This test verfies that wrappedSerialize() function won't leak unwiped data buffer.
-    /// Inside wrappedSerialize we invoke FFDataWrapper.wipe(&serialized),
-    /// and it will wipe the underlying data store ONLY if the data store is not retained or passed outside the closure.
-    func testBigUIntSerializeWiping()
-    {
-        class TestDataStorage
-        {
-            var bytes: UnsafeMutableRawPointer? = nil
-        }
-        
-        let value = BigUInt(5)
-        var dataBytesPtr: UnsafeMutableRawPointer? = nil
-        var serializedDataLength = 0
-        var dataBytesPtrAfterWiping: UnsafeMutableRawPointer? = nil
-        let wrapper = { () -> FFDataWrapper in
-            var serialized = value.serialize()
-            serializedDataLength = serialized.count
-            dataBytesPtr = { (_ o: UnsafeRawPointer) -> UnsafeRawPointer in o }(&serialized).assumingMemoryBound(to: TestDataStorage.self).pointee.bytes
-            defer {
-                FFDataWrapper.wipe(&serialized)
-                dataBytesPtrAfterWiping = { (_ o: UnsafeRawPointer) -> UnsafeRawPointer in o }(&serialized).assumingMemoryBound(to: TestDataStorage.self).pointee.bytes
-            }
-            return FFDataWrapper(serialized)
-        }()
-        
-        
-        guard let dataBytes = dataBytesPtr else {
-            XCTFail("Expecting non-nil data bytes")
-            return
-        }
-        
-        guard let dataBytesAfterWiping = dataBytesPtrAfterWiping else {
-            XCTFail("Expecting non-nil data bytes after wiping.")
-            return
-        }
-        
-        XCTAssertEqual(dataBytes, dataBytesAfterWiping)
-        let expectedData = Data(count: serializedDataLength)
-        let reconstructedData = Data(bytes: dataBytes, count: serializedDataLength)
-        XCTAssertEqual(reconstructedData, expectedData)
-        
-    }
 }
