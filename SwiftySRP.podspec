@@ -8,16 +8,13 @@ Pod::Spec.new do |spec|
     spec.author       = 'Sergey Novitsky'
     spec.source       = { :git => 'https://github.com/flockoffiles/SwiftySRP.git', :tag => 'v' + String(spec.version) }
     spec.source_files = 'SwiftySRP/*.{h,swift}', 'imath/*.{c,h}'
-    spec.module_map = 'SwiftySRP/private.modulemap'
+    spec.module_map = 'SwiftySRP/public.modulemap'
     spec.exclude_files = 'SwiftySRP/BigIntSpecific/*'
     spec.public_header_files = 'SwiftySRP/**/*.h' 
     spec.private_header_files = 'imath/*.h'
     spec.documentation_url = 'https://github.com/serieuxchat/SwiftySRP/'
     spec.dependency 'FFDataWrapper', '~> 1.8'
     spec.swift_version = '4.2'
-    spec.script_phases = [
-        { :name => 'Fix Module Map', :script => 'rm -rf "$TARGET_BUILD_DIR/$PRODUCT_NAME$WRAPPER_SUFFIX/PrivateHeaders" ; function replace() { export SEARCH="$1" && export REPLACE="$2" && ruby -p -i -e "gsub(ENV[\"SEARCH\"], ENV[\"REPLACE\"])" "$3" ; } ; replace "header \"imath.h\"" "" "${TARGET_BUILD_DIR}/${PRODUCT_NAME}${WRAPPER_SUFFIX}/Modules/module.modulemap" ; replace "header \"imath+additions.h\"" "" "${TARGET_BUILD_DIR}/${PRODUCT_NAME}${WRAPPER_SUFFIX}/Modules/module.modulemap"' }
-    ]
 
     # Things are listed twice (with different paths) in order to also make it compile as a development pod.
 
