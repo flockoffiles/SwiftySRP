@@ -25,6 +25,7 @@
 
 import Foundation
 import FFDataWrapper
+import SwiftySRP.Private
 
 /// This class wraps an mpz_t value from imath and provides methods to conform to SRPBigIntProtocol
 public final class SRPMpzT: SRPBigIntProtocol

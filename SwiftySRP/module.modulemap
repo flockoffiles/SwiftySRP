@@ -4,9 +4,9 @@ framework module SwiftySRP {
 
     export *
     module * {export *}
-}
 
-module SwiftySRP.Swift {
-    header "SwiftySRP-Swift.h"
-    requires objc
+    explicit module Private {
+        header "imath.h"
+        header "imath+additions.h"
+    }
 }

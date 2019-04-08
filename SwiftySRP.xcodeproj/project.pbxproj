@@ -80,8 +80,7 @@
 		57AA46891FCC424E00DEDF67 /* SRP+iMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SRP+iMath.swift"; sourceTree = "<group>"; };
 		57AA468C1FCC436200DEDF67 /* SRP+iMath+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SRP+iMath+Extensions.swift"; sourceTree = "<group>"; };
 		57AA468F1FCC43F400DEDF67 /* SRP+BigInt+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SRP+BigInt+Extensions.swift"; sourceTree = "<group>"; };
-		745DDECA2243A1F500ADFBF4 /* private.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = private.modulemap; sourceTree = "<group>"; };
-		745DDECF2243A46100ADFBF4 /* public.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = public.modulemap; sourceTree = "<group>"; };
+		745DDECF2243A46100ADFBF4 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		8489902F0C68A50F44D97659 /* Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig"; path = "Pods/Target Support Files/Pods-SwiftySRP_Base-SwiftySRP/Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig"; sourceTree = "<group>"; };
 		939F68601F83960D00C4553D /* FFDataWrapper.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FFDataWrapper.framework; path = Carthage/Build/iOS/FFDataWrapper.framework; sourceTree = "<group>"; };
 		A50090B51E4C74BD00238562 /* SwiftySRP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftySRP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -205,8 +204,7 @@
 		A50090B71E4C74BD00238562 /* SwiftySRP */ = {
 			isa = PBXGroup;
 			children = (
-				745DDECA2243A1F500ADFBF4 /* private.modulemap */,
-				745DDECF2243A46100ADFBF4 /* public.modulemap */,
+				745DDECF2243A46100ADFBF4 /* module.modulemap */,
 				A50090B81E4C74BD00238562 /* SwiftySRP.h */,
 				A50090B91E4C74BD00238562 /* Info.plist */,
 				A5D4B1CD1E7BE9E500BC9A9A /* Configuration */,
@@ -318,7 +316,6 @@
 				A50090B11E4C74BD00238562 /* Frameworks */,
 				A50090B21E4C74BD00238562 /* Headers */,
 				A50090B31E4C74BD00238562 /* Resources */,
-				745DDED02243A4BF00ADFBF4 /* Fix Framework Module Map */,
 			);
 			buildRules = (
 			);
@@ -357,7 +354,6 @@
 				A5D057661F5454A1004BC5D6 /* Frameworks */,
 				A5D057681F5454A1004BC5D6 /* Headers */,
 				A5D0576A1F5454A1004BC5D6 /* Resources */,
-				745DDED12243A54800ADFBF4 /* Fix Framework Module Map */,
 			);
 			buildRules = (
 			);
@@ -476,44 +472,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		745DDED02243A4BF00ADFBF4 /* Fix Framework Module Map */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Fix Framework Module Map";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Delete PrivateHeaders folder\nrm -rf \"${TARGET_BUILD_DIR}/${PRODUCT_NAME}${WRAPPER_SUFFIX}/PrivateHeaders\"\n\n# Copy public.modulemap file and rename it to module.modulemap\ncp \"${SRCROOT}/SwiftySRP/public.modulemap\" \"${TARGET_BUILD_DIR}/${PRODUCT_NAME}${WRAPPER_SUFFIX}/Modules/module.modulemap\"\n";
-			showEnvVarsInLog = 0;
-		};
-		745DDED12243A54800ADFBF4 /* Fix Framework Module Map */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Fix Framework Module Map";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Delete PrivateHeaders folder\nrm -rf \"${TARGET_BUILD_DIR}/${PRODUCT_NAME}${WRAPPER_SUFFIX}/PrivateHeaders\"\n\n# Copy public.modulemap file and rename it to module.modulemap\ncp \"${SRCROOT}/SwiftySRP/public.modulemap\" \"${TARGET_BUILD_DIR}/${PRODUCT_NAME}${WRAPPER_SUFFIX}/Modules/module.modulemap\"\n";
 			showEnvVarsInLog = 0;
 		};
 		BD890336167236BD4F0E34CA /* [CP] Check Pods Manifest.lock */ = {
@@ -744,7 +702,7 @@
 				INFOPLIST_FILE = SwiftySRP/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = SwiftySRP/private.modulemap;
+				MODULEMAP_FILE = SwiftySRP/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flockoffiles.SwiftySRP;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -770,7 +728,7 @@
 				INFOPLIST_FILE = SwiftySRP/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = SwiftySRP/private.modulemap;
+				MODULEMAP_FILE = SwiftySRP/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flockoffiles.SwiftySRP;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -834,7 +792,7 @@
 				INFOPLIST_FILE = SwiftySRP/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = SwiftySRP/private.modulemap;
+				MODULEMAP_FILE = SwiftySRP/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flockoffiles.SwiftySRP;
 				PRODUCT_NAME = SwiftySRP;
 				SKIP_INSTALL = YES;
@@ -861,7 +819,7 @@
 				INFOPLIST_FILE = SwiftySRP/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = SwiftySRP/private.modulemap;
+				MODULEMAP_FILE = SwiftySRP/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flockoffiles.SwiftySRP;
 				PRODUCT_NAME = SwiftySRP;
 				SKIP_INSTALL = YES;
