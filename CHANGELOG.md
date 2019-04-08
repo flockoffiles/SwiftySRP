@@ -1,5 +1,8 @@
 # SwiftySRP
 
+## Version 2.13
+- Merged pull request #11 (simplified module map)
+
 ## Version 2.12
 - Swift version changed to 4.2.
 - Fixed warnings under Xcode 10.2
