@@ -8,7 +8,7 @@ Pod::Spec.new do |spec|
     spec.author       = 'Sergey Novitsky'
     spec.source       = { :git => 'https://github.com/flockoffiles/SwiftySRP.git', :tag => 'v' + String(spec.version) }
     spec.source_files = 'SwiftySRP/*.{h,swift}', 'imath/*.{c,h}'
-    spec.module_map = 'SwiftySRP/public.modulemap'
+    spec.module_map = 'SwiftySRP/module.modulemap'
     spec.exclude_files = 'SwiftySRP/BigIntSpecific/*'
     spec.public_header_files = 'SwiftySRP/**/*.h' 
     spec.private_header_files = 'imath/*.h'
