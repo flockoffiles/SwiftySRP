@@ -92,7 +92,7 @@ public enum CryptoAlgorithm
             
             key.withUnsafeBytes { keyBytes in
                 data.withUnsafeBytes { dataBytes in
-                    CCHmac(CCHmacAlgorithm(self.hmacAlgorithm), keyBytes, key.count, dataBytes, data.count, &result)
+                    CCHmac(CCHmacAlgorithm(self.hmacAlgorithm), keyBytes.baseAddress!, key.count, dataBytes.baseAddress!, data.count, &result)
                 }
             }
             
@@ -137,7 +137,7 @@ public func data(hex: String) -> Data
         }
         bytes[index >> 1] |= nibble
     }
-    return Data(bytes: bytes)
+    return Data(bytes)
 }
 
 /// Convert data to a hex string

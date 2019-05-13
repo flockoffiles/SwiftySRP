@@ -5,12 +5,6 @@
       location = "group:SwiftySRP.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:SwiftySRPTestApp.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:Pods/Pods.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:SwiftySRPPlayground.xcodeproj">
    </FileRef>
 </Workspace>

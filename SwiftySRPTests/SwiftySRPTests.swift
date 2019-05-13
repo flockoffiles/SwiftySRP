@@ -25,7 +25,6 @@
 
 import XCTest
 @testable import SwiftySRP
-import BigInt
 import FFDataWrapper
 
 let N_asString = "EEAF0AB9ADB38DD69C33F80AFA8FC5E86072618775FF3C0B9EA2314C"
@@ -86,13 +85,15 @@ class SwiftySRPTests: XCTestCase
     let expectedStringSharedHMacKey_512 = "AF3C3D5644484E0D6C65B19F2C43F4D9C1C11C873577B2FA3C84B3EDF2D3FA1EC9005671749A881B769B21AF21E4060721B8A2DE6B43E34268860916D976A513"
 
     
-    let s = BigUInt("BEB25379D1A8581EB5A727673A2441EE", radix: 16)!.serialize()
+    let s = data(hex: "BEB25379D1A8581EB5A727673A2441EE")
     let I = "alice".data(using: .utf8)!
     let p = "password123".data(using: .utf8)!
 
     
-    var N: Data = BigUInt(N_asString, radix: 16)!.serialize()
-    var g: Data = BigUInt(g_asString, radix: 16)!.serialize()
+    var N: Data = data(hex: N_asString)
+    var g: Data = data(hex: g_asString)
+    
+    var emptyG: Data = data(hex: "0")
     
     override func setUp()
     {
@@ -108,21 +109,6 @@ class SwiftySRPTests: XCTestCase
         super.tearDown()
     }
     
-    func testBigUIntExponentiationPerformance()
-    {
-        let g: BigUInt = BigUInt("02", radix: 16)!
-        
-        let a: BigUInt = BigUInt("50BF3A20EBF53DD3CA79620CE47928148A15B25B28D00B25687AA08ABFA455E8641416DF9985A08521D719177D83A33C3B64AD5DA4BC3320C499220D1EF83ABAC9A10F04C44262540DD39FE9ABC590F774906589C72DF4439F63C9D0CE3545B497A8DFB8BDEB97CE2F7521FDB1AD55CE3E23B3634FC1AD2F40E63D68BBB6C0B25526F1729DDFA5130DEFDD142EB8433020C9211D08D6F59B3C3C90BD8FB258BCDF5A2FF87F77E2C427517D55C5C2BE25B9BC923DEB9BEDA25B505E09C5EEA44D584FAF0648DF23A8757B6414B9BF95E5F51C3910C97E70134E6A16A23F8F6AE8068AE01A6E9CE090DD02F6C2EAD70D1918CBFAAB58C78DC565E0B2479D9E51AC", radix:16)!
-        
-        let N: BigUInt = BigUInt("E13803363DBE8FC19F85E7DC6E8C26ACE2D78D722C1DE8A17746206BC436EC5BF20C0ACCE8BDACED9F22939836879E31D8F69ABFD7F357A1FA9DF31A3E5AF764E7D3D1CEAF48FF3C28F14004651FDB2D81C0B4E0DE6FD1EA7975BB868AFF65CB163F29205992ED2D80A7055A5BFA8C96456D74E6BA19ECCD4E3F3AE31B2D368DBC627EC3F701423586F77BA76E5A552DBA821DF7241B4FF43E7BDD5BCC55EEB2DBE2120B33F3D4A0EF4A3EA5B9EF8C2DC33447CEC468DD86B7AA23E3005305007433D51EC866228326B38EBED72C582CE121E95544FA08703B51E73F4EED91C26851573D01DDF189C710C29E9DBB4ED382942AF8590BB7AE33BF04FF40D8A003", radix: 16)!
-        
-        let startTime = CACurrentMediaTime()
-        _ = g.power(a, modulus:N)
-        let endTime = CACurrentMediaTime()
-        let duration = endTime - startTime
-        print("Exponentiation took: \(duration) seconds")
-    }
-    
     /// Simple test to verify that hex strings representations are the same and can be used for comparison in other tests.
     func testStringConversion()
     {
@@ -130,26 +116,9 @@ class SwiftySRPTests: XCTestCase
         XCTAssertEqual(g_asString, hexString(data: g))
     }
     
-    /// Simple test to verify that conversion of BigUInt to Data gives correct representation in terms of the order of bytes.
-    func testBigUIntDataConversion()
-    {
-        let N: BigUInt = BigUInt(N_asString, radix: 16)!
-        let N_data = N.serialize()
-        let N_dataArray = [UInt8](N_data)
-        let recoveredString = N_dataArray.reduce("") { (aResult, aCurrentValue) -> String in
-            return aResult + String(format: "%02X", aCurrentValue)
-        }
-        XCTAssertEqual(N_asString, recoveredString)
-    }
-    
-    func testCreateConfigurationErrorsBigUInt()
-    {
-        genTestCreateConfigurationErrors(forBigInt: BigUInt())
-    }
-
     func testCreateConfigurationErrorsIMath()
     {
-        genTestCreateConfigurationErrors(forBigInt: BigUInt())
+        genTestCreateConfigurationErrors(forBigInt: SRPMpzT())
     }
 
     func genTestCreateConfigurationErrors<BigIntType: SRPBigIntProtocol>(forBigInt bigIntType: BigIntType)
@@ -159,7 +128,10 @@ class SwiftySRPTests: XCTestCase
         // Create an SRP configuration with an empty generator.
         do
         {
-            let _ = try SRP.protocol(N: BigIntType(N), g:BigIntType(Data()), digest: CryptoAlgorithm.SHA256.digestFunc(), hmac: CryptoAlgorithm.SHA256.hmacFunc())
+            let _ = try SRP.protocol(N: BigIntType(N),
+                                     g: BigIntType(emptyG),
+                                     digest: CryptoAlgorithm.SHA256.digestFunc(),
+                                     hmac: CryptoAlgorithm.SHA256.hmacFunc())
         }
         catch let e {
             if let srpError = e as? SRPError
@@ -194,21 +166,11 @@ class SwiftySRPTests: XCTestCase
         
     }
     
-    func testGenerate_x_SHA256_BigUInt()
-    {
-        genTestGenerate_x(forBigInt: BigUInt(), expected_x: expected_x_256, digest: CryptoAlgorithm.SHA256.digestFunc(), hmac: CryptoAlgorithm.SHA256.hmacFunc())
-    }
-
     func testGenerate_x_SHA256_IMath()
     {
         genTestGenerate_x(forBigInt: SRPMpzT(), expected_x: expected_x_256, digest: CryptoAlgorithm.SHA256.digestFunc(), hmac: CryptoAlgorithm.SHA256.hmacFunc())
     }
 
-    func testGenerate_x_SHA512_BigUInt()
-    {
-        genTestGenerate_x(forBigInt: BigUInt(), expected_x: expected_x_512, digest: CryptoAlgorithm.SHA512.digestFunc(), hmac: CryptoAlgorithm.SHA512.hmacFunc())
-    }
-    
     func testGenerate_x_SHA512_IMath()
     {
         genTestGenerate_x(forBigInt: SRPMpzT(), expected_x: expected_x_512, digest: CryptoAlgorithm.SHA512.digestFunc(), hmac: CryptoAlgorithm.SHA512.hmacFunc())
@@ -229,8 +191,8 @@ class SwiftySRPTests: XCTestCase
         let srp: SRPGenericImpl<BigIntType>
         do {
             // a is fixed in this test (not generated randomly)
-            let fixed_a = data(hex:fixedString_a)
-            let fixed_b = data(hex:fixedString_b)
+            let fixed_a = data(hex: fixedString_a)
+            let fixed_b = data(hex: fixedString_b)
             
             srp = try SRP.protocol(N: BigIntType(N),
                                    g: BigIntType(g),
@@ -298,17 +260,6 @@ class SwiftySRPTests: XCTestCase
     /// In this test we use a fixed parameter a (instead of generating a random one).
     /// Expected values (for the given fixed salt) were generated by BouncyCastle.
     /// This test is for SRP using SHA256 as the hashing function.
-    func testGenerateClientCredentials_SHA256_BigUInt()
-    {
-        genTestGenerateClientCredentials(forBigInt: BigUInt(),
-                                         digest: CryptoAlgorithm.SHA256.digestFunc(),
-                                         hmac: CryptoAlgorithm.SHA256.hmacFunc(),
-                                         fixedString_a: fixedString_a_256,
-                                         fixedString_b: fixedString_b_256,
-                                         expectedString_x: expectedString_x_256,
-                                         expectedString_A: expectedString_A_256)
-    }
-    
     func testGenerateClientCredentials_SHA256_IMath()
     {
         genTestGenerateClientCredentials(forBigInt: SRPMpzT(),
@@ -320,22 +271,6 @@ class SwiftySRPTests: XCTestCase
                                          expectedString_A: expectedString_A_256)
     }
 
-    /// This test verifies correct computation of the client credentials by SRP.
-    /// In this test we use a fixed parameter a (instead of generating a random one).
-    /// Expected values (for the given fixed salt) were generated by BouncyCastle.
-    /// This test is for SRP using SHA512 as the hashing function.
-    func testGenerateClientCredentials_SHA512_BigUInt()
-    {
-        genTestGenerateClientCredentials(forBigInt: BigUInt(),
-                                         digest: CryptoAlgorithm.SHA512.digestFunc(),
-                                         hmac: CryptoAlgorithm.SHA512.hmacFunc(),
-                                         fixedString_a: fixedString_a_512,
-                                         fixedString_b: fixedString_b_512,
-                                         expectedString_x: expectedString_x_512,
-                                         expectedString_A: expectedString_A_512)
-    }
-
-    
     /// This test verifies correct computation of the client credentials by SRP.
     /// In this test we use a fixed parameter a (instead of generating a random one).
     /// Expected values (for the given fixed salt) were generated by BouncyCastle.
@@ -384,17 +319,6 @@ class SwiftySRPTests: XCTestCase
         
     }
     
-    /// Test to verify that the SRP verifier is calculated correctly (this version is for SHA256 hash function).
-    func testVerifier_SHA256_BigUInt()
-    {
-        genTestVerifier(forBigInt: BigUInt(),
-                        digest: CryptoAlgorithm.SHA256.digestFunc(),
-                        hmac: CryptoAlgorithm.SHA256.hmacFunc(),
-                        fixedString_a: fixedString_a_256,
-                        fixedString_b: fixedString_b_256,
-                        expectedStringVerifier: expectedStringVerifier_256)
-    }
-
     func testVerifier_SHA256_IMath()
     {
         genTestVerifier(forBigInt: SRPMpzT(),
@@ -405,16 +329,6 @@ class SwiftySRPTests: XCTestCase
                         expectedStringVerifier: expectedStringVerifier_256)
     }
 
-    func testVerifier_SHA512_BigUInt()
-    {
-        genTestVerifier(forBigInt: BigUInt(),
-                        digest: CryptoAlgorithm.SHA512.digestFunc(),
-                        hmac: CryptoAlgorithm.SHA512.hmacFunc(),
-                        fixedString_a: fixedString_a_512,
-                        fixedString_b: fixedString_b_512,
-                        expectedStringVerifier: expectedStringVerifier_512)
-    }
-    
     func testVerifier_SHA512_IMath()
     {
         genTestVerifier(forBigInt: SRPMpzT(),
@@ -442,13 +356,13 @@ class SwiftySRPTests: XCTestCase
         
         let srp: SRPProtocol
         do {
-            srp = try SRP.bigUInt.protocol(N: N,
-                                              g:g,
-                                              digest: digest,
-                                              hmac: hmac,
-                                              a: {  return fixed_a },
-                                              b: {  return fixed_b })
-            
+            srp = try SRP.protocol(N: BigIntType(N),
+                                   g: BigIntType(g),
+                                   digest: digest,
+                                   hmac: hmac,
+                                   a: {  return fixed_a },
+                                   b: {  return fixed_b })
+
             // Client computes the verifier (and sends it to the server)
             var clientSRPData = try srp.verifier(s: s, I: I, p: p)
             
@@ -506,23 +420,6 @@ class SwiftySRPTests: XCTestCase
     
     /// This test verifies that the client and server way of calculating the shared secret produce the same shared secret value.
     /// (This version is for SHA256 hash function)
-    func testVerification_SHA256_BigUInt()
-    {
-        genTestVerification(forBigInt: BigUInt(),
-                            digest: CryptoAlgorithm.SHA256.digestFunc(),
-                            hmac: CryptoAlgorithm.SHA256.hmacFunc(),
-                            hmacSalt: hmacSalt256,
-                            fixedString_a: fixedString_a_256,
-                            fixedString_b: fixedString_b_256,
-                            expectedString_B: expectedString_B_256,
-                            expectedString_cM: expectedString_cM_256,
-                            expectedString_sM: expectedString_sM_256,
-                            expectedStringSharedKey: expectedStringSharedKey_256,
-                            expectedStringSharedHMacKey: expectedStringSharedHMacKey_256)
-    }
-
-    /// This test verifies that the client and server way of calculating the shared secret produce the same shared secret value.
-    /// (This version is for SHA256 hash function)
     func testVerification_SHA256_IMath()
     {
         genTestVerification(forBigInt: SRPMpzT(),
@@ -536,26 +433,6 @@ class SwiftySRPTests: XCTestCase
                             expectedString_sM: expectedString_sM_256,
                             expectedStringSharedKey: expectedStringSharedKey_256,
                             expectedStringSharedHMacKey: expectedStringSharedHMacKey_256)
-    }
-
-    
-    
-    
-    /// This test verifies that the client and server way of calculating the shared secret produce the same shared secret value.
-    /// (This version is for SHA512 hash function)
-    func testVerification_SHA512_BigUInt()
-    {
-        genTestVerification(forBigInt: BigUInt(),
-                            digest: CryptoAlgorithm.SHA512.digestFunc(),
-                            hmac: CryptoAlgorithm.SHA512.hmacFunc(),
-                            hmacSalt: hmacSalt512,
-                            fixedString_a: fixedString_a_512,
-                            fixedString_b: fixedString_b_512,
-                            expectedString_B: expectedString_B_512,
-                            expectedString_cM: expectedString_cM_512,
-                            expectedString_sM: expectedString_sM_512,
-                            expectedStringSharedKey: expectedStringSharedKey_512,
-                            expectedStringSharedHMacKey: expectedStringSharedHMacKey_512)
     }
     
     func testVerification_SHA512_IMath()

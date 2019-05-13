@@ -1,1 +1,1 @@
-github "flockoffiles/FFDataWrapper" ~> 1.8
+github "flockoffiles/FFDataWrapper" "swift5"

@@ -54,8 +54,8 @@ public final class SRPMpzT: SRPBigIntProtocol
     /// - Parameter data: Data buffer holding the value.
     public required init(_ data: Data)
     {
-        data.withUnsafeBytes { (bytes: UnsafePointer<UInt8>) -> Void in
-            mp_int_read_const_unsigned(&value, bytes, Int32(data.count))
+        data.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) -> Void in
+            mp_int_read_const_unsigned(&value, bytes.baseAddress!.assumingMemoryBound(to: UInt8.self), Int32(data.count))
         }
     }
     
@@ -65,8 +65,8 @@ public final class SRPMpzT: SRPBigIntProtocol
     public required init(_ wrappedData: FFDataWrapper)
     {
         wrappedData.mapData { decodedData in
-            decodedData.withUnsafeBytes { (bytes: UnsafePointer<UInt8>) -> Void in
-                mp_int_read_const_unsigned(&value, bytes, Int32(decodedData.count))
+            decodedData.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) -> Void in
+                mp_int_read_const_unsigned(&value, bytes.baseAddress!.assumingMemoryBound(to: UInt8.self), Int32(decodedData.count))
             }
         }
     }
@@ -97,8 +97,8 @@ public final class SRPMpzT: SRPBigIntProtocol
         }
         
         var data = Data(count: Int(byteCount))
-        data.withUnsafeMutableBytes({ (bytes: UnsafeMutablePointer<UInt8>) -> Void in
-            mp_int_to_unsigned(&value, bytes, byteCount)
+        data.withUnsafeMutableBytes({ (bytes: UnsafeMutableRawBufferPointer) -> Void in
+            mp_int_to_unsigned(&value, bytes.baseAddress!.assumingMemoryBound(to: UInt8.self), byteCount)
         })
         
         return data
@@ -116,8 +116,8 @@ public final class SRPMpzT: SRPBigIntProtocol
         
         var data = Data(count: Int(byteCount))
         defer { FFDataWrapper.wipe(&data) }
-        data.withUnsafeMutableBytes({ (bytes: UnsafeMutablePointer<UInt8>) -> Void in
-            mp_int_to_unsigned(&value, bytes, byteCount)
+        data.withUnsafeMutableBytes({ (bytes: UnsafeMutableRawBufferPointer) -> Void in
+            mp_int_to_unsigned(&value, bytes.baseAddress!.assumingMemoryBound(to: UInt8.self), byteCount)
         })
 
         return FFDataWrapper(data: data)
