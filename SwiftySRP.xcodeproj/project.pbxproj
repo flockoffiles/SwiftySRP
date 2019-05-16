@@ -73,7 +73,7 @@
 		577FCE7B2257ABB20048BD0F /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		57AA46891FCC424E00DEDF67 /* SRP+iMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SRP+iMath.swift"; sourceTree = "<group>"; };
 		57AA468C1FCC436200DEDF67 /* SRP+iMath+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SRP+iMath+Extensions.swift"; sourceTree = "<group>"; };
-		57FF697F228985CA005F5180 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
+		57FF697F228985CA005F5180 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		745DDECF2243A46100ADFBF4 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		800E1112C68F934FFFD2DB3C /* Pods_SwiftySRP_Base_SwiftySRP_SwiftySRPTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SwiftySRP_Base_SwiftySRP_SwiftySRPTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AD64A74F54AF236E5BAF297 /* Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.debug.xcconfig"; path = "Target Support Files/Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests/Pods-SwiftySRP_Base-SwiftySRP-SwiftySRPTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -92,8 +92,6 @@
 		A52B24CB1E800ED40024707F /* SRPGenericImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPGenericImpl.swift; sourceTree = "<group>"; };
 		A53E4F1F1E5B522000C7DDEA /* SwiftySRPTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SwiftySRPTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		A54DFB671E7AD094003F4DB0 /* SRPMpzT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPMpzT.swift; sourceTree = "<group>"; };
-		A56827411F545DD300C4A80D /* BigInt.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BigInt.framework; path = Carthage/Build/iOS/BigInt.framework; sourceTree = "<group>"; };
-		A56827431F545DDD00C4A80D /* SipHash.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SipHash.framework; path = Carthage/Build/iOS/SipHash.framework; sourceTree = "<group>"; };
 		A58ACE861E5D818000FF2C0D /* SRPConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPConfiguration.swift; sourceTree = "<group>"; };
 		A58ACE8C1E5D826400FF2C0D /* SRPUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPUtil.swift; sourceTree = "<group>"; };
 		A58ACE8E1E5D82B400FF2C0D /* SRPProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SRPProtocol.swift; sourceTree = "<group>"; };
@@ -146,8 +144,6 @@
 			isa = PBXGroup;
 			children = (
 				939F68601F83960D00C4553D /* FFDataWrapper.framework */,
-				A56827431F545DDD00C4A80D /* SipHash.framework */,
-				A56827411F545DD300C4A80D /* BigInt.framework */,
 				96E7B011098C16B8B9413B5A /* Pods_SwiftySRP_Base_SwiftySRP.framework */,
 				800E1112C68F934FFFD2DB3C /* Pods_SwiftySRP_Base_SwiftySRP_SwiftySRPTests.framework */,
 			);
