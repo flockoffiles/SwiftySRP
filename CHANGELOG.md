@@ -1,6 +1,6 @@
 # SwiftySRP
 
-## Version 2.14
+## Version 3.0
 - Migrated to Swift 5 and removed support for Xcode versions earlier than 10.2
 - Removed remaining references to BigInt (in tests)
 - Removed unused projects.
