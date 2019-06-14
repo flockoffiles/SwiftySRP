@@ -30,10 +30,10 @@
 		57BD9EBE22B3D89D000BE530 /* SRP+iMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA46891FCC424E00DEDF67 /* SRP+iMath.swift */; };
 		57BD9EBF22B3D89D000BE530 /* SRPConfigurationGenericImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1D91E7C1D2100BC9A9A /* SRPConfigurationGenericImpl.swift */; };
 		57BD9EC022B3D89D000BE530 /* SRPConfiguration+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D4B1DD1E7C2D0A00BC9A9A /* SRPConfiguration+Extensions.swift */; };
-		57BD9EC222B3D89D000BE530 /* FFDataWrapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 939F68601F83960D00C4553D /* FFDataWrapper.framework */; };
 		57BD9EC422B3D89D000BE530 /* imath.h in Headers */ = {isa = PBXBuildFile; fileRef = A5BF31A81E7A9AA400EC5BCA /* imath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57BD9EC522B3D89D000BE530 /* imath+additions.h in Headers */ = {isa = PBXBuildFile; fileRef = A5BF31AF1E7ABFEE00EC5BCA /* imath+additions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57BD9EC622B3D89D000BE530 /* SwiftySRP.h in Headers */ = {isa = PBXBuildFile; fileRef = A50090B81E4C74BD00238562 /* SwiftySRP.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		57BD9EE022B3E0E3000BE530 /* FFDataWrapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57BD9EDD22B3E076000BE530 /* FFDataWrapper.framework */; };
 		57FF6980228985CA005F5180 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 57FF697F228985CA005F5180 /* Podfile */; };
 		745DDECB2243A3CD00ADFBF4 /* imath.h in Headers */ = {isa = PBXBuildFile; fileRef = A5BF31A81E7A9AA400EC5BCA /* imath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		745DDECC2243A3CE00ADFBF4 /* imath.h in Headers */ = {isa = PBXBuildFile; fileRef = A5BF31A81E7A9AA400EC5BCA /* imath.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -80,6 +80,41 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		57BD9ED622B3E076000BE530 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 57BD9ECF22B3E076000BE530 /* FFDataWrapper.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A5063F831F73B29500CA4109;
+			remoteInfo = FFDataWrapper;
+		};
+		57BD9ED822B3E076000BE530 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 57BD9ECF22B3E076000BE530 /* FFDataWrapper.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A5063F8C1F73B29500CA4109;
+			remoteInfo = FFDataWrapperTests;
+		};
+		57BD9EDA22B3E076000BE530 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 57BD9ECF22B3E076000BE530 /* FFDataWrapper.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 572AF0B120371C230094DA85;
+			remoteInfo = FFDataWrapperMacOS;
+		};
+		57BD9EDC22B3E076000BE530 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 57BD9ECF22B3E076000BE530 /* FFDataWrapper.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 57BD9E9422B3CF22000BE530;
+			remoteInfo = FFDataWrapper.static;
+		};
+		57BD9EDE22B3E0CF000BE530 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 57BD9ECF22B3E076000BE530 /* FFDataWrapper.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 57BD9E7E22B3CF22000BE530;
+			remoteInfo = FFDataWrapper.static;
+		};
 		A50090C01E4C74BD00238562 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A50090AC1E4C74BD00238562 /* Project object */;
@@ -96,6 +131,7 @@
 		57AA46891FCC424E00DEDF67 /* SRP+iMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SRP+iMath.swift"; sourceTree = "<group>"; };
 		57AA468C1FCC436200DEDF67 /* SRP+iMath+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SRP+iMath+Extensions.swift"; sourceTree = "<group>"; };
 		57BD9ECB22B3D89D000BE530 /* SwiftySRP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftySRP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		57BD9ECF22B3E076000BE530 /* FFDataWrapper.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FFDataWrapper.xcodeproj; path = Carthage/Checkouts/FFDataWrapper/FFDataWrapper.xcodeproj; sourceTree = "<group>"; };
 		57FF697F228985CA005F5180 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		745DDECF2243A46100ADFBF4 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		800E1112C68F934FFFD2DB3C /* Pods_SwiftySRP_Base_SwiftySRP_SwiftySRPTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SwiftySRP_Base_SwiftySRP_SwiftySRPTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -139,7 +175,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				57BD9EC222B3D89D000BE530 /* FFDataWrapper.framework in Frameworks */,
+				57BD9EE022B3E0E3000BE530 /* FFDataWrapper.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -171,11 +207,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		57BD9ECD22B3DCD1000BE530 /* FFDataWrapper */ = {
+		57BD9ECE22B3E022000BE530 /* FFDataWrapper */ = {
 			isa = PBXGroup;
 			children = (
+				57BD9ECF22B3E076000BE530 /* FFDataWrapper.xcodeproj */,
 			);
-			path = FFDataWrapper;
+			name = FFDataWrapper;
+			sourceTree = "<group>";
+		};
+		57BD9ED022B3E076000BE530 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				57BD9ED722B3E076000BE530 /* FFDataWrapper.framework */,
+				57BD9ED922B3E076000BE530 /* FFDataWrapperTests.xctest */,
+				57BD9EDB22B3E076000BE530 /* FFDataWrapperMacOS.framework */,
+				57BD9EDD22B3E076000BE530 /* FFDataWrapper.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		7DFD5AD894CA7CC238161CAA /* Frameworks */ = {
@@ -191,7 +239,7 @@
 		A50090AB1E4C74BD00238562 = {
 			isa = PBXGroup;
 			children = (
-				57BD9ECD22B3DCD1000BE530 /* FFDataWrapper */,
+				57BD9ECE22B3E022000BE530 /* FFDataWrapper */,
 				57FF697F228985CA005F5180 /* Podfile */,
 				5742D3AB228969A5003EF87A /* Cartfile */,
 				5742D3AA2289698D003EF87A /* SwiftySRP.podspec */,
@@ -355,6 +403,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				57BD9EDF22B3E0CF000BE530 /* PBXTargetDependency */,
 			);
 			name = "SwiftySRP-iOS.static";
 			productName = SwiftySRP;
@@ -457,6 +506,12 @@
 			mainGroup = A50090AB1E4C74BD00238562;
 			productRefGroup = A50090B61E4C74BD00238562 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 57BD9ED022B3E076000BE530 /* Products */;
+					ProjectRef = 57BD9ECF22B3E076000BE530 /* FFDataWrapper.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				A50090B41E4C74BD00238562 /* SwiftySRP */,
@@ -466,6 +521,37 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		57BD9ED722B3E076000BE530 /* FFDataWrapper.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = FFDataWrapper.framework;
+			remoteRef = 57BD9ED622B3E076000BE530 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		57BD9ED922B3E076000BE530 /* FFDataWrapperTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = FFDataWrapperTests.xctest;
+			remoteRef = 57BD9ED822B3E076000BE530 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		57BD9EDB22B3E076000BE530 /* FFDataWrapperMacOS.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = FFDataWrapperMacOS.framework;
+			remoteRef = 57BD9EDA22B3E076000BE530 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		57BD9EDD22B3E076000BE530 /* FFDataWrapper.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = FFDataWrapper.framework;
+			remoteRef = 57BD9EDC22B3E076000BE530 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		57BD9EC722B3D89D000BE530 /* Resources */ = {
@@ -651,6 +737,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		57BD9EDF22B3E0CF000BE530 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = FFDataWrapper.static;
+			targetProxy = 57BD9EDE22B3E0CF000BE530 /* PBXContainerItemProxy */;
+		};
 		A50090C11E4C74BD00238562 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = A50090B41E4C74BD00238562 /* SwiftySRP */;
