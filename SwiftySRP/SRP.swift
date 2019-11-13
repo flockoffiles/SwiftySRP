@@ -27,31 +27,57 @@ import Foundation
 
 /// This class serves as a namespace for SRP related methods. It is not meant to be instantiated.
 /// For a short description of the SRP protocol, see SRPProtocol.swift
-public struct SRP
-{
-    /// Create an instance of SRPProtocol with the given configuration.
-    /// - Parameters:
-    ///   - N: Safe large prime per SRP spec. You can generate the prime with openssl: openssl dhparam -text 2048
-    ///   - g: Group generator per SRP spec.
-    ///   - digest: Hash function to be used.
-    ///   - hmac: HMAC function to be used.
-    /// - Throws: SRPError if configuration parameters are not valid.
-    /// - Returns: The resulting SRP protocol implementation.
-    public static func `protocol`<BigIntType: SRPBigIntProtocol>(N: BigIntType,
-                                                                g: BigIntType,
-                                                                digest: @escaping DigestFunc = CryptoAlgorithm.SHA256.digestFunc(),
-                                                                hmac: @escaping HMacFunc = CryptoAlgorithm.SHA256.hmacFunc()) throws -> SRPProtocol
-    {
-        let configuration = SRPConfigurationGenericImpl<BigIntType>(N: N,
-                                                                g: g,
-                                                                digest: digest,
-                                                                hmac: hmac,
-                                                                aFunc: nil,
-                                                                bFunc: nil)
-        try configuration.validate()
-        return SRPGenericImpl<BigIntType>(configuration: configuration)
+public struct SRP<DataWrapperType: SRPDataWrapperProtocol> {
+
+    public struct Generic<BigIntType: SRPBigIntProtocol> {
+        
+        /// Create an instance of SRPProtocol with the given configuration.
+        /// - Parameters:
+        ///   - N: Safe large prime per SRP spec. You can generate the prime with openssl: openssl dhparam -text 2048
+        ///   - g: Group generator per SRP spec.
+        ///   - digest: Hash function to be used.
+        ///   - hmac: HMAC function to be used.
+        /// - Throws: SRPError if configuration parameters are not valid.
+        /// - Returns: The resulting SRP protocol implementation.
+        public static func `protocol`(N: BigIntType,
+                                      g: BigIntType,
+                                      digest: @escaping DigestFunc = CryptoAlgorithm.SHA256.digestFunc(),
+                                      hmac: @escaping HMacFunc = CryptoAlgorithm.SHA256.hmacFunc()) throws -> SRPProtocol {
+            let configuration =
+                SRPConfigurationGenericImpl<BigIntType>(N: BigIntType(N),
+                                                        g: BigIntType(g),
+                                                        digest: digest,
+                                                        hmac: hmac,
+                                                        aFunc: nil,
+                                                        bFunc: nil)
+            try configuration.validate()
+            return SRPGenericImpl<BigIntType, DataWrapperType>(configuration: configuration)
+        }
+    }
+
+    public struct IMath {
+        
+        /// Create an instance of SRPProtocol with the given configuration.
+        /// - Parameters:
+        ///   - N: Safe large prime per SRP spec. You can generate the prime with openssl: openssl dhparam -text 2048
+        ///   - g: Group generator per SRP spec.
+        ///   - digest: Hash function to be used.
+        ///   - hmac: HMAC function to be used.
+        /// - Throws: SRPError if configuration parameters are not valid.
+        /// - Returns: The resulting SRP protocol implementation.
+        public static func `protocol`(N: Data,
+                                      g: Data,
+                                      digest: @escaping DigestFunc = CryptoAlgorithm.SHA256.digestFunc(),
+                                      hmac: @escaping HMacFunc = CryptoAlgorithm.SHA256.hmacFunc()) throws -> SRPProtocol {
+            let configuration =
+                SRPConfigurationGenericImpl<SRPMpzT>(N: SRPMpzT(N),
+                                                     g: SRPMpzT(g),
+                                                     digest: digest,
+                                                     hmac: hmac,
+                                                     aFunc: nil,
+                                                     bFunc: nil)
+            try configuration.validate()
+            return SRPGenericImpl<SRPMpzT, DataWrapperType>(configuration: configuration)
+        }
     }
 }
-
-
-

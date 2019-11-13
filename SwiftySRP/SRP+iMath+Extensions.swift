@@ -8,8 +8,7 @@
 
 import Foundation
 
-public extension SRPIMathFactory
-{
+public extension SRP.IMath {
     /// Only for use in testing! Create an SRP configuration and provide custom closures to generate private ephemeral values 'a' and 'b'
     /// This is done to be able to use fixed values for 'a' and 'b' and make generated values predictable (and compare them with expected values).
     /// - Parameters:
@@ -26,15 +25,14 @@ public extension SRPIMathFactory
                     digest: @escaping DigestFunc = CryptoAlgorithm.SHA256.digestFunc(),
                     hmac: @escaping HMacFunc = CryptoAlgorithm.SHA256.hmacFunc(),
                     a: @escaping () -> Data,
-                    b: @escaping () -> Data) throws -> SRPProtocol
-    {
-        let configuration = SRPConfigurationGenericImpl<SRPMpzT>(N: SRPMpzT(N),
-                                                                 g: SRPMpzT(g),
-                                                                 digest: digest,
-                                                                 hmac: hmac,
-                                                                 aFunc: { SRPMpzT(a()) },
-                                                                 bFunc: { SRPMpzT(b()) })
-        return SRPGenericImpl<SRPMpzT>(configuration: configuration)
+                    b: @escaping () -> Data) throws -> SRPProtocol {
+        let configuration =
+            SRPConfigurationGenericImpl<SRPMpzT>(N: SRPMpzT(N),
+                                                 g: SRPMpzT(g),
+                                                 digest: digest,
+                                                 hmac: hmac,
+                                                 aFunc: { SRPMpzT(a()) },
+                                                 bFunc: { SRPMpzT(b()) })
+        return SRPGenericImpl<SRPMpzT, DataWrapperType>(configuration: configuration)
     }
-
 }

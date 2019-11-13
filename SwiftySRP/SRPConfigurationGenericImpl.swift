@@ -24,11 +24,9 @@
 //  SOFTWARE.
 
 import Foundation
-import FFDataWrapper
 
 /// Implementation: configuration for SRP algorithms (see the spec. above for more information about the meaning of parameters).
-struct SRPConfigurationGenericImpl<BigIntType: SRPBigIntProtocol>: SRPConfiguration
-{
+struct SRPConfigurationGenericImpl<BigIntType: SRPBigIntProtocol>: SRPConfiguration {
     typealias PrivateValueFunc = () -> BigIntType
 
     /// A large safe prime per SRP spec. (Also see: https://tools.ietf.org/html/rfc5054#appendix-A)
@@ -59,7 +57,6 @@ struct SRPConfigurationGenericImpl<BigIntType: SRPBigIntProtocol>: SRPConfigurat
     /// Custom function to generate 'b'
     let _bFunc: PrivateValueFunc?
     
-    
     /// Create a configuration with the given parameters.
     ///
     /// - Parameters:
@@ -74,8 +71,7 @@ struct SRPConfigurationGenericImpl<BigIntType: SRPBigIntProtocol>: SRPConfigurat
          digest: @escaping DigestFunc = CryptoAlgorithm.SHA256.digestFunc(),
          hmac: @escaping HMacFunc = CryptoAlgorithm.SHA256.hmacFunc(),
          aFunc: PrivateValueFunc?,
-         bFunc: PrivateValueFunc?)
-    {
+         bFunc: PrivateValueFunc?) {
         _N = BigIntType(N)
         _g = BigIntType(g)
         self.digest = digest
@@ -84,12 +80,10 @@ struct SRPConfigurationGenericImpl<BigIntType: SRPBigIntProtocol>: SRPConfigurat
         _bFunc = bFunc
     }
     
-    
     /// Check if configuration is valid.
     /// Currently only requires the size of the prime to be >= 256 and the g to be greater than 1.
     /// - Throws: SRPError if invalid.
-    func validate() throws
-    {
+    func validate() throws {
         guard _N.bitWidth >= 256 else { throw SRPError.configurationPrimeTooShort }
         guard _g > BigIntType(1) else { throw SRPError.configurationGeneratorInvalid }
     }
@@ -98,8 +92,7 @@ struct SRPConfigurationGenericImpl<BigIntType: SRPBigIntProtocol>: SRPConfigurat
     ///
     /// - Parameter N: The value determining the range of the random value to generate.
     /// - Returns: Randomly generate value.
-    public static func generatePrivateValue(N: BigIntType) -> BigIntType
-    {
+    private static func generatePrivateValue(N: BigIntType) -> BigIntType {
         // Suppose that N is 8 bits wide
         // Then min bits == 4
         let minBits = N.bitWidth / 2
@@ -113,47 +106,28 @@ struct SRPConfigurationGenericImpl<BigIntType: SRPBigIntProtocol>: SRPConfigurat
     }
     
     /// Function to calculate parameter a (per SRP spec above)
-    func _a() -> BigIntType
-    {
-        if let aFunc = _aFunc
-        {
+    func _a() -> BigIntType {
+        if let aFunc = _aFunc {
             return aFunc()
         }
         return type(of: self).generatePrivateValue(N: _N)
     }
     
     /// Function to calculate parameter a (per SRP spec above)
-    func clientPrivateValue() -> Data
-    {
+    func clientPrivateValue() -> Data {
         return _a().serialize()
     }
     
-    /// Function to calculate parameter a (per SRP spec above). Returns a wrapped value (more secure).
-    func wrappedClientPrivateValue() -> FFDataWrapper
-    {
-        return _a().wrappedSerialize()
-    }
-    
     /// Function to calculate parameter b (per SRP spec above)
-    func _b() -> BigIntType
-    {
-        if let bFunc = _bFunc
-        {
+    func _b() -> BigIntType {
+        if let bFunc = _bFunc {
             return bFunc()
         }
         return type(of: self).generatePrivateValue(N: _N)
     }
     
     /// Function to calculate parameter b (per SRP spec above)
-    func serverPrivateValue() -> Data
-    {
+    func serverPrivateValue() -> Data {
         return _b().serialize()
     }
-    
-    /// Function to calculate parameter b (per SRP spec above). Returns a wrapped value (more secure).
-    func wrappedServerPrivateValue() -> FFDataWrapper
-    {
-        return _b().wrappedSerialize()
-    }
 }
-

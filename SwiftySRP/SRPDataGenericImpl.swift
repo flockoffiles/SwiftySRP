@@ -24,11 +24,9 @@
 //  SOFTWARE.
 
 import Foundation
-import FFDataWrapper
 
 /// Specific implementation of SRP data for supported big integer types (they must conform to SRPBigIntProtocol)
-public struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
-{
+struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol> {
     /// Password hash 'x' as BigUInt (see SRP spec. in SRPProtocol.swift)
     var _x = BigIntType()
     
@@ -41,7 +39,8 @@ public struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
     /// Client evidence message, computed as: M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S (see SRP spec. in SRPProtocol.swift)
     var _clientM = BigIntType()
     
-    /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret. (see SRP spec. in SRPProtocol.swift)
+    /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message,
+    /// and pS is the padded shared secret. (see SRP spec. in SRPProtocol.swift)
     var _serverM = BigIntType()
     
     // Common data
@@ -74,14 +73,12 @@ public struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
     ///   - x: Salted password hash (= H(s, p))
     ///   - a: Private ephemeral value 'a' (per SRP spec. above)
     ///   - A: Public ephemeral value 'A' (per SRP spec. above)
-    public init(x: BigIntType, a: BigIntType, A: BigIntType)
-    {
+    public init(x: BigIntType, a: BigIntType, A: BigIntType) {
         // Actually copy the values.
         _x = BigIntType(x)
         _a = BigIntType(a)
         _A = BigIntType(A)
     }
-    
     
     /// Initializer to be used for the server side data.
     ///
@@ -90,14 +87,15 @@ public struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
     ///   - k: Parameter 'k' (per SRP spec. above)
     ///   - b: Private ephemeral value 'b' (per SRP spec. above)
     ///   - B: Public ephemeral value 'B' (per SRP spec. above)
-    public init(v: BigIntType, k: BigIntType, b: BigIntType, B: BigIntType)
-    {
+    public init(v: BigIntType, k: BigIntType, b: BigIntType, B: BigIntType) {
         _v = v
         _k = k
         _b = b
         _B = B
     }
-    
+}
+
+extension SRPDataGenericImpl: SRPData {
     /// Client public value 'A' (see the spec. above)
     public var clientPublicValue: Data {
         get {
@@ -108,17 +106,6 @@ public struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
         }
     }
     
-    /// Client public value 'A' (see SRP spec. in SRPProtocol.swift). This version returns a wrapped value (more secure).
-    public var wrappedClientPublicValue: FFDataWrapper {
-        get {
-            return _A.wrappedSerialize()
-        }
-        set {
-            _A = BigIntType(newValue)
-        }
-    }
-    
-
     /// Client private value 'a' (see the spec. above)
     public var clientPrivateValue: Data {
         get {
@@ -129,18 +116,6 @@ public struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
         }
     }
     
-    /// Client private value 'a' (see SRP spec. in SRPProtocol.swift)
-    /// This version returns a wrapped value (more secure).
-    public var wrappedClientPrivateValue: FFDataWrapper {
-        get {
-            return _a.wrappedSerialize()
-        }
-        set {
-            _a = BigIntType(newValue)
-        }
-    }
-
-    
     /// Client evidence message, computed as: M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S
     public var clientEvidenceMessage: Data {
         get {
@@ -150,18 +125,6 @@ public struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
             _clientM = BigIntType(newValue)
         }
     }
-    
-    /// Client evidence message, computed as: M = H( pA | pB | pS), where pA, pB, and pS - padded values of A, B, and S (see SRP spec. in SRPProtocol.swift)
-    /// This version returns a wrapped value (more secure).
-    public var wrappedClientEvidenceMessage: FFDataWrapper {
-        get {
-            return _clientM.wrappedSerialize()
-        }
-        set {
-            _clientM = BigIntType(newValue)
-        }
-    }
-
     
     /// Password hash (see the spec. above)
     public var passwordHash: Data {
@@ -174,17 +137,6 @@ public struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
         }
     }
     
-    /// Password hash 'x' (see SRP spec. in SRPProtocol.swift). This version returns a wrapped value (more secure).
-    public var wrappedPasswordHash: FFDataWrapper {
-        get {
-            return _x.wrappedSerialize()
-        }
-        set {
-            _x = BigIntType(newValue)
-        }
-    }
-
-    
     /// Scrambler u
     public var scrambler: Data {
         get {
@@ -194,17 +146,6 @@ public struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
             _u = BigIntType(newValue)
         }
     }
-    
-    /// Scrambler parameter 'u' = H(A, B) (see SRP spec. in SRPProtocol.swift). This version returns a wrapped value (more secure).
-    public var wrappedScrambler: FFDataWrapper {
-        get {
-            return _u.wrappedSerialize()
-        }
-        set {
-            _u = BigIntType(newValue)
-        }
-    }
-
     
     /// Client secret 'S' (see SRP spec. in SRPProtocol.swift)
     public var clientSecret: Data {
@@ -216,17 +157,6 @@ public struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
         }
     }
     
-    /// Client secret 'S' (see SRP spec. in SRPProtocol.swift). This version returns a wrapped value (more secure).
-    public var wrappedClientSecret: FFDataWrapper {
-        get {
-            return _clientS.wrappedSerialize()
-        }
-        set {
-            _clientS = BigIntType(newValue)
-        }
-    }
-
-    
     /// SRP Verifier 'v' (see SRP spec. in SRPProtocol.swift)
     public var verifier: Data {
         get {
@@ -236,17 +166,6 @@ public struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
             _v = BigIntType(newValue)
         }
     }
-    
-    /// SRP Verifier. (see SRP spec. in SRPProtocol.swift). This version returns a wrapped value (more secure).
-    public var wrappedVerifier: FFDataWrapper {
-        get {
-            return _v.wrappedSerialize()
-        }
-        set {
-            _v = BigIntType(newValue)
-        }
-    }
-
     
     /// Server public value 'B' (see SRP spec. in SRPProtocol.swift)
     public var serverPublicValue: Data {
@@ -259,17 +178,6 @@ public struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
         }
     }
     
-    /// Server public value 'B' (see SRP spec. in SRPProtocol.swift). This version returns a wrapped value (more secure).
-    public var wrappedServerPublicValue: FFDataWrapper {
-        get {
-            return _B.wrappedSerialize()
-        }
-        set {
-            _B = BigIntType(newValue)
-        }
-    }
-
-    
     /// Server private value 'b' (see SRP spec. in SRPProtocol.swift)
     public var serverPrivateValue: Data {
         get {
@@ -279,17 +187,6 @@ public struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
             _b = BigIntType(newValue)
         }
     }
-    
-    /// Server private value 'b' (see SRP spec. in SRPProtocol.swift). This version returns a wrapped value (more secure).
-    public var wrappedServerPrivateValue: FFDataWrapper {
-        get {
-            return _b.wrappedSerialize()
-        }
-        set {
-            _b = BigIntType(newValue)
-        }
-    }
-
     
     /// Server shared secret 'S' (see SRP spec. in SRPProtocol.swift)
     public var serverSecret: Data {
@@ -301,17 +198,6 @@ public struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
         }
     }
     
-    /// Server secret 'S' (see SRP spec. in SRPProtocol.swift). This version returns a wrapped value (more secure).
-    public var wrappedServerSecret: FFDataWrapper {
-        get {
-            return _serverS.wrappedSerialize()
-        }
-        set {
-            _serverS = BigIntType(newValue)
-        }
-    }
-
-    
     // Multiplier parameter 'k' (see SRP spec. in SRPProtocol.swift)
     public var multiplier: Data {
         get {
@@ -322,18 +208,8 @@ public struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
         }
     }
     
-    /// Multiplier parameter 'k' (see SRP spec. in SRPProtocol.swift). This version returns a wrapped value (more secure).
-    public var wrappedMultiplier: FFDataWrapper {
-        get {
-            return _k.wrappedSerialize()
-        }
-        set {
-            _k = BigIntType(newValue)
-        }
-    }
-
-    
-    /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret. (see SRP spec. in SRPProtocol.swift)
+    /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message,
+    /// and pS is the padded shared secret. (see SRP spec. in SRPProtocol.swift)
     public var serverEvidenceMessage: Data {
         get {
             return _serverM.serialize()
@@ -343,18 +219,9 @@ public struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
             _serverM = BigIntType(newValue)
         }
     }
-    
-    /// Server evidence message, computed as: M = H( pA | pMc | pS), where pA is the padded A value; pMc is the padded client evidence message, and pS is the padded shared secret. (see SRP spec. in SRPProtocol.swift)
-    /// This version returns a wrapped value (more secure).
-    public var wrappedServerEvidenceMessage: FFDataWrapper {
-        get {
-            return _serverM.wrappedSerialize()
-        }
-        set {
-            _serverM = BigIntType(newValue)
-        }
-    }
-    
+}
+
+extension SRPDataGenericImpl: Codable {
     enum CodingKeys: String, CodingKey {
         case wrappedClientPublicValue
         case wrappedClientEvidenceMessage
@@ -369,38 +236,38 @@ public struct SRPDataGenericImpl<BigIntType: SRPBigIntProtocol>: SRPData
         case wrappedMultiplier
         case wrappedServerPrivateValue
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(self.wrappedClientPublicValue, forKey: .wrappedClientPublicValue)
-        try container.encode(self.wrappedClientEvidenceMessage, forKey: .wrappedClientEvidenceMessage)
-        try container.encode(self.wrappedVerifier, forKey: .wrappedVerifier)
-        try container.encode(self.wrappedServerPublicValue, forKey: .wrappedServerPublicValue)
-        try container.encode(self.wrappedServerEvidenceMessage, forKey: .wrappedServerEvidenceMessage)
-        try container.encode(self.wrappedPasswordHash, forKey: .wrappedPasswordHash)
-        try container.encode(self.wrappedClientPrivateValue, forKey: .wrappedClientPrivateValue)
-        try container.encode(self.wrappedScrambler, forKey: .wrappedScrambler)
-        try container.encode(self.wrappedClientSecret, forKey: .wrappedClientSecret)
-        try container.encode(self.wrappedServerSecret, forKey: .wrappedServerSecret)
-        try container.encode(self.wrappedMultiplier, forKey: .wrappedMultiplier)
-        try container.encode(self.wrappedServerPrivateValue, forKey: .wrappedServerPrivateValue)
+        try container.encode(self.clientPublicValue, forKey: .wrappedClientPublicValue)
+        try container.encode(self.clientEvidenceMessage, forKey: .wrappedClientEvidenceMessage)
+        try container.encode(self.verifier, forKey: .wrappedVerifier)
+        try container.encode(self.serverPublicValue, forKey: .wrappedServerPublicValue)
+        try container.encode(self.serverEvidenceMessage, forKey: .wrappedServerEvidenceMessage)
+        try container.encode(self.passwordHash, forKey: .wrappedPasswordHash)
+        try container.encode(self.clientPrivateValue, forKey: .wrappedClientPrivateValue)
+        try container.encode(self.scrambler, forKey: .wrappedScrambler)
+        try container.encode(self.clientSecret, forKey: .wrappedClientSecret)
+        try container.encode(self.serverSecret, forKey: .wrappedServerSecret)
+        try container.encode(self.multiplier, forKey: .wrappedMultiplier)
+        try container.encode(self.serverPrivateValue, forKey: .wrappedServerPrivateValue)
     }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        self.wrappedClientPublicValue = try container.decode(FFDataWrapper.self, forKey: .wrappedClientPublicValue)
-        self.wrappedClientEvidenceMessage = try container.decode(FFDataWrapper.self, forKey: .wrappedClientEvidenceMessage)
-        self.wrappedVerifier = try container.decode(FFDataWrapper.self, forKey: .wrappedVerifier)
-        self.wrappedServerPublicValue = try container.decode(FFDataWrapper.self, forKey: .wrappedServerPublicValue)
-        self.wrappedServerEvidenceMessage = try container.decode(FFDataWrapper.self, forKey: .wrappedServerEvidenceMessage)
-        self.wrappedPasswordHash = try container.decode(FFDataWrapper.self, forKey: .wrappedPasswordHash)
-        self.wrappedClientPrivateValue = try container.decode(FFDataWrapper.self, forKey: .wrappedClientPrivateValue)
-        self.wrappedScrambler = try container.decode(FFDataWrapper.self, forKey: .wrappedScrambler)
-        self.wrappedClientSecret = try container.decode(FFDataWrapper.self, forKey: .wrappedClientSecret)
-        self.wrappedServerSecret = try container.decode(FFDataWrapper.self, forKey: .wrappedServerSecret)
-        self.wrappedMultiplier = try container.decode(FFDataWrapper.self, forKey: .wrappedMultiplier)
-        self.wrappedServerPrivateValue = try container.decode(FFDataWrapper.self, forKey: .wrappedServerPrivateValue)
+        self.clientPublicValue = try container.decode(Data.self, forKey: .wrappedClientPublicValue)
+        self.clientEvidenceMessage = try container.decode(Data.self, forKey: .wrappedClientEvidenceMessage)
+        self.verifier = try container.decode(Data.self, forKey: .wrappedVerifier)
+        self.serverPublicValue = try container.decode(Data.self, forKey: .wrappedServerPublicValue)
+        self.serverEvidenceMessage = try container.decode(Data.self, forKey: .wrappedServerEvidenceMessage)
+        self.passwordHash = try container.decode(Data.self, forKey: .wrappedPasswordHash)
+        self.clientPrivateValue = try container.decode(Data.self, forKey: .wrappedClientPrivateValue)
+        self.scrambler = try container.decode(Data.self, forKey: .wrappedScrambler)
+        self.clientSecret = try container.decode(Data.self, forKey: .wrappedClientSecret)
+        self.serverSecret = try container.decode(Data.self, forKey: .wrappedServerSecret)
+        self.multiplier = try container.decode(Data.self, forKey: .wrappedMultiplier)
+        self.serverPrivateValue = try container.decode(Data.self, forKey: .wrappedServerPrivateValue)
     }
 }

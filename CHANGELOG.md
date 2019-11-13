@@ -1,5 +1,14 @@
 # SwiftySRP
 
+## Version 4.0
+- NOTE: There are breaking changes in this version!
+- SwiftySRP no longer depends on FFDataWrapper (which is only used internally for testing).
+  Instead, users must provide their own data wrapper class conforming to SRPDataWrapperProtocol when the use create the SRP protocol.
+  (It's possible to provide FFDataWrapper there, provided that its conformance to SRPDataWrapperProtocol is declared).
+- Eliminated the private imath clang module and its module map. 
+   The necessary imath types are declared in SwiftySRP.h, and the functions are bound at runtime via a simple Objective-C binder class.
+- Providing data in wrapped form is now mandatory in the methods of SRPProtocol.
+
 ## Version 3.0
 - Migrated to Swift 5 and removed support for Xcode versions earlier than 10.2
 - Removed remaining references to BigInt (in tests)

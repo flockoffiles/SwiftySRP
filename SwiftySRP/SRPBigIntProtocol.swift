@@ -24,11 +24,9 @@
 //  SOFTWARE.
 
 import Foundation
-import FFDataWrapper
 
 /// Protocol definition for big integer types used in SRP implementation.
-public protocol SRPBigIntProtocol: Comparable
-{
+public protocol SRPBigIntProtocol: Comparable {
     /// Default initializer
     init()
     
@@ -47,20 +45,10 @@ public protocol SRPBigIntProtocol: Comparable
     /// - Parameter other: The wrapped value to initialize with.
     init(_ other: Self)
     
-    /// Initialize with an unsigned value stored in a big endian data buffer.
-    ///
-    /// - Parameter data: Wrapped data buffer holding the value.
-    init(_ wrappedData: FFDataWrapper)
-    
     /// Store the data in a big endian data buffer
     ///
     /// - Returns: The big endian data buffer which contains the value.
     func serialize() -> Data
-    
-    /// Store the data in a wrapped big endian data buffer (more secure)
-    ///
-    /// - Returns: The big endian data buffer which contains the value.
-    func wrappedSerialize() -> FFDataWrapper
     
     /// Number of bits needed to represent the value.
     var bitWidth: Int { get }
@@ -71,7 +59,7 @@ public protocol SRPBigIntProtocol: Comparable
     ///   - x: Dividend
     ///   - y: Divisor
     /// - Returns: The remainder of an integer division of the dividend by the divisor
-    static func %(x: Self, y: Self) -> Self
+    static func % (x: Self, y: Self) -> Self
     
     /// Compute the result of multiplication of x by y
     ///
@@ -79,7 +67,7 @@ public protocol SRPBigIntProtocol: Comparable
     ///   - x: multiplicand
     ///   - y: Multiplier
     /// - Returns: The result of multiplication
-    static func *(x: Self, y: Self) -> Self
+    static func * (x: Self, y: Self) -> Self
     
     /// Compute the result of addition of a and b
     ///
@@ -87,7 +75,7 @@ public protocol SRPBigIntProtocol: Comparable
     ///   - a: First additive
     ///   - b: Second additive
     /// - Returns: The result of addition a + b
-    static func +(a: Self, b: Self) -> Self
+    static func + (a: Self, b: Self) -> Self
     
     /// Compute the result of subtraction a - b
     ///
@@ -95,7 +83,7 @@ public protocol SRPBigIntProtocol: Comparable
     ///   - a: The number to subtract from (minuend)
     ///   - b: The number being subtracted (subtrahend)
     /// - Returns: Difference
-    static func -(a: Self, b: Self) -> Self
+    static func - (a: Self, b: Self) -> Self
     
     /// Compute the result of modular exponentiation of the current value by the exponent; with the given modulus.
     ///

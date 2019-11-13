@@ -24,7 +24,6 @@
 //  SOFTWARE.
 
 import Foundation
-import FFDataWrapper
 
 // SPR Design spec: http://srp.stanford.edu/design.html
 // SRP RFC: https://tools.ietf.org/html/rfc5054
@@ -62,7 +61,8 @@ import FFDataWrapper
 //
 //    Host:  S = (Av^u) ^ b              (computes session key)
 //    Host:  K = H(S)
-//    Now the two parties have a shared, strong session key K. To complete authentication, they need to prove to each other that their keys match. One possible way:
+//    Now the two parties have a shared, strong session key K. To complete authentication, they need to prove to each other that their keys match.
+//    One possible way:
 //    User -> Host:  M = H(H(N) xor H(g), H(I), s, A, B, K)
 //    Host -> User:  H(A, M, K)
 //    The two parties also employ the following safeguards:
@@ -70,9 +70,8 @@ import FFDataWrapper
 //    The host will abort if it detects that A == 0 (mod N).
 //    The user must show his proof of K first. If the server detects that the user's proof is incorrect, it must abort without showing its own proof of K.
 
-
-public protocol SRPProtocol
-{
+public protocol SRPProtocol {
+    
     /// Configuration for this protocol instance.
     var configuration: SRPConfiguration { get }
     
@@ -84,17 +83,7 @@ public protocol SRPProtocol
     ///   - p: Password
     /// - Returns: SRPData with parameters v, x, a, and A populated.
     /// - Throws: SRPError if input parameters or configuration are not valid.
-    func verifier(s: Data, I: Data,  p: Data) throws -> SRPData
-    
-    /// Compute the verifier and client credentials.
-    ///
-    /// - Parameters:
-    ///   - s: SRP salt
-    ///   - I: User name
-    ///   - p: Password
-    /// - Returns: SRPData with parameters v, x, a, and A populated.
-    /// - Throws: SRPError if input parameters or configuration are not valid.
-    func verifier(s: FFDataWrapper, I: FFDataWrapper,  p: FFDataWrapper) throws -> SRPData
+    func verifier(s: SRPDataWrapperProtocol, I: SRPDataWrapperProtocol, p: SRPDataWrapperProtocol) throws -> SRPData
 
     /// Generate client credentials (parameters x, a, and A) from the SRP salt, user name (I), and password (p)
     ///
@@ -104,17 +93,7 @@ public protocol SRPProtocol
     ///   - p: Password
     /// - Returns: SRP data with parameters x, a, and A populated.
     /// - Throws: SRPError if input parameters or configuration are not valid.
-    func generateClientCredentials(s: Data, I: Data, p: Data) throws -> SRPData
-    
-    /// Generate client credentials (parameters x, a, and A) from the SRP salt, user name (I), and password (p)
-    ///
-    /// - Parameters:
-    ///   - s: SRP salt
-    ///   - I: User name
-    ///   - p: Password
-    /// - Returns: SRP data with parameters x, a, and A populated.
-    /// - Throws: SRPError if input parameters or configuration are not valid.
-    func generateClientCredentials(s: FFDataWrapper, I: FFDataWrapper, p: FFDataWrapper) throws -> SRPData
+    func generateClientCredentials(s: SRPDataWrapperProtocol, I: SRPDataWrapperProtocol, p: SRPDataWrapperProtocol) throws -> SRPData
     
     /// Calculate the shared secret on the client side: S = (B - kg^x) ^ (a + ux)
     ///
@@ -144,41 +123,28 @@ public protocol SRPProtocol
     func verifyClientEvidenceMessage(srpData: SRPData) throws
     
     /// Calculate the shared key (client side) in the standard way: sharedKey = H(clientS)
-    ///
-    /// - Parameter srpData: SRPData with clientS populated.
-    /// - Returns: Shared key
-    /// - Throws: SRPError if some of the required parameters is invalid.
-    func calculateClientSharedKey(srpData: SRPData) throws -> Data
-
-    /// Calculate the shared key (client side) in the standard way: sharedKey = H(clientS)
     /// This version returns a wrapped version (more secure).
     /// - Parameter srpData: SRPData with clientS populated.
     /// - Returns: Shared key
     /// - Throws: SRPError if some of the required parameters is invalid.
-    func calculateClientSharedKey(srpData: SRPData) throws -> FFDataWrapper
+    func calculateClientSharedKey(srpData: SRPData) throws -> SRPDataWrapperProtocol
 
-    /// Calculate the shared key (client side) by using HMAC: sharedKey = HMAC(salt, clientS)
-    /// This version can be used to derive multiple shared keys from the same shared secret (by using different salts)
-    /// - Parameter srpData: SRPData with clientS populated.
-    /// - Returns: Shared key
-    /// - Throws: SRPError if some of the required parameters is invalid.
-    func calculateClientSharedKey(srpData: SRPData, salt: Data) throws -> Data
-    
     /// Calculate the shared key (client side) by using HMAC: sharedKey = HMAC(salt, clientS)
     /// This version can be used to derive multiple shared keys from the same shared secret (by using different salts)
     /// This version returns a wrapped version (more secure).
     /// - Parameter srpData: SRPData with clientS populated.
     /// - Returns: Shared key
     /// - Throws: SRPError if some of the required parameters is invalid.
-    func calculateClientSharedKey(srpData: SRPData, salt: FFDataWrapper) throws -> FFDataWrapper
+    func calculateClientSharedKey(srpData: SRPData, salt: SRPDataWrapperProtocol) throws -> SRPDataWrapperProtocol
 
     /// Generate the server side SRP parameters. This method normally will NOT be used by the client.
     /// It's included here for testing purposes.
+    /// This version uses a wrapped verifier (more secure).
     /// - Parameter verifier: SRP verifier received from the client.
     /// - Returns: SRP data with parameters v, k, b, and B populated.
     /// - Throws: SRPError if the verifier or configuration is invalid.
-    func generateServerCredentials(verifier: Data) throws -> SRPData
-    
+    func generateServerCredentials(verifier: SRPDataWrapperProtocol) throws -> SRPData
+
     /// Calculate the shared secret on the server side: S = (Av^u) ^ b
     ///
     /// - Parameter srpData: SRPData with the following parameters populated: A, v, b, B
@@ -206,26 +172,12 @@ public protocol SRPProtocol
     func verifyServerEvidenceMessage(srpData: SRPData) throws
     
     /// Calculate the shared key (server side) in the standard way: sharedKey = H(serverS)
-    ///
-    /// - Parameter srpData: SRPData with serverS populated.
-    /// - Returns: Shared key
-    /// - Throws: SRPError if some of the required parameters is invalid.
-    func calculateServerSharedKey(srpData: SRPData) throws -> Data
-
-    /// Calculate the shared key (server side) in the standard way: sharedKey = H(serverS)
     /// This version returns a wrapped version (more secure).
     ///
     /// - Parameter srpData: SRPData with serverS populated.
     /// - Returns: Shared key
     /// - Throws: SRPError if some of the required parameters is invalid.
-    func calculateServerSharedKey(srpData: SRPData) throws -> FFDataWrapper
-
-    /// Calculate the shared key (server side) by using HMAC: sharedKey = HMAC(salt, clientS)
-    /// This version can be used to derive multiple shared keys from the same shared secret (by using different salts)
-    /// - Parameter srpData: SRPData with clientS populated.
-    /// - Returns: Shared key
-    /// - Throws: SRPError if some of the required parameters is invalid.
-    func calculateServerSharedKey(srpData: SRPData, salt: Data) throws -> Data
+    func calculateServerSharedKey(srpData: SRPData) throws -> SRPDataWrapperProtocol
 
     /// Calculate the shared key (server side) by using HMAC: sharedKey = HMAC(salt, clientS)
     /// This version can be used to derive multiple shared keys from the same shared secret (by using different salts)
@@ -233,8 +185,5 @@ public protocol SRPProtocol
     /// - Parameter srpData: SRPData with clientS populated.
     /// - Returns: Shared key
     /// - Throws: SRPError if some of the required parameters is invalid.
-    func calculateServerSharedKey(srpData: SRPData, salt: FFDataWrapper) throws -> FFDataWrapper
-
+    func calculateServerSharedKey(srpData: SRPData, salt: SRPDataWrapperProtocol) throws -> SRPDataWrapperProtocol
 }
-
-

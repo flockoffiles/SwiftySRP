@@ -24,13 +24,10 @@
 //  SOFTWARE.
 
 import Foundation
-import FFDataWrapper
-
 
 /// Internal extension. For test purposes only.
 /// Allows to create a configuration with custom (fixed) private ephemeral values 'a' and 'b'
-public extension SRP
-{
+extension SRP.Generic {
     
     /// Only for use in testing! Create an SRP configuration and provide custom closures to generate private ephemeral values 'a' and 'b'
     /// This is done to be able to use fixed values for 'a' and 'b' and make generated values predictable (and compare them with expected values).
@@ -45,19 +42,18 @@ public extension SRP
     /// - Returns: The resulting SRP protocol implementation.
     static func `protocol`<BigIntType: SRPBigIntProtocol>(N: BigIntType,
                                                           g: BigIntType,
-                                                     digest: @escaping DigestFunc = CryptoAlgorithm.SHA256.digestFunc(),
-                                                       hmac: @escaping HMacFunc = CryptoAlgorithm.SHA256.hmacFunc(),
+                                                          digest: @escaping DigestFunc = CryptoAlgorithm.SHA256.digestFunc(),
+                                                          hmac: @escaping HMacFunc = CryptoAlgorithm.SHA256.hmacFunc(),
                                                           a: @escaping () -> Data,
-                                                          b: @escaping () -> Data) throws -> SRPProtocol
-    {
-        let configuration = SRPConfigurationGenericImpl<BigIntType>(N: N,
-                                                                    g: g,
-                                                                    digest: digest,
-                                                                    hmac: hmac,
-                                                                    aFunc: { BigIntType(a()) },
-                                                                    bFunc: { BigIntType(b()) })
-        return SRPGenericImpl<BigIntType>(configuration: configuration)
+                                                          b: @escaping () -> Data) throws -> SRPProtocol {
+        let configuration =
+            SRPConfigurationGenericImpl<BigIntType>(N: N,
+                                                    g: g,
+                                                    digest: digest,
+                                                    hmac: hmac,
+                                                    aFunc: { BigIntType(a()) },
+                                                    bFunc: { BigIntType(b()) })
 
+        return SRPGenericImpl<BigIntType, DataWrapperType>(configuration: configuration)
     }
 }
-

@@ -23,14 +23,13 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import <SwiftySRP/imath.h>
+#import <SwiftySRP/imath+additions.h>
 
 //! Project version number for SwiftySRP.
 FOUNDATION_EXPORT double SwiftySRPVersionNumber;
 
 //! Project version string for SwiftySRP.
 FOUNDATION_EXPORT const unsigned char SwiftySRPVersionString[];
-
-// In this header, you should import all the public headers of your framework using statements like #import <SwiftySRP/PublicHeader.h>
-
 
