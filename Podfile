@@ -1,12 +1,11 @@
-# TODO: Bump this up to iOS9
-platform :ios, '9.3'
+platform :ios, '12.0'
 workspace 'SwiftySRP'
 
 abstract_target 'SwiftySRP_Base' do
     use_frameworks!
     
-    pod 'FFDataWrapper', '~> 2.0'
-    # pod 'FFDataWrapper', :git => 'https://github.com/flockoffiles/FFDataWrapper.git', :branch => 'swift5'
+    # pod 'FFDataWrapper', 'no_sim_arm64'
+    pod 'FFDataWrapper', :git => 'https://github.com/flockoffiles/FFDataWrapper.git', :branch => 'no_sim_arm64'
     
     target 'SwiftySRP' do
       project 'SwiftySRP'

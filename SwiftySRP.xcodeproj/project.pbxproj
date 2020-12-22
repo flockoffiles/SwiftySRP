@@ -754,6 +754,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
@@ -770,6 +771,7 @@
 				);
 				INFOPLIST_FILE = SwiftySRP/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = SwiftySRP/module.modulemap;
@@ -784,6 +786,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -801,6 +804,7 @@
 				);
 				INFOPLIST_FILE = SwiftySRP/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = SwiftySRP/module.modulemap;
@@ -934,6 +938,7 @@
 			baseConfigurationReference = BFE2C437828277B7A84D87AE /* Pods-SwiftySRP_Base-SwiftySRP.debug.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
@@ -946,6 +951,7 @@
 				EXCLUDED_ARCHS__XCODE_VERSION_1200__simulator__x86_64 = "arm64 arm64e armv7 armv7s armv6 armv8";
 				INFOPLIST_FILE = SwiftySRP/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = SwiftySRP/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flockoffiles.SwiftySRP;
@@ -961,6 +967,7 @@
 			baseConfigurationReference = FD02F82AB3A137C540FE76A5 /* Pods-SwiftySRP_Base-SwiftySRP.release.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
@@ -973,6 +980,7 @@
 				EXCLUDED_ARCHS__XCODE_VERSION_1200__simulator__x86_64 = "arm64 arm64e armv7 armv7s armv6 armv8";
 				INFOPLIST_FILE = SwiftySRP/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = SwiftySRP/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flockoffiles.SwiftySRP;
@@ -1021,6 +1029,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
@@ -1037,6 +1046,7 @@
 				);
 				INFOPLIST_FILE = SwiftySRP/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = SwiftySRP/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flockoffiles.SwiftySRP;
@@ -1050,6 +1060,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
@@ -1066,6 +1077,7 @@
 				);
 				INFOPLIST_FILE = SwiftySRP/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = SwiftySRP/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flockoffiles.SwiftySRP;
