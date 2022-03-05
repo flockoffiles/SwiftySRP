@@ -28,7 +28,11 @@ github "flockoffiles/SwiftySRP" ~> 3.1
 ### SwiftySRP
 This is a target that requires cocoapods.
 
+### SwiftySRP-iOS
+Target for Carthage
 
+### SwiftSRP-iOS.static
+Target for Carthage. Static instead of dynamic.
 
 
 ## How to Use
