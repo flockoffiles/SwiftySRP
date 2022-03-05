@@ -1,5 +1,10 @@
 # SwiftySRP
 
+# Version 3.1
+- M1 Simulator architecture is excluded in build settings (to fix Carthage and cocoapods builds).
+- Minimum deployment target raised to iOS12.
+- Fixed compilation errors under XCode 13.
+
 ## Version 3.0
 - Migrated to Swift 5 and removed support for Xcode versions earlier than 10.2
 - Removed remaining references to BigInt (in tests)
