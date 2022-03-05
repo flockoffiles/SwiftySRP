@@ -13,20 +13,23 @@ For SRP 6a Specification, see:
 To use with cocoapods, add the following line to your Podfile:
 
 ```
-pod 'SwiftySRP', '~> 2.12'
+pod 'SwiftySRP', '~> 3.1'
 ```
 
 ### Carthage
 To use with Carthage, add the following line to your Cartfile:
 
 ```
-github "flockoffiles/SwiftySRP" ~> 2.12
+github "flockoffiles/SwiftySRP" ~> 3.1
 ```
 
+## Workspace Targets
 
-## Xcode 10 vs 9.4 Support
+### SwiftySRP
+This is a target that requires cocoapods.
 
-Starting with version 2.7 SwiftySRP no longer supports building with Xcode 9 (because of the different ways the CommonCrypto library must be imported). If you still need to support XCode 9, you have to stay on version 2.6.
+
+
 
 ## How to Use
 

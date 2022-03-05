@@ -4,8 +4,8 @@ workspace 'SwiftySRP'
 abstract_target 'SwiftySRP_Base' do
     use_frameworks!
     
-    # pod 'FFDataWrapper', 'no_sim_arm64'
-    pod 'FFDataWrapper', :git => 'https://github.com/flockoffiles/FFDataWrapper.git', :branch => 'no_sim_arm64'
+    # pod 'FFDataWrapper'
+    pod 'FFDataWrapper', '~> 2.2'
     
     target 'SwiftySRP' do
       project 'SwiftySRP'
@@ -17,6 +17,9 @@ end
 
 # This part is essential for playgrounds to work properly with frameworks installed with cocoapods.
 post_install do |installer|
+    installer.pods_project.build_configurations.each do |config|
+        config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+    end
     installer.pods_project.targets.each do |target|
         # Get rid of the compiler warning about missing linker paths.
         target.new_shell_script_build_phase.shell_script = "mkdir -p $PODS_CONFIGURATION_BUILD_DIR/#{target.name}"

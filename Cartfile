@@ -1,1 +1,1 @@
-github "flockoffiles/FFDataWrapper" "no_sim_arm64"
+github "flockoffiles/FFDataWrapper" ~> 2.2
